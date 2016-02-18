@@ -2,6 +2,7 @@ package hu.nevermind.app.keyvalue
 
 import com.github.andrewoma.flux.Store
 import hu.nevermind.app.Actions
+import hu.nevermind.app.communicator
 import hu.nevermind.app.globalDispatcher
 
 data class KeyValue(
@@ -26,13 +27,15 @@ object KeyValueStore : Store() {
             emitChange()
         }
         register(globalDispatcher, Actions.modifyKeyValue) { modifiedConfig ->
-            val index = configs.indexOfFirst { it.key == modifiedConfig.key }
-            if (index == -1) {
-                configs.add(modifiedConfig)
-            } else {
-                configs[index] = modifiedConfig
+            communicator.saveKeyValue(modifiedConfig) {
+                val index = configs.indexOfFirst { it.key == modifiedConfig.key }
+                if (index == -1) {
+                    configs.add(modifiedConfig)
+                } else {
+                    configs[index] = modifiedConfig
+                }
+                emitChange()
             }
-            emitChange()
         }
     }
 

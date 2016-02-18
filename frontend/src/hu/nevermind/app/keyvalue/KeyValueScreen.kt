@@ -6,9 +6,9 @@ import hu.nevermind.common.*
 import hu.nevermind.reakt.bootstrap.*
 import hu.nevermind.reakt.bootstrap.table.*
 import hu.nevermind.reakt.jqext.find
-import hu.nevermind.reakt.jqext.get
 import hu.nevermind.reakt.jqext.size
 import jquery.jq
+import org.junit.Test
 import kotlin.browser.window
 
 private @native val accounting: dynamic = noImpl
@@ -94,13 +94,13 @@ class KeyValueScreen : ComponentSpec<Unit, Unit>() {
                             isKey = true
                             dataField = "key"
                             width = "100"
-                        }) { text("Key HU") }
+                        }) { text("Key") }
                         tableHeaderColumn<KeyValue, String>({
                             dataField = "value"
                             dataAlign = DataAlign.Right
                             width = "75"
                             dataFormat = { cell, keyValue -> accounting.formatNumber(cell, 3, ' ') }
-                        }) { text("Érték") }
+                        }) { text("Value") }
                     }
                 }
             }
@@ -225,21 +225,10 @@ class KeyValueEditorDialog() : ComponentSpec<KeyValueEditorDialogProps, KeyValue
         val conf = state.editedKeyValue
         arrayOf("key" to conf.key,
                 "value" to conf.value).forEach {
-            onValidationError(it.second, Min(3), Max(100)) { errorMessage ->
-                errors[it.first] = errorMessage
+            val errorMessages = validate(it.second, Min(3), Max(100))
+            if (errorMessages.isNotEmpty()) {
+                errors[it.first] = errorMessages.joinToString("\n")
             }
-        }
-    }
-
-    fun onValidationError(value: String, vararg rules: ValidationRule, onError: (String) -> Unit) {
-        val errorMessages = arrayListOf<String>()
-        rules.forEach {
-            if (it.hasValidationError(value)) {
-                errorMessages.add(it.errorMsg)
-            }
-        }
-        if (errorMessages.isNotEmpty()) {
-            onError(errorMessages.joinToString("\n"))
         }
     }
 }
@@ -253,6 +242,16 @@ fun Component.keyValueScreen(): Component {
 }
 
 class KeyValueScreenTest {
+
+
+    @Test
+    fun hack() {
+        kotlin.test.assertTrue(true) // qunit hack, at least one assert must be present
+        qunitTest("KeyValueScreenTest") { assert: dynamic ->
+            tests()
+            runFirstGiven(assert)
+        }
+    }
 
     fun tests() {
         given("KeyValueScreenTest in default state") {

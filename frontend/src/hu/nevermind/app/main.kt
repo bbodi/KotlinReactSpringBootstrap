@@ -3,11 +3,10 @@ package hu.nevermind.app
 
 import com.github.andrewoma.flux.Dispatcher
 import com.github.andrewoma.react.*
-import hu.nevermind.app.keyvalue.KeyValueScreenTest
 import hu.nevermind.app.keyvalue.KeyValueStore
 import hu.nevermind.app.keyvalue.keyValueScreen
-import hu.nevermind.common.given
-import hu.nevermind.common.runFirstGiven
+import hu.nevermind.app.keyvalue.loginScreen
+import hu.nevermind.common.*
 import hu.nevermind.reakt.bootstrap.*
 import hu.nevermind.reakt.jqext.get
 import hu.nevermind.reakt.jqext.hide
@@ -21,23 +20,27 @@ import kotlin.browser.window
 
 val globalDispatcher = Dispatcher()
 
+var communicator: Communicator
+
 public fun main(vararg arg: String) {
     QUnit.config.autostart = false
     react.render(app(), jq("#app").get(0)!!)
     if (window.location.search.contains("tests")) {
         window.location.hash = Path.root
+        communicator = Communicator(TestAjaxPoster())
         QUnit.start()
     } else {
+        communicator = Communicator(JqueryAjaxPoster())
         jq("#qunit").hide()
         jq("#qunit-fixture").hide()
-        getConfigsFromServer() {
+        communicator.getKeyValuesFromServer() {
             Actions.setKeyValues(globalDispatcher, it)
         }
     }
 }
 
 enum class AppScreen {
-    Main, Config
+    Login, Home, Config
 }
 
 data class AppState(val screen: AppScreen)
@@ -47,25 +50,36 @@ class App : ComponentSpec<Unit, AppState>() {
         val factory = react.createFactory(App())
     }
 
-    override fun componentDidMount() {
-        RouterStore.addChangeListener(this) {
-            RouterStore.match(
-                    "config/?editedConfId" to { params ->
-                        if (state.screen != AppScreen.Config) {
-                            state = AppState(AppScreen.Config)
-                        }
-                        val keyValue = KeyValueStore.keyValue(params["editedConfId"].orEmpty())
-                        Actions.setEditingKeyValue(globalDispatcher, keyValue)
-                    },
-                    "" to { params ->
-                        state = AppState(AppScreen.Main)
+    private fun route() {
+        RouterStore.match(
+                "login" to { params ->
+                    state = AppState(AppScreen.Login)
+                },
+                "config/?editedConfId" to { params ->
+                    if (state.screen != AppScreen.Config) {
+                        state = AppState(AppScreen.Config)
                     }
-            )
+                    val keyValue = KeyValueStore.keyValue(params["editedConfId"].orEmpty())
+                    Actions.setEditingKeyValue(globalDispatcher, keyValue)
+                },
+                "home" to { params ->
+                    state = AppState(AppScreen.Home)
+                },
+                otherwise = {
+                    window.location.hash = Path.login
+                }
+        )
+    }
+
+    override fun componentDidMount() {
+        route()
+        RouterStore.addChangeListener(this) {
+            route()
         }
     }
 
     override fun initialState(): AppState? {
-        return AppState(AppScreen.Main)
+        return AppState(AppScreen.Login)
     }
 
     override fun Component.render() {
@@ -73,25 +87,30 @@ class App : ComponentSpec<Unit, AppState>() {
             bsNavbar() {
                 bsNavbarHeader() {
                     bsNavbarBrand() {
-                        a({ href = nullHref }) { text("Link") }
+                        a({ href = nullHref }) { text("Project name") }
                     }
                 }
-                bsNav {
-                    bsNavItem({ id = "configScreenNavItem"; href = Path.keyValue.root; active = state.screen == AppScreen.Config }) { text("Configs") }
-                    bsNavItem({ href = nullHref }) { text("Link") }
-                    bsNavDropdown({ title = "Dropdown"; id = "basic-nav-dropdown" }) {
-                        bsMenuItem { text("Action") }
-                        bsMenuItem { text("Another Action") }
-                        bsMenuItem { text("Something else here") }
-                        bsMenuItemDivider()
-                        bsMenuItem { text("Separated link") }
+                if (state.screen != AppScreen.Login) {
+                    bsNav {
+                        bsNavItem({ id = "configScreenNavItem"; href = Path.keyValue.root; active = state.screen == AppScreen.Config }) { text("Configs") }
+                        bsNavItem({ href = nullHref }) { text("Link") }
+                        bsNavDropdown({ title = "Dropdown"; id = "basic-nav-dropdown" }) {
+                            bsMenuItem { text("Action") }
+                            bsMenuItem { text("Another Action") }
+                            bsMenuItem { text("Something else here") }
+                            bsMenuItemDivider()
+                            bsMenuItem { text("Separated link") }
+                        }
                     }
                 }
-                bsNav({ pullRight = true }) {
-                    bsNavItem({
-                        eventKey = 1; href = Path.root
-                    }) { text("Link Right") }
-                    bsNavItem({ eventKey = 2; href = nullHref }) { text("Link Right") }
+                if (state.screen != AppScreen.Login) {
+                    bsNav({ pullRight = true }) {
+                        bsNavItem({ eventKey = 2; href = "/logout" }) { text("Logout") }
+                    }
+                } else {
+                    bsNav({ pullRight = true }) {
+                        bsNavItem({ eventKey = 2; href = "/" }) { text("Contact") }
+                    }
                 }
             }
             bsGrid({ fluid = true }) {
@@ -99,6 +118,8 @@ class App : ComponentSpec<Unit, AppState>() {
                     bsCol({ md = 12 }) {
                         if (state.screen == AppScreen.Config) {
                             keyValueScreen()
+                        } else if (state.screen == AppScreen.Login) {
+                            loginScreen()
                         }
                     }
                 }
@@ -132,25 +153,29 @@ data class Max(val length: Int) : ValidationRule {
     }
 }
 
+fun validate(value: String, vararg rules: ValidationRule): List<String> {
+    val errorMessages = arrayListOf<String>()
+    rules.forEach {
+        if (it.hasValidationError(value)) {
+            errorMessages.add(it.errorMsg)
+        }
+    }
+    return errorMessages
+}
 
 
 class RoutingTest {
 
-    init {
-        val test = js("QUnit.test")
-        test("tests") { assert: dynamic ->
-            configScreenShouldAppear()
-            KeyValueScreenTest().tests()
-
+    @Test
+    fun hack() {
+        kotlin.test.assertTrue(true) // qunit hack, at least one assert must be present
+        qunitTest("RoutingTest") { assert: dynamic ->
+            tests()
             runFirstGiven(assert)
         }
     }
 
-    @Test fun hack() {
-        kotlin.test.assertTrue(true) // qunit hack, at least one assert must be present
-    }
-
-    fun configScreenShouldAppear() {
+    fun tests() {
         given("in any state") {
             on("routing to the main screen") {
                 window.location.hash = Path.root

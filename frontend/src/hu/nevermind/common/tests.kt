@@ -97,7 +97,7 @@ private fun later(assert: dynamic, body: () -> Unit) {
     window.setTimeout({
         body()
         done()
-    }, 500)
+    }, 100)
 }
 
 fun simulateChangeInput(id: String, body: (HTMLInputElement)->Unit) {
@@ -111,3 +111,5 @@ fun String.appearOnScreen(): Boolean = jq("#${this}").size() == 1
 fun String.simulateClick() {
     ReactTestUtils.Simulate.click(jq("#${this}").get(0)!!)
 }
+
+@native("QUnit.test") fun qunitTest(name: String, body: (assert: dynamic)->Unit)

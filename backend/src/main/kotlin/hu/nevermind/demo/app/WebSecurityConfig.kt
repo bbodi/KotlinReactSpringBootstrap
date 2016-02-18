@@ -10,10 +10,21 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
-        http.authorizeRequests()
-                .anyRequest().fullyAuthenticated().and().
-                httpBasic().and().
-                csrf().disable();
+        http
+                .authorizeRequests()
+                    .antMatchers("/", "/js/**", "/css/**", "/**/favicon.ico").permitAll()
+                    .anyRequest().authenticated()
+                .and()
+                    .formLogin()
+                        .loginPage("/#login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/#home")
+                        .permitAll()
+                .and()
+                    .logout()
+                        .logoutSuccessUrl("/")
+                        .logoutUrl("/logout") // POST only
+                .and().csrf().disable()
     }
 
 }

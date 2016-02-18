@@ -39,8 +39,16 @@ object BsStyle {
     val Link: BsStyle = js("'link'")
 }
 
+
+
+object BsButtonType {
+    val Button: BsButtonType = js("'button'")
+    val Reset: BsButtonType = js("'reset'")
+    val Submit: BsButtonType = js("'submit'")
+}
+
 object BsSize {
-    val Large: BsStyle = js("'Large'")
+    val Large: BsStyle = js("'large'")
     val Small: BsStyle = js("'small'")
     val ExtraSmall: BsStyle = js("'xsmall'")
 }
@@ -99,11 +107,13 @@ fun Component.bsButtonGroup(
 class ButtonProperties : HtmlGlobalProperties() {
     var bsStyle: BsStyle by Property()
     var bsSize: BsStyle by Property()
+    var type: BsButtonType by Property()
     var block: Boolean by Property()
     var active: Boolean by Property()
     var disabled: Boolean by Property()
     var href: String by Property()
 }
+
 
 fun Component.bsButton(
         properties: ButtonProperties.() -> Unit = {},
@@ -350,36 +360,20 @@ fun Component.bsModalTitle(
             init)
 }
 
-object InputType {
-    val Text: InputType = js("'text'")
-    val Button: InputType = js("'button'")
-    val Color: InputType = js("'color'")
-    val Date: InputType = js("'date'")
-    val Datetime: InputType = js("'datetime'")
-    val Hidden: InputType = js("'hidden'")
-    val Number: InputType = js("'number'")
-    val Password: InputType = js("'password'")
-    val Textarea: InputType = js("'textarea'")
-    val Checkbox: InputType = js("'checkbox'")
-}
-
-class InputProperties : HtmlGlobalProperties() {
-    var type: InputType by Property()
+class BsInputProperties : InputProperties() {
     var label: String by Property()
     var bsStyle: BsStyle by Property()
-    var value: String by Property()
     var help: String by Property()
-    var defaultValue: String by Property()
     var wrapperClassName: String by Property()
     var labelClassName: String by Property()
 
 }
 
 fun Component.bsInput(
-        properties: InputProperties.() -> Unit = {},
+        properties: BsInputProperties.() -> Unit = {},
         init: Component.() -> Unit = {}) {
     externalReactClassWithoutChild(
             js("ReactBootstrap.Input"),
-            InputProperties(), properties,
+            BsInputProperties(), properties,
             init)
 }

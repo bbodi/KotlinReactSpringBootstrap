@@ -5,19 +5,23 @@ import kotlin.browser.window
 
 object RouterStore : Store() {
 
-    var path = ""
+    var path = window.location.hash.substring(1)
         private set
 
     init {
+
         window.addEventListener("hashchange", {
             path = window.location.hash.substring(1)
             emitChange()
         }, false);
     }
 
-    fun match(vararg patterns: Pair<String, (Map<String, String>) -> Unit>) {
-        patterns.takeWhile { pattern ->
+    fun match(vararg patterns: Pair<String, (Map<String, String>) -> Unit>, otherwise: ()->Unit) {
+        val pattern = patterns.firstOrNull { pattern ->
             match(pattern.first, pattern.second)
+        }
+        if (pattern == null) {
+            otherwise()
         }
     }
 

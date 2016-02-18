@@ -160,7 +160,7 @@ class FormProperties : HtmlGlobalProperties() {
     var target: String? by Property()
 }
 
-class InputProperties : HtmlGlobalProperties() {
+open class InputProperties : HtmlGlobalProperties() {
     var accept: String? by Property()
     var alt: String? by Property()
     var autoCapitalize: String? by Property()
@@ -184,13 +184,26 @@ class InputProperties : HtmlGlobalProperties() {
     var size: Int? by Property()
     var src: String? by Property()
     var step: Int? by Property()
-    var type: String? by Property()
+    var type: InputType by Property()
     var value: String? by Property()
     var width: Int? by Property()
     var formAction: String? by Property()
     var formEncType: String? by Property()
     var formMethod: String? by Property()
     var formTarget: String? by Property()
+}
+
+object InputType {
+    val Text: InputType = js("'text'")
+    val Button: InputType = js("'button'")
+    val Color: InputType = js("'color'")
+    val Date: InputType = js("'date'")
+    val Datetime: InputType = js("'datetime'")
+    val Hidden: InputType = js("'hidden'")
+    val Number: InputType = js("'number'")
+    val Password: InputType = js("'password'")
+    val Textarea: InputType = js("'textarea'")
+    val Checkbox: InputType = js("'checkbox'")
 }
 
 class IframeProperties : HtmlGlobalProperties() {

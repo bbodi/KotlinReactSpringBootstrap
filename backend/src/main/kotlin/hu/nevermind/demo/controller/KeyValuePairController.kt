@@ -23,7 +23,8 @@ class KeyValuePairController {
     }
 
     @RequestMapping("/putKeyValue", method=arrayOf(RequestMethod.POST))
-    fun putKeyValue(@RequestParam key: String, @RequestParam value: String) {
-        keyValuePairRepository.save(KeyValuePair(key, value))
+    fun putKeyValue(@RequestBody entity: KeyValuePair): KeyValuePair {
+        keyValuePairRepository.save(entity)
+        return entity
     }
 }
