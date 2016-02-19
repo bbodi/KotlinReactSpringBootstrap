@@ -3,9 +3,9 @@ package hu.nevermind.app
 
 import com.github.andrewoma.flux.Dispatcher
 import com.github.andrewoma.react.*
-import hu.nevermind.app.keyvalue.KeyValueStore
 import hu.nevermind.app.keyvalue.keyValueScreen
 import hu.nevermind.app.keyvalue.loginScreen
+import hu.nevermind.app.store.*
 import hu.nevermind.common.*
 import hu.nevermind.reakt.bootstrap.*
 import hu.nevermind.reakt.jqext.get
@@ -21,21 +21,24 @@ import kotlin.browser.window
 val globalDispatcher = Dispatcher()
 
 var communicator: Communicator
+var testAjaxPoster: TestAjaxPoster
 
 public fun main(vararg arg: String) {
     QUnit.config.autostart = false
-    react.render(app(), jq("#app").get(0)!!)
+
     if (window.location.search.contains("tests")) {
-        window.location.hash = Path.root
-        communicator = Communicator(TestAjaxPoster())
+        testAjaxPoster = TestAjaxPoster()
+        communicator = Communicator(testAjaxPoster)
+        testAjaxPoster.pushResult<Nothing>(RestUrl.authenticate, {ok(object{val name="testUser";val roles=arrayOf(Role.Admin.name)})})
+        testAjaxPoster.pushResult<Nothing>(RestUrl.getKeyValuesFromServer, {ok(emptyArray<Any>())})
+        testAjaxPoster.pushResult(RestUrl.putKeyValue, {result: KeyValue -> ok(result)})
+        react.render(app(), jq("#app").get(0)!!)
         QUnit.start()
     } else {
         communicator = Communicator(JqueryAjaxPoster())
         jq("#qunit").hide()
         jq("#qunit-fixture").hide()
-        communicator.getKeyValuesFromServer() {
-            Actions.setKeyValues(globalDispatcher, it)
-        }
+        react.render(app(), jq("#app").get(0)!!)
     }
 }
 
@@ -51,30 +54,45 @@ class App : ComponentSpec<Unit, AppState>() {
     }
 
     private fun route() {
-        RouterStore.match(
-                "login" to { params ->
-                    state = AppState(AppScreen.Login)
-                },
-                "config/?editedConfId" to { params ->
-                    if (state.screen != AppScreen.Config) {
-                        state = AppState(AppScreen.Config)
+        if (!LoggedInUserStore.isLoggedIn) {
+            window.location.hash = Path.login
+        } else {
+            RouterStore.match(
+                    "login" to { params ->
+                        state = AppState(AppScreen.Login)
+                    },
+                    "config/?editedConfId" to { params ->
+                        if (state.screen != AppScreen.Config) {
+                            state = AppState(AppScreen.Config)
+                        }
+                        val keyValue = KeyValueStore.keyValue(params["editedConfId"].orEmpty())
+                        Actions.setEditingKeyValue(globalDispatcher, keyValue)
+                    },
+                    otherwise = {
+                        state = AppState(AppScreen.Home)
                     }
-                    val keyValue = KeyValueStore.keyValue(params["editedConfId"].orEmpty())
-                    Actions.setEditingKeyValue(globalDispatcher, keyValue)
-                },
-                "home" to { params ->
-                    state = AppState(AppScreen.Home)
-                },
-                otherwise = {
-                    window.location.hash = Path.login
-                }
-        )
+            )
+        }
     }
 
     override fun componentDidMount() {
+        authenticate()
         route()
         RouterStore.addChangeListener(this) {
             route()
+        }
+    }
+
+    private fun authenticate() {
+        communicator.authenticate() { result ->
+            if (result.ok != null) {
+                val principal = result.ok.asDynamic()
+                val rolesStringArray: Array<String> = principal.roles
+                val roles = rolesStringArray.map { Role.valueOf(it) }.toTypedArray()
+                Actions.setLoggedInuser(globalDispatcher, LoggedInUser(principal.name, roles))
+            } else {
+                Actions.setLoggedInuser(globalDispatcher, null)
+            }
         }
     }
 
@@ -92,20 +110,37 @@ class App : ComponentSpec<Unit, AppState>() {
                 }
                 if (state.screen != AppScreen.Login) {
                     bsNav {
-                        bsNavItem({ id = "configScreenNavItem"; href = Path.keyValue.root; active = state.screen == AppScreen.Config }) { text("Configs") }
-                        bsNavItem({ href = nullHref }) { text("Link") }
-                        bsNavDropdown({ title = "Dropdown"; id = "basic-nav-dropdown" }) {
-                            bsMenuItem { text("Action") }
-                            bsMenuItem { text("Another Action") }
-                            bsMenuItem { text("Something else here") }
-                            bsMenuItemDivider()
-                            bsMenuItem { text("Separated link") }
+                        if (LoggedInUserStore.hasRole(Role.Admin)) {
+                            bsNavDropdown({ title = "Admin"; id = "basic-nav-dropdown" }) {
+                                bsMenuItem { text("Accounts") }
+                                bsMenuItem { text("Another Action") }
+                                bsMenuItem { text("Something else here") }
+                                bsMenuItemDivider()
+                                bsMenuItem { text("Separated link") }
+                            }
+                        }
+                        bsNavDropdown({ title = "Options"; id = "basic-nav-dropdown" }) {
+                            bsMenuItem({
+                                id = "configScreenNavItem"
+                                href = Path.keyValue.root
+                                active = state.screen == AppScreen.Config
+                            }) { text("Configs") }
                         }
                     }
                 }
                 if (state.screen != AppScreen.Login) {
                     bsNav({ pullRight = true }) {
-                        bsNavItem({ eventKey = 2; href = "/logout" }) { text("Logout") }
+                        bsNavItem {
+                            text("${LoggedInUserStore.username}")
+                            text("(${LoggedInUserStore.roles.joinToString(", ")})")
+                        }
+                        bsNavItem({
+                            eventKey = 2
+                            href = "/logout"
+                            onClick = { Actions.setLoggedInuser(globalDispatcher, null) }
+                        }) {
+                            text("Logout")
+                        }
                     }
                 } else {
                     bsNav({ pullRight = true }) {
@@ -179,13 +214,13 @@ class RoutingTest {
         given("in any state") {
             on("routing to the main screen") {
                 window.location.hash = Path.root
-                it("should not render KeyValue screen") {assertTrue(jq("#configScreen").size() == 0)}
-                it("should not make the KeyValue menupoint active") {assertTrue(jq("#configScreenNavItem").hasClass("active") == false)}
+                it("should not render KeyValue screen") { assertTrue(jq("#configScreen").size() == 0) }
+                it("should not make the KeyValue menupoint active") { assertTrue(jq("#configScreenNavItem").hasClass("active") == false) }
             }
             on("routing to the KeyValue screen") {
                 window.location.hash = Path.keyValue.root
-                it("should be rendered KeyValue screen") {assertTrue(jq("#configScreen").size() == 1)}
-                it("should make the KeyValue menupoint active") {assertTrue(jq("#configScreenNavItem").hasClass("active"))}
+                it("should be rendered KeyValue screen") { assertTrue(jq("#configScreen").size() == 1) }
+                it("should make the KeyValue menupoint active") { assertTrue(jq("#configScreenNavItem").parent().hasClass("active")) }
             }
         }
     }

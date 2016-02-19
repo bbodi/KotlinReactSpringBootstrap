@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @Configuration
 open class AuthenticationConfig : GlobalAuthenticationConfigurerAdapter() {
@@ -17,7 +18,9 @@ open class AuthenticationConfig : GlobalAuthenticationConfigurerAdapter() {
     private lateinit var accountRepository: AccountRepository;
 
     override public fun init(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(userDetailsService());
+        auth
+                .userDetailsService(userDetailsService())
+                .passwordEncoder(BCryptPasswordEncoder())
     }
 
     fun userDetailsService(): UserDetailsService {
@@ -26,7 +29,7 @@ open class AuthenticationConfig : GlobalAuthenticationConfigurerAdapter() {
             if (account != null) {
                 User(
                         account.username,
-                        account.password,
+                        account.passwordHash,
                         true, // enabled
                         true, // accountNonExpired
                         true, // credentialsNonExpired

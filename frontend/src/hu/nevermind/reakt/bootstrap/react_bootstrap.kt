@@ -53,9 +53,11 @@ object BsSize {
     val ExtraSmall: BsStyle = js("'xsmall'")
 }
 
-class MenuItemProperties {
+class MenuItemProperties : HtmlGlobalProperties() {
     var eventKey: Any by Property()
-    var onClick: () -> Unit by Property()
+    var href: String by Property()
+    var active: Boolean by Property()
+    var divider: Boolean by Property()
 }
 
 fun Component.bsMenuItem(

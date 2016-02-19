@@ -2,6 +2,7 @@ package hu.nevermind.app.keyvalue
 
 import com.github.andrewoma.react.*
 import hu.nevermind.app.*
+import hu.nevermind.app.store.*
 import hu.nevermind.common.*
 import hu.nevermind.reakt.bootstrap.*
 import hu.nevermind.reakt.bootstrap.table.*
@@ -255,10 +256,11 @@ class KeyValueScreenTest {
 
     fun tests() {
         given("KeyValueScreenTest in default state") {
+            Actions.setLoggedInuser(globalDispatcher, LoggedInUser("testUser", arrayOf(Role.Admin)))
             window.location.hash = Path.keyValue.root
-            Actions.setKeyValues(globalDispatcher, arrayOf(
+            Actions.modifyKeyValue(globalDispatcher,
                     KeyValue(key = "key1", value = "100")
-            ))
+            )
             on("changing the URl to .../keyValue/editedkey") {
                 window.location.hash = Path.keyValue.keyValueWithOpenedEditorModal("key1")
                 it("should open the modal") {
@@ -337,9 +339,9 @@ class KeyValueScreenTest {
         given("KeyValueScreenTest: the Modal editor is open") {
             window.location.hash = Path.keyValue.root
             window.location.hash = Path.keyValue.keyValueWithOpenedEditorModal("key1")
-            Actions.setKeyValues(globalDispatcher, arrayOf(
+            Actions.modifyKeyValue(globalDispatcher,
                     KeyValue(key = "key1", value = "100")
-            ))
+            )
             on("clicking on the Close button") {
                 NodeIds.modal.buttons.close.simulateClick()
                 it("should close the Modal dialog window") {

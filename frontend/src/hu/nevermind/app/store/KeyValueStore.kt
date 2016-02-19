@@ -1,4 +1,4 @@
-package hu.nevermind.app.keyvalue
+package hu.nevermind.app.store
 
 import com.github.andrewoma.flux.Store
 import hu.nevermind.app.Actions
@@ -18,8 +18,14 @@ object KeyValueStore : Store() {
 
 
     init {
-        register(globalDispatcher, Actions.setKeyValues) { newConfigs ->
-            configs = newConfigs.toArrayList()
+        register(globalDispatcher, Actions.setLoggedInuser) { loggedInuser ->
+            if (loggedInuser == null) {
+                configs = arrayListOf()
+            } else {
+                communicator.getKeyValuesFromServer() { newConfigs ->
+                    configs = newConfigs.toArrayList()
+                }
+            }
             emitChange()
         }
         register(globalDispatcher, Actions.setEditingKeyValue) { keyValue ->
@@ -40,5 +46,5 @@ object KeyValueStore : Store() {
     }
 
     fun keyValues(): List<KeyValue> = configs
-    fun keyValue(key: String): KeyValue? = KeyValueStore.keyValues().firstOrNull {it.key == key.orEmpty()}
+    fun keyValue(key: String): KeyValue? = keyValues().firstOrNull { it.key == key.orEmpty() }
 }

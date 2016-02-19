@@ -8,10 +8,8 @@ import javax.persistence.Id
 
 @Entity
 data class Account(@Id var username: String = "",
-                   var password: String = "",
+                   var passwordHash: String = "",
                    var roles: String = "") {
-
-
 }
 
 @Repository

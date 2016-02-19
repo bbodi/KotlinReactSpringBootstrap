@@ -6,11 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class KeyValuePairController {
-
+class KeyValuePairController
     @Autowired
-    private lateinit var keyValuePairRepository: KeyValuePairRepository
-
+    constructor(private val keyValuePairRepository: KeyValuePairRepository) {
 
     @RequestMapping("/getKeyValues")
     fun getKeyValues(): Iterable<KeyValuePair> {

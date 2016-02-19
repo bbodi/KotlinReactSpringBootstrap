@@ -14,6 +14,4 @@ data class KeyValuePair(@Id var key: String = "", var value: String = "") {
 }
 
 @Repository
-interface KeyValuePairRepository : CrudRepository<KeyValuePair, String> {
-
-}
+interface KeyValuePairRepository : CrudRepository<KeyValuePair, String>

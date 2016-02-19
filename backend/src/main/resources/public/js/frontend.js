@@ -100,33 +100,73 @@
           JqueryAjaxPoster: Kotlin.createClass(function () {
             return [_.hu.nevermind.common.AjaxPoster];
           }, null, /** @lends _.hu.nevermind.common.JqueryAjaxPoster.prototype */ {
-            ajaxPost_e7br0g$: function (ajaxRequest) {
+            ajaxPost_i9h86c$: function (url, type, data, contentType, dataType, async, after) {
+              if (type === void 0)
+                type = 'POST';
+              if (data === void 0)
+                data = null;
+              if (contentType === void 0)
+                contentType = 'application/json; charset=utf-8';
+              if (dataType === void 0)
+                dataType = 'json';
+              if (async === void 0)
+                async = true;
+              var error = _.hu.nevermind.common.JqueryAjaxPoster.ajaxPost_i9h86c$f(after);
+              var success = _.hu.nevermind.common.JqueryAjaxPoster.ajaxPost_i9h86c$f_0(after);
+              var ajaxRequest = _.hu.nevermind.common.JqueryAjaxPoster.ajaxPost_i9h86c$f_1(url, type, data, contentType, dataType, async, error, success);
               $.ajax(ajaxRequest);
+            }
+          }, /** @lends _.hu.nevermind.common.JqueryAjaxPoster */ {
+            ajaxPost_i9h86c$f: function (after) {
+              return function (jqXHR, textStatus, errorThrown) {
+                after(_.hu.nevermind.common.err_za3rmp$(textStatus + ' ' + errorThrown));
+              };
+            },
+            ajaxPost_i9h86c$f_0: function (after) {
+              return function (data) {
+                after(_.hu.nevermind.common.ok_za3rmp$(data));
+              };
+            },
+            ajaxPost_i9h86c$f_1: function (url, type, data, contentType, dataType, async, error, success) {
+              return Kotlin.createObject(null, function () {
+                this.url = url;
+                this.type = type;
+                this.data = data;
+                this.contentType = contentType;
+                this.dataType = dataType;
+                this.async = async;
+                this.error = error;
+                this.success = success;
+              });
             }
           }),
           TestAjaxPoster: Kotlin.createClass(function () {
             return [_.hu.nevermind.common.AjaxPoster];
-          }, function () {
-            this.ajaxRequest = null;
-          }, /** @lends _.hu.nevermind.common.TestAjaxPoster.prototype */ {
-            ajaxPost_e7br0g$: function (ajaxRequest) {
-              this.ajaxRequest = ajaxRequest;
+          }, null, /** @lends _.hu.nevermind.common.TestAjaxPoster.prototype */ {
+            ajaxPost_i9h86c$: function (url, type, data, contentType, dataType, async, success) {
+              if (type === void 0)
+                type = 'POST';
+              if (data === void 0)
+                data = null;
+              if (contentType === void 0)
+                contentType = 'application/json; charset=utf-8';
+              if (dataType === void 0)
+                dataType = 'json';
+              if (async === void 0)
+                async = true;
             }
           }),
-          ajaxGet_435vpa$: function (url, loaded) {
-            $.get(url, loaded);
+          Result: Kotlin.createClass(null, function (ok, error) {
+            this.ok = ok;
+            this.error = error;
+          }),
+          ok_za3rmp$: function (data) {
+            return new _.hu.nevermind.common.Result(data, null);
+          },
+          err_za3rmp$: function (err) {
+            return new _.hu.nevermind.common.Result(null, err);
           },
           AjaxPoster: Kotlin.createTrait(null),
-          ReactStateDelegate: Kotlin.createClass(null, function (comp) {
-            this.comp = comp;
-          }, /** @lends _.hu.nevermind.common.ReactStateDelegate.prototype */ {
-            getValue_dsk1ci$: function (thisRef, property) {
-              return thisRef;
-            },
-            setValue_w32e13$: function (thisRef, property, value) {
-              this.comp.forceUpdate();
-            }
-          }),
           TestBuilder: Kotlin.createClass(null, function (assert, description) {
             this.assert = assert;
             this.description = description;
@@ -725,9 +765,14 @@
               init.call($receiver);
               return $receiver.children.get_za3lpa$(0).transform();
             },
-            MenuItemProperties: Kotlin.createClass(null, function () {
+            MenuItemProperties: Kotlin.createClass(function () {
+              return [_.com.github.andrewoma.react.HtmlGlobalProperties];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
               this.eventKey$delegate = new _.com.github.andrewoma.react.Property();
-              this.onClick$delegate = new _.com.github.andrewoma.react.Property();
+              this.href$delegate = new _.com.github.andrewoma.react.Property();
+              this.active$delegate = new _.com.github.andrewoma.react.Property();
+              this.divider$delegate = new _.com.github.andrewoma.react.Property();
             }, /** @lends _.hu.nevermind.reakt.bootstrap.MenuItemProperties.prototype */ {
               eventKey: {
                 get: function () {
@@ -737,12 +782,28 @@
                   this.eventKey$delegate.setValue_w32e13$(this, new Kotlin.PropertyMetadata('eventKey'), eventKey);
                 }
               },
-              onClick: {
+              href: {
                 get: function () {
-                  return this.onClick$delegate.getValue_dsk1ci$(this, new Kotlin.PropertyMetadata('onClick'));
+                  return this.href$delegate.getValue_dsk1ci$(this, new Kotlin.PropertyMetadata('href'));
                 },
-                set: function (onClick) {
-                  this.onClick$delegate.setValue_w32e13$(this, new Kotlin.PropertyMetadata('onClick'), onClick);
+                set: function (href) {
+                  this.href$delegate.setValue_w32e13$(this, new Kotlin.PropertyMetadata('href'), href);
+                }
+              },
+              active: {
+                get: function () {
+                  return this.active$delegate.getValue_dsk1ci$(this, new Kotlin.PropertyMetadata('active'));
+                },
+                set: function (active) {
+                  this.active$delegate.setValue_w32e13$(this, new Kotlin.PropertyMetadata('active'), active);
+                }
+              },
+              divider: {
+                get: function () {
+                  return this.divider$delegate.getValue_dsk1ci$(this, new Kotlin.PropertyMetadata('divider'));
+                },
+                set: function (divider) {
+                  this.divider$delegate.setValue_w32e13$(this, new Kotlin.PropertyMetadata('divider'), divider);
                 }
               }
             }),
@@ -1896,95 +1957,24 @@
         app: Kotlin.definePackage(function () {
           this.globalDispatcher = new _.com.github.andrewoma.flux.Dispatcher();
           this.Actions = Kotlin.createObject(null, function () {
-            this.setKeyValues = new _.com.github.andrewoma.flux.ActionDef();
+            this.setLoggedInuser = new _.com.github.andrewoma.flux.ActionDef();
             this.modifyKeyValue = new _.com.github.andrewoma.flux.ActionDef();
             this.setEditingKeyValue = new _.com.github.andrewoma.flux.ActionDef();
           });
-          this.RouterStore = Kotlin.createObject(function () {
-            return [_.com.github.andrewoma.flux.Store];
-          }, function $fun() {
-            $fun.baseInitializer.call(this);
-            this.$path_hv4dqx$ = window.location.hash.substring(1);
-            window.addEventListener('hashchange', _.hu.nevermind.app.RouterStore$f(this), false);
-          }, {
-            path: {
-              get: function () {
-                return this.$path_hv4dqx$;
-              },
-              set: function (path) {
-                this.$path_hv4dqx$ = path;
-              }
-            },
-            match_98xyu1$: function (patterns, otherwise) {
-              var pattern;
-              var predicate = _.hu.nevermind.app.match_98xyu1$f(this);
-              firstOrNull_dgtl0h$break: {
-                var tmp$0, tmp$1, tmp$2;
-                tmp$0 = patterns, tmp$1 = tmp$0.length;
-                for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
-                  var element = tmp$0[tmp$2];
-                  if (predicate(element)) {
-                    pattern = element;
-                    break firstOrNull_dgtl0h$break;
-                  }
-                }
-                pattern = null;
-              }
-              if (pattern == null) {
-                otherwise();
-              }
-            },
-            match_7srmwi$: function (pattern, body) {
-              var patternParts = Kotlin.modules['stdlib'].kotlin.text.split_l2gz7$(pattern, ['/']);
-              var pathParts = Kotlin.modules['stdlib'].kotlin.text.split_l2gz7$(this.path, ['/']);
-              var params = {v: Kotlin.modules['stdlib'].kotlin.collections.hashMapOf_eoa9s7$([])};
-              var ok = {v: true};
-              var $receiver = Kotlin.modules['stdlib'].kotlin.collections.withIndex_ir3nkc$(patternParts);
-              var tmp$0;
-              tmp$0 = $receiver.iterator();
-              while (tmp$0.hasNext()) {
-                var element = tmp$0.next();
-                var tmp$1 = element
-                , index = tmp$1.component1()
-                , value = tmp$1.component2();
-                if (Kotlin.modules['stdlib'].kotlin.text.startsWith_41xvrb$(value, '?')) {
-                  if (pathParts.size > index) {
-                    params.v.put_wn2jw4$(value.substring(1), pathParts.get_za3lpa$(index));
-                  }
-                }
-                 else if (Kotlin.modules['stdlib'].kotlin.text.startsWith_41xvrb$(value, ':') && pathParts.size > index) {
-                  params.v.put_wn2jw4$(value.substring(1), pathParts.get_za3lpa$(index));
-                }
-                 else {
-                  if (pathParts.size <= index || !Kotlin.equals(pathParts.get_za3lpa$(index), value)) {
-                    ok.v = false;
-                  }
-                }
-              }
-              if (ok.v) {
-                body(params.v);
-              }
-              return ok.v;
-            }
-          });
         }, /** @lends _.hu.nevermind.app */ {
-          main_kand9s$f: function (it) {
-            _.hu.nevermind.app.Actions.setKeyValues.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, it);
-          },
           main_kand9s$: function (arg) {
-            var tmp$0;
+            var tmp$0, tmp$1;
             QUnit.config.autostart = false;
-            _.com.github.andrewoma.react.react.render_vbpb6g$(_.hu.nevermind.app.app(), (tmp$0 = $('#app').get(0)) != null ? tmp$0 : Kotlin.throwNPE());
             if (Kotlin.modules['stdlib'].kotlin.text.contains_kzp0od$(window.location.search, 'tests')) {
-              window.location.hash = _.Path.root;
               _.hu.nevermind.app.communicator = new _.hu.nevermind.app.Communicator(new _.hu.nevermind.common.TestAjaxPoster());
+              _.com.github.andrewoma.react.react.render_vbpb6g$(_.hu.nevermind.app.app(), (tmp$0 = $('#app').get(0)) != null ? tmp$0 : Kotlin.throwNPE());
               QUnit.start();
             }
              else {
               _.hu.nevermind.app.communicator = new _.hu.nevermind.app.Communicator(new _.hu.nevermind.common.JqueryAjaxPoster());
               $('#qunit').hide();
               $('#qunit-fixture').hide();
-              _.hu.nevermind.app.communicator.getKeyValuesFromServer_stx1lv$(_.hu.nevermind.app.main_kand9s$f);
+              _.com.github.andrewoma.react.react.render_vbpb6g$(_.hu.nevermind.app.app(), (tmp$1 = $('#app').get(0)) != null ? tmp$1 : Kotlin.throwNPE());
             }
           },
           AppScreen: Kotlin.createEnumClass(function () {
@@ -2025,11 +2015,20 @@
             $fun.baseInitializer.call(this);
           }, /** @lends _.hu.nevermind.app.App.prototype */ {
             route: function () {
-              _.hu.nevermind.app.RouterStore.match_98xyu1$([Kotlin.modules['stdlib'].kotlin.to_l1ob02$('login', _.hu.nevermind.app.App.route$f(this)), Kotlin.modules['stdlib'].kotlin.to_l1ob02$('config/?editedConfId', _.hu.nevermind.app.App.route$f_0(this)), Kotlin.modules['stdlib'].kotlin.to_l1ob02$('home', _.hu.nevermind.app.App.route$f_1(this))], _.hu.nevermind.app.App.route$f_2);
+              if (!_.hu.nevermind.app.store.LoggedInUserStore.isLoggedIn) {
+                window.location.hash = _.Path.login;
+              }
+               else {
+                _.hu.nevermind.app.store.RouterStore.match_98xyu1$([Kotlin.modules['stdlib'].kotlin.to_l1ob02$('login', _.hu.nevermind.app.App.route$f(this)), Kotlin.modules['stdlib'].kotlin.to_l1ob02$('config/?editedConfId', _.hu.nevermind.app.App.route$f_0(this))], _.hu.nevermind.app.App.route$f_1(this));
+              }
             },
             componentDidMount: function () {
+              this.authenticate();
               this.route();
-              _.hu.nevermind.app.RouterStore.addChangeListener_o7wwlr$(this, _.hu.nevermind.app.App.componentDidMount$f(this));
+              _.hu.nevermind.app.store.RouterStore.addChangeListener_o7wwlr$(this, _.hu.nevermind.app.App.componentDidMount$f(this));
+            },
+            authenticate: function () {
+              _.hu.nevermind.app.communicator.authenticate_6bhr7k$(_.hu.nevermind.app.App.authenticate$f);
             },
             initialState: function () {
               return new _.hu.nevermind.app.AppState(_.hu.nevermind.app.AppScreen.object.Login);
@@ -2053,131 +2052,159 @@
                 if (this$App.state.screen !== _.hu.nevermind.app.AppScreen.object.Config) {
                   this$App.state = new _.hu.nevermind.app.AppState(_.hu.nevermind.app.AppScreen.object.Config);
                 }
-                var keyValue = _.hu.nevermind.app.keyvalue.KeyValueStore.keyValue_61zpoe$(Kotlin.modules['stdlib'].kotlin.text.orEmpty_pdl1w0$(params.get_za3rmp$('editedConfId')));
+                var keyValue = _.hu.nevermind.app.store.KeyValueStore.keyValue_61zpoe$(Kotlin.modules['stdlib'].kotlin.text.orEmpty_pdl1w0$(params.get_za3rmp$('editedConfId')));
                 _.hu.nevermind.app.Actions.setEditingKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, keyValue);
               };
             },
             route$f_1: function (this$App) {
-              return function (params) {
+              return function () {
                 this$App.state = new _.hu.nevermind.app.AppState(_.hu.nevermind.app.AppScreen.object.Home);
               };
-            },
-            route$f_2: function () {
-              window.location.hash = _.Path.login;
             },
             componentDidMount$f: function (this$App) {
               return function () {
                 this$App.route();
               };
             },
+            authenticate$f: function (result) {
+              if (result.ok != null) {
+                var principal = result.ok;
+                var rolesStringArray = principal.roles;
+                var destination = new Kotlin.ArrayList(rolesStringArray.length);
+                var tmp$0, tmp$1, tmp$2;
+                tmp$0 = rolesStringArray, tmp$1 = tmp$0.length;
+                for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
+                  var item = tmp$0[tmp$2];
+                  destination.add_za3rmp$(_.hu.nevermind.app.store.Role.valueOf_61zpoe$(item));
+                }
+                var roles = Kotlin.copyToArray(destination);
+                _.hu.nevermind.app.Actions.setLoggedInuser.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.LoggedInUser(principal.name, roles));
+              }
+               else {
+                _.hu.nevermind.app.Actions.setLoggedInuser.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, null);
+              }
+            },
             render_sx5o3u$f: function () {
               this.className = '';
             },
-            f: function () {
+            f_0: function () {
               this.href = _.hu.nevermind.reakt.bootstrap.nullHref;
             },
-            f_0: function () {
+            f_1: function () {
               _.com.github.andrewoma.react.text_3pk7xh$(this, 'Project name');
             },
-            f_1: function () {
-              _.com.github.andrewoma.react.a_z74dev$(this, _.hu.nevermind.app.App.f, _.hu.nevermind.app.App.f_0);
-            },
             f_2: function () {
-              _.hu.nevermind.reakt.bootstrap.bsNavbarBrand_xt4fwq$(this, void 0, _.hu.nevermind.app.App.f_1);
+              _.com.github.andrewoma.react.a_z74dev$(this, _.hu.nevermind.app.App.f_0, _.hu.nevermind.app.App.f_1);
             },
-            f_3: function (this$App) {
+            f_3: function () {
+              _.hu.nevermind.reakt.bootstrap.bsNavbarBrand_xt4fwq$(this, void 0, _.hu.nevermind.app.App.f_2);
+            },
+            f_4: function () {
+              this.title = 'Admin';
+              this.id = 'basic-nav-dropdown';
+            },
+            f_5: function () {
+              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Accounts');
+            },
+            f_6: function () {
+              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Another Action');
+            },
+            f_7: function () {
+              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Something else here');
+            },
+            f_8: function () {
+              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Separated link');
+            },
+            f_9: function () {
+              _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_5);
+              _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_6);
+              _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_7);
+              _.hu.nevermind.reakt.bootstrap.bsMenuItemDivider_r2i6fj$(this);
+              _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_8);
+            },
+            f_10: function () {
+              this.title = 'Options';
+              this.id = 'basic-nav-dropdown';
+            },
+            f_11: function (this$App) {
               return function () {
                 this.id = 'configScreenNavItem';
                 this.href = _.Path.keyValue.root;
                 this.active = this$App.state.screen === _.hu.nevermind.app.AppScreen.object.Config;
               };
             },
-            f_4: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Configs');
-            },
-            f_5: function () {
-              this.href = _.hu.nevermind.reakt.bootstrap.nullHref;
-            },
-            f_6: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Link');
-            },
-            f_7: function () {
-              this.title = 'Dropdown';
-              this.id = 'basic-nav-dropdown';
-            },
-            f_8: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Action');
-            },
-            f_9: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Another Action');
-            },
-            f_10: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Something else here');
-            },
-            f_11: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Separated link');
-            },
             f_12: function () {
-              _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_8);
-              _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_9);
-              _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_10);
-              _.hu.nevermind.reakt.bootstrap.bsMenuItemDivider_r2i6fj$(this);
-              _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_11);
+              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Configs');
             },
             f_13: function (this$App) {
               return function () {
-                _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_3(this$App), _.hu.nevermind.app.App.f_4);
-                _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_5, _.hu.nevermind.app.App.f_6);
-                _.hu.nevermind.reakt.bootstrap.bsNavDropdown_sdj1l$(this, _.hu.nevermind.app.App.f_7, _.hu.nevermind.app.App.f_12);
+                _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, _.hu.nevermind.app.App.f_11(this$App), _.hu.nevermind.app.App.f_12);
               };
             },
-            f_14: function () {
-              this.pullRight = true;
+            f_14: function (this$App) {
+              return function () {
+                if (_.hu.nevermind.app.store.LoggedInUserStore.hasRole_4w2bpb$(_.hu.nevermind.app.store.Role.object.Admin)) {
+                  _.hu.nevermind.reakt.bootstrap.bsNavDropdown_sdj1l$(this, _.hu.nevermind.app.App.f_4, _.hu.nevermind.app.App.f_9);
+                }
+                _.hu.nevermind.reakt.bootstrap.bsNavDropdown_sdj1l$(this, _.hu.nevermind.app.App.f_10, _.hu.nevermind.app.App.f_13(this$App));
+              };
             },
             f_15: function () {
-              this.eventKey = 2;
-              this.href = '/logout';
-            },
-            f_16: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Logout');
-            },
-            f_17: function () {
-              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_15, _.hu.nevermind.app.App.f_16);
-            },
-            f_18: function () {
               this.pullRight = true;
             },
+            f_16: function () {
+              _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.store.LoggedInUserStore.username);
+              _.com.github.andrewoma.react.text_3pk7xh$(this, '(' + Kotlin.modules['stdlib'].kotlin.collections.joinToString_qtax42$(_.hu.nevermind.app.store.LoggedInUserStore.roles, ', ') + ')');
+            },
+            f_17: function (it) {
+              _.hu.nevermind.app.Actions.setLoggedInuser.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, null);
+            },
+            f_18: function () {
+              this.eventKey = 2;
+              this.href = '/logout';
+              this.onClick = _.hu.nevermind.app.App.f_17;
+            },
             f_19: function () {
+              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Logout');
+            },
+            f_20: function () {
+              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, void 0, _.hu.nevermind.app.App.f_16);
+              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_18, _.hu.nevermind.app.App.f_19);
+            },
+            f_21: function () {
+              this.pullRight = true;
+            },
+            f_22: function () {
               this.eventKey = 2;
               this.href = '/';
             },
-            f_20: function () {
+            f_23: function () {
               _.com.github.andrewoma.react.text_3pk7xh$(this, 'Contact');
             },
-            f_21: function () {
-              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_19, _.hu.nevermind.app.App.f_20);
+            f_24: function () {
+              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_22, _.hu.nevermind.app.App.f_23);
             },
-            f_22: function (this$App) {
+            f_25: function (this$App) {
               return function () {
-                _.hu.nevermind.reakt.bootstrap.bsNavbarHeader_hn5u98$(this, void 0, _.hu.nevermind.app.App.f_2);
+                _.hu.nevermind.reakt.bootstrap.bsNavbarHeader_hn5u98$(this, void 0, _.hu.nevermind.app.App.f_3);
                 if (this$App.state.screen !== _.hu.nevermind.app.AppScreen.object.Login) {
-                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, void 0, _.hu.nevermind.app.App.f_13(this$App));
+                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, void 0, _.hu.nevermind.app.App.f_14(this$App));
                 }
                 if (this$App.state.screen !== _.hu.nevermind.app.AppScreen.object.Login) {
-                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, _.hu.nevermind.app.App.f_14, _.hu.nevermind.app.App.f_17);
+                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, _.hu.nevermind.app.App.f_15, _.hu.nevermind.app.App.f_20);
                 }
                  else {
-                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, _.hu.nevermind.app.App.f_18, _.hu.nevermind.app.App.f_21);
+                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, _.hu.nevermind.app.App.f_21, _.hu.nevermind.app.App.f_24);
                 }
               };
             },
-            f_23: function () {
+            f_26: function () {
               this.fluid = true;
             },
-            f_24: function () {
+            f_27: function () {
               this.md = 12;
             },
-            f_25: function (this$App) {
+            f_28: function (this$App) {
               return function () {
                 if (this$App.state.screen === _.hu.nevermind.app.AppScreen.object.Config) {
                   _.hu.nevermind.app.keyvalue.keyValueScreen_sx5o3u$(this);
@@ -2187,20 +2214,20 @@
                 }
               };
             },
-            f_26: function (this$App) {
+            f_29: function (this$App) {
               return function () {
-                _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.App.f_24, _.hu.nevermind.app.App.f_25(this$App));
+                _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.App.f_27, _.hu.nevermind.app.App.f_28(this$App));
               };
             },
-            f_27: function (this$App) {
+            f_30: function (this$App) {
               return function () {
-                _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.App.f_26(this$App));
+                _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.App.f_29(this$App));
               };
             },
             render_sx5o3u$f_0: function (this$App) {
               return function () {
-                _.hu.nevermind.reakt.bootstrap.bsNavbar_1x79tb$(this, void 0, _.hu.nevermind.app.App.f_22(this$App));
-                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$(this, _.hu.nevermind.app.App.f_23, _.hu.nevermind.app.App.f_27(this$App));
+                _.hu.nevermind.reakt.bootstrap.bsNavbar_1x79tb$(this, void 0, _.hu.nevermind.app.App.f_25(this$App));
+                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$(this, _.hu.nevermind.app.App.f_26, _.hu.nevermind.app.App.f_30(this$App));
               };
             }
           }),
@@ -2330,71 +2357,130 @@
             this.ajaxPoster = ajaxPoster;
           }, /** @lends _.hu.nevermind.app.Communicator.prototype */ {
             getKeyValuesFromServer_stx1lv$: function (callback) {
-              _.hu.nevermind.common.ajaxGet_435vpa$('/getKeyValues', _.hu.nevermind.app.Communicator.getKeyValuesFromServer_stx1lv$f(callback));
+              this.ajaxPoster.ajaxPost_i9h86c$('/getKeyValues', 'GET', void 0, void 0, void 0, false, _.hu.nevermind.app.Communicator.getKeyValuesFromServer_stx1lv$f(callback));
             },
-            saveKeyValue_6uschn$: function (entity, callback) {
-              this.ajaxPoster.ajaxPost_e7br0g$(new _.hu.nevermind.common.AjaxRequest('/putKeyValue', void 0, JSON.stringify(entity), void 0, void 0, false, _.hu.nevermind.app.Communicator.saveKeyValue_6uschn$f(callback)));
+            saveKeyValue_ej3bb1$: function (entity, callback) {
+              this.ajaxPoster.ajaxPost_i9h86c$('/putKeyValue', void 0, JSON.stringify(entity), void 0, void 0, false, _.hu.nevermind.app.Communicator.saveKeyValue_ej3bb1$f(callback));
+            },
+            authenticate_6bhr7k$: function (after) {
+              this.ajaxPoster.ajaxPost_i9h86c$('/user', 'GET', void 0, void 0, void 0, false, after);
             }
           }, /** @lends _.hu.nevermind.app.Communicator */ {
             getKeyValuesFromServer_stx1lv$f: function (callback) {
-              return function (returnedConfigs) {
+              return function (result) {
+                var tmp$0;
+                if (result.error != null) {
+                  throw new Kotlin.Exception(result.error);
+                }
+                var returnedConfigs = (tmp$0 = result.ok) != null ? tmp$0 : Kotlin.throwNPE();
                 var destination = new Kotlin.ArrayList(returnedConfigs.length);
-                var tmp$0, tmp$1, tmp$2;
-                tmp$0 = returnedConfigs, tmp$1 = tmp$0.length;
+                var tmp$3, tmp$1, tmp$2;
+                tmp$3 = returnedConfigs, tmp$1 = tmp$3.length;
                 for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
-                  var item = tmp$0[tmp$2];
-                  destination.add_za3rmp$(new _.hu.nevermind.app.keyvalue.KeyValue(item.key, item.value));
+                  var item = tmp$3[tmp$2];
+                  destination.add_za3rmp$(new _.hu.nevermind.app.store.KeyValue(item.key, item.value));
                 }
                 callback(Kotlin.copyToArray(destination));
               };
             },
-            saveKeyValue_6uschn$f: function (callback) {
-              return function (returnedKeyValue) {
-                callback(returnedKeyValue);
+            saveKeyValue_ej3bb1$f: function (callback) {
+              return function (result) {
+                var tmp$0;
+                callback((tmp$0 = result.ok) != null ? tmp$0 : Kotlin.throwNPE());
               };
             }
           }),
-          RouterStore$f: function (this$RouterStore) {
-            return function (it) {
-              this$RouterStore.path = window.location.hash.substring(1);
-              this$RouterStore.emitChange();
-            };
-          },
-          match_98xyu1$f: function (this$RouterStore) {
-            return function (pattern) {
-              return this$RouterStore.match_7srmwi$(pattern.first, pattern.second);
-            };
-          },
-          keyvalue: Kotlin.definePackage(function () {
-            this.NodeIds = Kotlin.createObject(null, function () {
-              this.screenId = 'configScreen';
-              this.addButton = 'configScreen_addButton';
-              this.row = _.hu.nevermind.app.keyvalue.row(this);
-              this.modal = _.hu.nevermind.app.keyvalue.modal();
+          store: Kotlin.definePackage(function () {
+            this.RouterStore = Kotlin.createObject(function () {
+              return [_.com.github.andrewoma.flux.Store];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+              this.$path_dcoqd6$ = window.location.hash.substring(1);
+              window.addEventListener('hashchange', _.hu.nevermind.app.store.RouterStore$f(this), false);
+            }, {
+              path: {
+                get: function () {
+                  return this.$path_dcoqd6$;
+                },
+                set: function (path) {
+                  this.$path_dcoqd6$ = path;
+                }
+              },
+              match_98xyu1$: function (patterns, otherwise) {
+                var pattern;
+                var predicate = _.hu.nevermind.app.store.match_98xyu1$f(this);
+                firstOrNull_dgtl0h$break: {
+                  var tmp$0, tmp$1, tmp$2;
+                  tmp$0 = patterns, tmp$1 = tmp$0.length;
+                  for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
+                    var element = tmp$0[tmp$2];
+                    if (predicate(element)) {
+                      pattern = element;
+                      break firstOrNull_dgtl0h$break;
+                    }
+                  }
+                  pattern = null;
+                }
+                if (pattern == null) {
+                  otherwise();
+                }
+              },
+              match_7srmwi$: function (pattern, body) {
+                var patternParts = Kotlin.modules['stdlib'].kotlin.text.split_l2gz7$(pattern, ['/']);
+                var pathParts = Kotlin.modules['stdlib'].kotlin.text.split_l2gz7$(this.path, ['/']);
+                var params = {v: Kotlin.modules['stdlib'].kotlin.collections.hashMapOf_eoa9s7$([])};
+                var ok = {v: true};
+                var $receiver = Kotlin.modules['stdlib'].kotlin.collections.withIndex_ir3nkc$(patternParts);
+                var tmp$0;
+                tmp$0 = $receiver.iterator();
+                while (tmp$0.hasNext()) {
+                  var element = tmp$0.next();
+                  var tmp$1 = element
+                  , index = tmp$1.component1()
+                  , value = tmp$1.component2();
+                  if (Kotlin.modules['stdlib'].kotlin.text.startsWith_41xvrb$(value, '?')) {
+                    if (pathParts.size > index) {
+                      params.v.put_wn2jw4$(value.substring(1), pathParts.get_za3lpa$(index));
+                    }
+                  }
+                   else if (Kotlin.modules['stdlib'].kotlin.text.startsWith_41xvrb$(value, ':') && pathParts.size > index) {
+                    params.v.put_wn2jw4$(value.substring(1), pathParts.get_za3lpa$(index));
+                  }
+                   else {
+                    if (pathParts.size <= index || !Kotlin.equals(pathParts.get_za3lpa$(index), value)) {
+                      ok.v = false;
+                    }
+                  }
+                }
+                if (ok.v) {
+                  body(params.v);
+                }
+                return ok.v;
+              }
             });
             this.KeyValueStore = Kotlin.createObject(function () {
               return [_.com.github.andrewoma.flux.Store];
             }, function $fun() {
               $fun.baseInitializer.call(this);
-              this.configs_gmau6s$ = Kotlin.modules['stdlib'].kotlin.collections.arrayListOf_9mqe4v$([]);
-              this.$editingKeyValue_sp3nkj$ = null;
-              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setKeyValues, _.hu.nevermind.app.keyvalue.KeyValueStore$f(this));
-              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setEditingKeyValue, _.hu.nevermind.app.keyvalue.KeyValueStore$f_0(this));
-              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.modifyKeyValue, _.hu.nevermind.app.keyvalue.KeyValueStore$f_1(this));
+              this.configs_pl3qvb$ = Kotlin.modules['stdlib'].kotlin.collections.arrayListOf_9mqe4v$([]);
+              this.$editingKeyValue_ncr9eo$ = null;
+              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setLoggedInuser, _.hu.nevermind.app.store.KeyValueStore$f(this));
+              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setEditingKeyValue, _.hu.nevermind.app.store.KeyValueStore$f_0(this));
+              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.modifyKeyValue, _.hu.nevermind.app.store.KeyValueStore$f_1(this));
             }, {
               editingKeyValue: {
                 get: function () {
-                  return this.$editingKeyValue_sp3nkj$;
+                  return this.$editingKeyValue_ncr9eo$;
                 },
                 set: function (editingKeyValue) {
-                  this.$editingKeyValue_sp3nkj$ = editingKeyValue;
+                  this.$editingKeyValue_ncr9eo$ = editingKeyValue;
                 }
               },
               keyValues: function () {
-                return this.configs_gmau6s$;
+                return this.configs_pl3qvb$;
               },
               keyValue_61zpoe$: function (key) {
-                var $receiver = _.hu.nevermind.app.keyvalue.KeyValueStore.keyValues();
+                var $receiver = this.keyValues();
                 var tmp$0;
                 tmp$0 = $receiver.iterator();
                 while (tmp$0.hasNext()) {
@@ -2405,6 +2491,210 @@
                 }
                 return null;
               }
+            });
+            this.LoggedInUserStore = Kotlin.createObject(function () {
+              return [_.com.github.andrewoma.flux.Store];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+              this.loggedInUser_yzdszo$ = null;
+              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setLoggedInuser, _.hu.nevermind.app.store.LoggedInUserStore$f(this));
+            }, {
+              hasRole_4w2bpb$: function (role) {
+                var tmp$0;
+                return Kotlin.modules['stdlib'].kotlin.collections.contains_ke19y6$(((tmp$0 = this.loggedInUser_yzdszo$) != null ? tmp$0 : Kotlin.throwNPE()).roles, role);
+              },
+              hasAnyRoles_cgl70t$: function (roles) {
+                var predicate = _.hu.nevermind.app.store.hasAnyRoles_cgl70t$f(this);
+                var tmp$0, tmp$1, tmp$2;
+                tmp$0 = roles, tmp$1 = tmp$0.length;
+                for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
+                  var element = tmp$0[tmp$2];
+                  if (predicate(element)) {
+                    return true;
+                  }
+                }
+                return false;
+              },
+              hasAllRoles_cgl70t$: function (roles) {
+                var predicate = _.hu.nevermind.app.store.hasAllRoles_cgl70t$f(this);
+                var tmp$0, tmp$1, tmp$2;
+                tmp$0 = roles, tmp$1 = tmp$0.length;
+                for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
+                  var element = tmp$0[tmp$2];
+                  if (!predicate(element)) {
+                    return false;
+                  }
+                }
+                return true;
+              },
+              isLoggedIn: {
+                get: function () {
+                  return this.loggedInUser_yzdszo$ != null;
+                }
+              },
+              username: {
+                get: function () {
+                  var tmp$0;
+                  return ((tmp$0 = this.loggedInUser_yzdszo$) != null ? tmp$0 : Kotlin.throwNPE()).name;
+                }
+              },
+              roles: {
+                get: function () {
+                  var tmp$0;
+                  return ((tmp$0 = this.loggedInUser_yzdszo$) != null ? tmp$0 : Kotlin.throwNPE()).roles;
+                }
+              }
+            });
+          }, /** @lends _.hu.nevermind.app.store */ {
+            RouterStore$f: function (this$RouterStore) {
+              return function (it) {
+                this$RouterStore.path = window.location.hash.substring(1);
+                this$RouterStore.emitChange();
+              };
+            },
+            match_98xyu1$f: function (this$RouterStore) {
+              return function (pattern) {
+                return this$RouterStore.match_7srmwi$(pattern.first, pattern.second);
+              };
+            },
+            KeyValue: Kotlin.createClass(null, function (key, value) {
+              this.key = key;
+              this.value = value;
+            }, /** @lends _.hu.nevermind.app.store.KeyValue.prototype */ {
+              component1: function () {
+                return this.key;
+              },
+              component2: function () {
+                return this.value;
+              },
+              copy_puj7f4$: function (key, value) {
+                return new _.hu.nevermind.app.store.KeyValue(key === void 0 ? this.key : key, value === void 0 ? this.value : value);
+              },
+              toString: function () {
+                return 'KeyValue(key=' + Kotlin.toString(this.key) + (', value=' + Kotlin.toString(this.value)) + ')';
+              },
+              hashCode: function () {
+                var result = 0;
+                result = result * 31 + Kotlin.hashCode(this.key) | 0;
+                result = result * 31 + Kotlin.hashCode(this.value) | 0;
+                return result;
+              },
+              equals_za3rmp$: function (other) {
+                return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.key, other.key) && Kotlin.equals(this.value, other.value)))));
+              }
+            }),
+            f: function (this$KeyValueStore) {
+              return function (newConfigs) {
+                this$KeyValueStore.configs_pl3qvb$ = Kotlin.modules['stdlib'].kotlin.collections.toArrayList_eg9ybj$(newConfigs);
+              };
+            },
+            KeyValueStore$f: function (this$KeyValueStore) {
+              return function (loggedInuser) {
+                if (loggedInuser == null) {
+                  this$KeyValueStore.configs_pl3qvb$ = Kotlin.modules['stdlib'].kotlin.collections.arrayListOf_9mqe4v$([]);
+                }
+                 else {
+                  _.hu.nevermind.app.communicator.getKeyValuesFromServer_stx1lv$(_.hu.nevermind.app.store.f(this$KeyValueStore));
+                }
+                this$KeyValueStore.emitChange();
+              };
+            },
+            KeyValueStore$f_0: function (this$KeyValueStore) {
+              return function (keyValue) {
+                this$KeyValueStore.editingKeyValue = keyValue;
+                this$KeyValueStore.emitChange();
+              };
+            },
+            f_1: function (this$KeyValueStore, modifiedConfig) {
+              return function (it) {
+                var index;
+                indexOfFirst_rw062o$break: {
+                  var tmp$0, tmp$1, tmp$2, tmp$3;
+                  tmp$0 = Kotlin.modules['stdlib'].kotlin.collections.get_indices_4m3c68$(this$KeyValueStore.configs_pl3qvb$), tmp$1 = tmp$0.start, tmp$2 = tmp$0.end, tmp$3 = tmp$0.increment;
+                  for (var index_0 = tmp$1; index_0 <= tmp$2; index_0 += tmp$3) {
+                    var it_0 = this$KeyValueStore.configs_pl3qvb$.get_za3lpa$(index_0);
+                    if (Kotlin.equals(it_0.key, modifiedConfig.key)) {
+                      index = index_0;
+                      break indexOfFirst_rw062o$break;
+                    }
+                  }
+                  index = -1;
+                }
+                if (index === -1) {
+                  this$KeyValueStore.configs_pl3qvb$.add_za3rmp$(modifiedConfig);
+                }
+                 else {
+                  this$KeyValueStore.configs_pl3qvb$.set_vux3hl$(index, modifiedConfig);
+                }
+                this$KeyValueStore.emitChange();
+              };
+            },
+            KeyValueStore$f_1: function (this$KeyValueStore) {
+              return function (modifiedConfig) {
+                _.hu.nevermind.app.communicator.saveKeyValue_ej3bb1$(modifiedConfig, _.hu.nevermind.app.store.f_1(this$KeyValueStore, modifiedConfig));
+              };
+            },
+            Role: Kotlin.createEnumClass(function () {
+              return [Kotlin.Enum];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+            }, function () {
+              return {
+                Admin: new _.hu.nevermind.app.store.Role(),
+                User: new _.hu.nevermind.app.store.Role()
+              };
+            }),
+            LoggedInUser: Kotlin.createClass(null, function (name, roles) {
+              this.name = name;
+              this.roles = roles;
+            }, /** @lends _.hu.nevermind.app.store.LoggedInUser.prototype */ {
+              component1: function () {
+                return this.name;
+              },
+              component2: function () {
+                return this.roles;
+              },
+              copy_d8unq9$: function (name, roles) {
+                return new _.hu.nevermind.app.store.LoggedInUser(name === void 0 ? this.name : name, roles === void 0 ? this.roles : roles);
+              },
+              toString: function () {
+                return 'LoggedInUser(name=' + Kotlin.toString(this.name) + (', roles=' + Kotlin.toString(this.roles)) + ')';
+              },
+              hashCode: function () {
+                var result = 0;
+                result = result * 31 + Kotlin.hashCode(this.name) | 0;
+                result = result * 31 + Kotlin.hashCode(this.roles) | 0;
+                return result;
+              },
+              equals_za3rmp$: function (other) {
+                return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.name, other.name) && Kotlin.equals(this.roles, other.roles)))));
+              }
+            }),
+            LoggedInUserStore$f: function (this$LoggedInUserStore) {
+              return function (newLoggedInUser) {
+                this$LoggedInUserStore.loggedInUser_yzdszo$ = newLoggedInUser;
+                this$LoggedInUserStore.emitChange();
+              };
+            },
+            hasAnyRoles_cgl70t$f: function (this$LoggedInUserStore) {
+              return function (it) {
+                var tmp$0;
+                return Kotlin.modules['stdlib'].kotlin.collections.contains_ke19y6$(((tmp$0 = this$LoggedInUserStore.loggedInUser_yzdszo$) != null ? tmp$0 : Kotlin.throwNPE()).roles, it);
+              };
+            },
+            hasAllRoles_cgl70t$f: function (this$LoggedInUserStore) {
+              return function (it) {
+                var tmp$0;
+                return Kotlin.modules['stdlib'].kotlin.collections.contains_ke19y6$(((tmp$0 = this$LoggedInUserStore.loggedInUser_yzdszo$) != null ? tmp$0 : Kotlin.throwNPE()).roles, it);
+              };
+            }
+          }),
+          keyvalue: Kotlin.definePackage(function () {
+            this.NodeIds = Kotlin.createObject(null, function () {
+              this.screenId = 'configScreen';
+              this.addButton = 'configScreen_addButton';
+              this.row = _.hu.nevermind.app.keyvalue.row(this);
+              this.modal = _.hu.nevermind.app.keyvalue.modal();
             });
           }, /** @lends _.hu.nevermind.app.keyvalue */ {
             LoginScreenState: Kotlin.createClass(null, function (username, password) {
@@ -2589,14 +2879,14 @@
               $fun.baseInitializer.call(this);
             }, /** @lends _.hu.nevermind.app.keyvalue.KeyValueScreen.prototype */ {
               componentDidMount: function () {
-                _.hu.nevermind.app.keyvalue.KeyValueStore.addChangeListener_o7wwlr$(this, _.hu.nevermind.app.keyvalue.KeyValueScreen.componentDidMount$f(this));
+                _.hu.nevermind.app.store.KeyValueStore.addChangeListener_o7wwlr$(this, _.hu.nevermind.app.keyvalue.KeyValueScreen.componentDidMount$f(this));
               },
               componentWillUnmount: function () {
-                _.hu.nevermind.app.keyvalue.KeyValueStore.removeListener_za3rmp$(this);
+                _.hu.nevermind.app.store.KeyValueStore.removeListener_za3rmp$(this);
               },
               render_sx5o3u$: function ($receiver) {
-                var keyValues = _.hu.nevermind.app.keyvalue.KeyValueStore.keyValues();
-                var editingKeyValue = _.hu.nevermind.app.keyvalue.KeyValueStore.editingKeyValue;
+                var keyValues = _.hu.nevermind.app.store.KeyValueStore.keyValues();
+                var editingKeyValue = _.hu.nevermind.app.store.KeyValueStore.editingKeyValue;
                 var rowIndex = {v: 0};
                 _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$($receiver, _.hu.nevermind.app.keyvalue.KeyValueScreen.render_sx5o3u$f, _.hu.nevermind.app.keyvalue.KeyValueScreen.render_sx5o3u$f_0(keyValues, rowIndex, editingKeyValue));
               }
@@ -2615,7 +2905,7 @@
                 this.id = _.hu.nevermind.app.keyvalue.NodeIds.screenId;
               },
               f: function (it) {
-                _.hu.nevermind.app.Actions.setEditingKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.keyvalue.KeyValue('', ''));
+                _.hu.nevermind.app.Actions.setEditingKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.KeyValue('', ''));
               },
               f_0: function () {
                 this.id = _.hu.nevermind.app.keyvalue.NodeIds.addButton;
@@ -2747,7 +3037,7 @@
               component2: function () {
                 return this.close;
               },
-              copy_rc3k4e$: function (editedKeyValue, close) {
+              copy_h8idqa$: function (editedKeyValue, close) {
                 return new _.hu.nevermind.app.keyvalue.KeyValueEditorDialogProps(editedKeyValue === void 0 ? this.editedKeyValue : editedKeyValue, close === void 0 ? this.close : close);
               },
               toString: function () {
@@ -2769,7 +3059,7 @@
               component1: function () {
                 return this.editedKeyValue;
               },
-              copy_rtrb4g$: function (editedKeyValue) {
+              copy_6gbzj1$: function (editedKeyValue) {
                 return new _.hu.nevermind.app.keyvalue.KeyValueEditorDialogState(editedKeyValue === void 0 ? this.editedKeyValue : editedKeyValue);
               },
               toString: function () {
@@ -2790,10 +3080,10 @@
               $fun.baseInitializer.call(this);
             }, /** @lends _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.prototype */ {
               componentDidMount: function () {
-                _.hu.nevermind.app.keyvalue.KeyValueStore.addChangeListener_o7wwlr$(this, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.componentDidMount$f(this));
+                _.hu.nevermind.app.store.KeyValueStore.addChangeListener_o7wwlr$(this, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.componentDidMount$f(this));
               },
               componentWillUnmount: function () {
-                _.hu.nevermind.app.keyvalue.KeyValueStore.removeListener_za3rmp$(this);
+                _.hu.nevermind.app.store.KeyValueStore.removeListener_za3rmp$(this);
               },
               initialState: function () {
                 return new _.hu.nevermind.app.keyvalue.KeyValueEditorDialogState(this.props.editedKeyValue);
@@ -2829,7 +3119,7 @@
               },
               componentDidMount$f: function (this$KeyValueEditorDialog) {
                 return function () {
-                  var newKeyValue = _.hu.nevermind.app.keyvalue.KeyValueStore.editingKeyValue;
+                  var newKeyValue = _.hu.nevermind.app.store.KeyValueStore.editingKeyValue;
                   if (newKeyValue != null) {
                     this$KeyValueEditorDialog.state = new _.hu.nevermind.app.keyvalue.KeyValueEditorDialogState(newKeyValue.copy_puj7f4$());
                   }
@@ -3069,7 +3359,7 @@
                 this.assertEquals_wn2jw4$('100', $('#configScreen_modal_value').val());
               },
               f_6: function () {
-                this.assertEquals_wn2jw4$('config/key1/', _.hu.nevermind.app.RouterStore.path);
+                this.assertEquals_wn2jw4$('config/key1/', _.hu.nevermind.app.store.RouterStore.path);
               },
               f_7: function () {
                 _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.row.editButton(0));
@@ -3091,7 +3381,7 @@
               },
               tests$f: function () {
                 window.location.hash = _.Path.keyValue.root;
-                _.hu.nevermind.app.Actions.setKeyValues.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, [new _.hu.nevermind.app.keyvalue.KeyValue('key1', '100')]);
+                _.hu.nevermind.app.Actions.modifyKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.KeyValue('key1', '100'));
                 this.on_82t0p5$('changing the URl to .../keyValue/editedkey', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_3);
                 this.on_82t0p5$('Clicking on the Edit button', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_7);
                 this.on_82t0p5$('Clicking on Add button', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_10);
@@ -3106,7 +3396,7 @@
                 this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.id));
               },
               f_14: function () {
-                this.assertEquals_wn2jw4$('config/', _.hu.nevermind.app.RouterStore.path);
+                this.assertEquals_wn2jw4$('config/', _.hu.nevermind.app.store.RouterStore.path);
               },
               f_15: function () {
                 _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.buttons.close);
@@ -3117,10 +3407,10 @@
                 this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.id));
               },
               f_17: function () {
-                this.assertEquals_wn2jw4$('config/', _.hu.nevermind.app.RouterStore.path);
+                this.assertEquals_wn2jw4$('config/', _.hu.nevermind.app.store.RouterStore.path);
               },
               f_18: function () {
-                this.assertEquals_wn2jw4$(2, _.hu.nevermind.app.keyvalue.KeyValueStore.keyValues().size);
+                this.assertEquals_wn2jw4$(2, _.hu.nevermind.app.store.KeyValueStore.keyValues().size);
               },
               f_19: function () {
                 this.assertTrue_6taknv$($('#configScreen').find("div:contains('123.000'):last").size() === 1);
@@ -3144,7 +3434,7 @@
                 this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.id));
               },
               f_22: function () {
-                this.assertEquals_wn2jw4$('config/', _.hu.nevermind.app.RouterStore.path);
+                this.assertEquals_wn2jw4$('config/', _.hu.nevermind.app.store.RouterStore.path);
               },
               f_23: function () {
                 _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.buttons.close);
@@ -3155,7 +3445,7 @@
                 this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.id));
               },
               f_25: function () {
-                this.assertEquals_wn2jw4$('config/', _.hu.nevermind.app.RouterStore.path);
+                this.assertEquals_wn2jw4$('config/', _.hu.nevermind.app.store.RouterStore.path);
               },
               f_26: function () {
                 _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.buttons.save);
@@ -3186,7 +3476,7 @@
                 input.value = '200';
               },
               f_34: function () {
-                this.assertEquals_wn2jw4$('200', Kotlin.modules['stdlib'].kotlin.collections.first_fvq2g0$(_.hu.nevermind.app.keyvalue.KeyValueStore.keyValues()).value);
+                this.assertEquals_wn2jw4$('200', Kotlin.modules['stdlib'].kotlin.collections.first_fvq2g0$(_.hu.nevermind.app.store.KeyValueStore.keyValues()).value);
               },
               f_35: function () {
                 this.assertTrue_6taknv$($('#configScreen').find("div:contains('200.000'):last").size() === 1);
@@ -3200,81 +3490,14 @@
               tests$f_1: function () {
                 window.location.hash = _.Path.keyValue.root;
                 window.location.hash = _.Path.keyValue.keyValueWithOpenedEditorModal('key1');
-                _.hu.nevermind.app.Actions.setKeyValues.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, [new _.hu.nevermind.app.keyvalue.KeyValue('key1', '100')]);
+                _.hu.nevermind.app.Actions.modifyKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.KeyValue('key1', '100'));
                 this.on_82t0p5$('clicking on the Close button', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_23);
                 this.on_82t0p5$('clicking on the Save button', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_26);
                 this.on_82t0p5$('Emptying the Key input field', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_29);
                 this.on_82t0p5$('Emptying the Value input field', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_32);
                 this.on_82t0p5$('Clicking on Save after changing the input value', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_36);
               }
-            }),
-            KeyValue: Kotlin.createClass(null, function (key, value) {
-              this.key = key;
-              this.value = value;
-            }, /** @lends _.hu.nevermind.app.keyvalue.KeyValue.prototype */ {
-              component1: function () {
-                return this.key;
-              },
-              component2: function () {
-                return this.value;
-              },
-              copy_puj7f4$: function (key, value) {
-                return new _.hu.nevermind.app.keyvalue.KeyValue(key === void 0 ? this.key : key, value === void 0 ? this.value : value);
-              },
-              toString: function () {
-                return 'KeyValue(key=' + Kotlin.toString(this.key) + (', value=' + Kotlin.toString(this.value)) + ')';
-              },
-              hashCode: function () {
-                var result = 0;
-                result = result * 31 + Kotlin.hashCode(this.key) | 0;
-                result = result * 31 + Kotlin.hashCode(this.value) | 0;
-                return result;
-              },
-              equals_za3rmp$: function (other) {
-                return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.key, other.key) && Kotlin.equals(this.value, other.value)))));
-              }
-            }),
-            KeyValueStore$f: function (this$KeyValueStore) {
-              return function (newConfigs) {
-                this$KeyValueStore.configs_gmau6s$ = Kotlin.modules['stdlib'].kotlin.collections.toArrayList_eg9ybj$(newConfigs);
-                this$KeyValueStore.emitChange();
-              };
-            },
-            KeyValueStore$f_0: function (this$KeyValueStore) {
-              return function (keyValue) {
-                this$KeyValueStore.editingKeyValue = keyValue;
-                this$KeyValueStore.emitChange();
-              };
-            },
-            f_0: function (this$KeyValueStore, modifiedConfig) {
-              return function (it) {
-                var index;
-                indexOfFirst_rw062o$break: {
-                  var tmp$0, tmp$1, tmp$2, tmp$3;
-                  tmp$0 = Kotlin.modules['stdlib'].kotlin.collections.get_indices_4m3c68$(this$KeyValueStore.configs_gmau6s$), tmp$1 = tmp$0.start, tmp$2 = tmp$0.end, tmp$3 = tmp$0.increment;
-                  for (var index_0 = tmp$1; index_0 <= tmp$2; index_0 += tmp$3) {
-                    var it_0 = this$KeyValueStore.configs_gmau6s$.get_za3lpa$(index_0);
-                    if (Kotlin.equals(it_0.key, modifiedConfig.key)) {
-                      index = index_0;
-                      break indexOfFirst_rw062o$break;
-                    }
-                  }
-                  index = -1;
-                }
-                if (index === -1) {
-                  this$KeyValueStore.configs_gmau6s$.add_za3rmp$(modifiedConfig);
-                }
-                 else {
-                  this$KeyValueStore.configs_gmau6s$.set_vux3hl$(index, modifiedConfig);
-                }
-                this$KeyValueStore.emitChange();
-              };
-            },
-            KeyValueStore$f_1: function (this$KeyValueStore) {
-              return function (modifiedConfig) {
-                _.hu.nevermind.app.communicator.saveKeyValue_6uschn$(modifiedConfig, _.hu.nevermind.app.keyvalue.f_0(this$KeyValueStore, modifiedConfig));
-              };
-            }
+            })
           })
         })
       })

@@ -1,4 +1,4 @@
-package hu.nevermind.app
+package hu.nevermind.app.store
 
 import com.github.andrewoma.flux.Store
 import kotlin.browser.window
