@@ -32,15 +32,24 @@ object KeyValueStore : Store() {
             editingKeyValue = keyValue
             emitChange()
         }
-        register(globalDispatcher, Actions.modifyKeyValue) { modifiedConfig ->
-            communicator.saveKeyValue(modifiedConfig) {
-                val index = configs.indexOfFirst { it.key == modifiedConfig.key }
+        register(globalDispatcher, Actions.modifyKeyValue) { modifiedKeyValue ->
+            communicator.saveKeyValue(modifiedKeyValue) {
+                val index = configs.indexOfFirst { it.key == modifiedKeyValue.key }
                 if (index == -1) {
-                    configs.add(modifiedConfig)
+                    configs.add(modifiedKeyValue)
                 } else {
-                    configs[index] = modifiedConfig
+                    configs[index] = modifiedKeyValue
                 }
                 emitChange()
+            }
+        }
+        register(globalDispatcher, Actions.deleteKeyValue) { deletingKeyValue ->
+            communicator.deleteKeyValue(deletingKeyValue) {
+                val index = configs.indexOfFirst { it.key == deletingKeyValue.key }
+                if (index > -1) {
+                    configs.removeAt(index)
+                    emitChange()
+                }
             }
         }
     }

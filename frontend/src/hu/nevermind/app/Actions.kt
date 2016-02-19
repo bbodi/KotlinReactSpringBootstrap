@@ -7,5 +7,6 @@ import hu.nevermind.app.store.LoggedInUser
 object Actions {
     val setLoggedInuser = ActionDef<LoggedInUser?>()
     val modifyKeyValue = ActionDef<KeyValue>()
+    val deleteKeyValue = ActionDef<KeyValue>()
     val setEditingKeyValue = ActionDef<KeyValue?>()
 }

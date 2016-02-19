@@ -25,4 +25,9 @@ class KeyValuePairController
         keyValuePairRepository.save(entity)
         return entity
     }
+
+    @RequestMapping("/deleteKeyValue", method=arrayOf(RequestMethod.POST))
+    fun deleteKeyValue(@RequestBody key: String) {
+        keyValuePairRepository.delete(key)
+    }
 }

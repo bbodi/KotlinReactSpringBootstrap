@@ -21,8 +21,12 @@ enum class ModalResult {
 private object NodeIds {
     val screenId = "configScreen"
     val addButton = "${screenId}_addButton"
-    object row {
-        val editButton: (Int)->String = {rowIndex -> "${screenId}_editButton_$rowIndex"}
+    object table {
+        val id = "${screenId}_table"
+        object row {
+            val editButton: (Int)->String = {rowIndex -> "${id}_editButton_$rowIndex"}
+            val deleteButton: (Int)->String = {rowIndex -> "${id}_deleteButton_$rowIndex"}
+        }
     }
     object modal {
         val id = "${screenId}_modal"
@@ -77,15 +81,18 @@ class KeyValueScreen : ComponentSpec<Unit, Unit>() {
                                 createReactElement {
                                     bsButtonGroup ({ bsSize = BsSize.ExtraSmall }) {
                                         bsButton ({
-                                            id = NodeIds.row.editButton(rowIndex++)
+                                            id = NodeIds.table.row.editButton(rowIndex)
                                             bsStyle = BsStyle.Primary
                                             onClick = {
                                                 window.location.hash = Path.keyValue.keyValueWithOpenedEditorModal(keyValue.key)
-                                                //Actions.setEditingKeyValue(globalDispatcher, keyValue)
                                             }
                                         }) { text("Szerkesztés") }
                                         bsButton ({
+                                            id = NodeIds.table.row.deleteButton(rowIndex++)
                                             bsStyle = BsStyle.Danger
+                                            onClick = {
+                                                Actions.deleteKeyValue(globalDispatcher, keyValue)
+                                            }
                                         }) { text("Törlés") }
                                     }
                                 }
@@ -279,7 +286,7 @@ class KeyValueScreenTest {
                 }
             }
             on("Clicking on the Edit button") {
-                NodeIds.row.editButton(0).simulateClick()
+                NodeIds.table.row.editButton(0).simulateClick()
                 it("should open the modal") {
                     assertTrue(NodeIds.modal.id.appearOnScreen())
                 }
@@ -289,6 +296,15 @@ class KeyValueScreenTest {
                 }
                 it("should change the URL, appending the editing key to it") {
                     assertEquals("config/key1/", RouterStore.path)
+                }
+            }
+            on("Clicking on the Delete button") {
+                NodeIds.table.row.deleteButton(0).simulateClick()
+                it("should remove the KeyValue") {
+                    assertEquals(0, KeyValueStore.keyValues().size)
+                }
+                it("should remove the row from the table") {
+                    assertEquals(0, jq("#${NodeIds.table.id}").find("tr").size())
                 }
             }
             on("Clicking on Add button") {

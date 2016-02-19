@@ -8,6 +8,7 @@ object RestUrl {
     val getKeyValuesFromServer = "/getKeyValues"
     val authenticate = "/user"
     val putKeyValue = "/putKeyValue"
+    val deleteKeyValue = "/deleteKeyValue"
 }
 
 class Communicator(val ajaxPoster: AjaxPoster) {
@@ -31,6 +32,15 @@ class Communicator(val ajaxPoster: AjaxPoster) {
                 url = RestUrl.putKeyValue,
                 data = JSON.stringify(entity),
                 async = false) { result: Result<KeyValue, String> ->
+            callback(result.ok!!)
+        }
+    }
+
+    fun deleteKeyValue(entity: KeyValue, callback: (String) -> Unit) {
+        ajaxPoster.ajaxPost(
+                url = RestUrl.deleteKeyValue,
+                data = entity.key,
+                async = false) { result: Result<String, String> ->
             callback(result.ok!!)
         }
     }

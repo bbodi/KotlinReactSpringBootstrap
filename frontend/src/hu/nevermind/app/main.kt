@@ -32,6 +32,7 @@ public fun main(vararg arg: String) {
         testAjaxPoster.pushResult<Nothing>(RestUrl.authenticate, {ok(object{val name="testUser";val roles=arrayOf(Role.Admin.name)})})
         testAjaxPoster.pushResult<Nothing>(RestUrl.getKeyValuesFromServer, {ok(emptyArray<Any>())})
         testAjaxPoster.pushResult(RestUrl.putKeyValue, {result: KeyValue -> ok(result)})
+        testAjaxPoster.pushResult<Nothing>(RestUrl.deleteKeyValue, {ok("")})
         react.render(app(), jq("#app").get(0)!!)
         QUnit.start()
     } else {
