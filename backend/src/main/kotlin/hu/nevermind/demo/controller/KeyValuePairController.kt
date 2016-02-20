@@ -20,7 +20,7 @@ class KeyValuePairController
         return keyValuePairRepository.findOne(key)
     }
 
-    @RequestMapping("/putKeyValue", method=arrayOf(RequestMethod.POST))
+    @RequestMapping("/saveKeyValue", method=arrayOf(RequestMethod.POST))
     fun putKeyValue(@RequestBody entity: KeyValuePair): KeyValuePair {
         keyValuePairRepository.save(entity)
         return entity

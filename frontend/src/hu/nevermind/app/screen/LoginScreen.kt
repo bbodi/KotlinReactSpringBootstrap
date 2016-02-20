@@ -1,4 +1,4 @@
-package hu.nevermind.app.keyvalue
+package hu.nevermind.app.screen
 
 import com.github.andrewoma.react.*
 import hu.nevermind.app.*

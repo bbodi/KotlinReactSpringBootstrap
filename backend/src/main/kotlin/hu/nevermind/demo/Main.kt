@@ -23,8 +23,8 @@ open class Main {
     @Bean
     open fun init(accountRepository: AccountRepository): CommandLineRunner {
         return CommandLineRunner {
-            accountRepository.save(Account("admin", BCryptPasswordEncoder().encode("admin"), Role.Admin));
-            accountRepository.save(Account("user", BCryptPasswordEncoder().encode("user"), Role.User));
+            accountRepository.save(Account("admin", BCryptPasswordEncoder().encode("admin"), false, Role.Admin));
+            accountRepository.save(Account("user", BCryptPasswordEncoder().encode("user"), false, Role.User));
         }
     }
 }

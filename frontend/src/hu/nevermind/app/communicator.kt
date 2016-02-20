@@ -5,34 +5,36 @@ import hu.nevermind.common.AjaxPoster
 import hu.nevermind.common.Result
 
 object RestUrl {
-    val getKeyValuesFromServer = "/getKeyValues"
-    val authenticate = "/user"
-    val putKeyValue = "/putKeyValue"
-    val deleteKeyValue = "/deleteKeyValue"
+    const val authenticate = "/user"
+
+    const val getKeyValuesFromServer = "/getKeyValues"
+    const val getAccountsFromServer = "/getAllAccounts"
+
+    const val saveKeyValue = "/saveKeyValue"
+    const val saveAccount = "/saveAccount"
+
+    const val deleteKeyValue = "/deleteKeyValue"
 }
 
 class Communicator(val ajaxPoster: AjaxPoster) {
-    fun getKeyValuesFromServer(callback: (Array<KeyValue>) -> Unit) {
+
+    fun getEntitiesFromServer(url: String, callback: (Array<Any>) -> Unit) {
         ajaxPoster.ajaxPost(
-                url = RestUrl.getKeyValuesFromServer,
+                url = url,
                 type = "GET",
-                async = false) { result: Result<Array<KeyValue>, String> ->
-            if (result.error != null) {
-                throw Exception(result.error)
-            }
-            val returnedConfigs = result.ok!!
-            callback(returnedConfigs.map {
-                KeyValue(it.key, it.value)
-            }.toTypedArray())
+                async = false) { result: Result<Array<Any>, String> ->
+            requireNotNull(result.ok)
+            val returnedEntities = result.ok!!
+            callback(returnedEntities)
         }
     }
-
-    fun saveKeyValue(entity: KeyValue, callback: (KeyValue) -> Unit) {
+    fun <T : Any> saveEntity(url: String, entity: T, callback: () -> Unit) {
         ajaxPoster.ajaxPost(
-                url = RestUrl.putKeyValue,
+                url = url,
                 data = JSON.stringify(entity),
-                async = false) { result: Result<KeyValue, String> ->
-            callback(result.ok!!)
+                async = false) { result: Result<T, String> ->
+            requireNotNull(result.ok)
+            callback()
         }
     }
 
@@ -49,7 +51,7 @@ class Communicator(val ajaxPoster: AjaxPoster) {
         ajaxPoster.ajaxPost(
                 url = RestUrl.authenticate,
                 async = false,
-                success = after,
+                after = after,
                 type = "GET"
         )
     }

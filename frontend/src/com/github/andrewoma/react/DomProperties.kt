@@ -204,6 +204,7 @@ object InputType {
     val Password: InputType = js("'password'")
     val Textarea: InputType = js("'textarea'")
     val Checkbox: InputType = js("'checkbox'")
+    val Select: InputType = js("'select'")
 }
 
 class IframeProperties : HtmlGlobalProperties() {

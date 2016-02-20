@@ -368,7 +368,6 @@ class BsInputProperties : InputProperties() {
     var help: String by Property()
     var wrapperClassName: String by Property()
     var labelClassName: String by Property()
-
 }
 
 fun Component.bsInput(

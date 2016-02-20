@@ -1,6 +1,12 @@
 package hu.nevermind.app.store
 
 import com.github.andrewoma.flux.Store
+import hu.nevermind.common.given
+import hu.nevermind.common.qunitTest
+import hu.nevermind.common.runFirstGiven
+import hu.nevermind.reakt.jqext.size
+import jquery.jq
+import org.junit.Test
 import kotlin.browser.window
 
 object RouterStore : Store() {
@@ -16,7 +22,7 @@ object RouterStore : Store() {
         }, false);
     }
 
-    fun match(vararg patterns: Pair<String, (Map<String, String>) -> Unit>, otherwise: ()->Unit) {
+    fun match(vararg patterns: Pair<String, (Map<String, String>) -> Unit>, otherwise: () -> Unit) {
         val pattern = patterns.firstOrNull { pattern ->
             match(pattern.first, pattern.second)
         }
@@ -50,4 +56,60 @@ object RouterStore : Store() {
         return ok
     }
 
+}
+
+class RouterStoreTest {
+
+    @Test
+    fun hack() {
+        kotlin.test.assertTrue(true) // qunit hack, at least one assert must be present
+        qunitTest("RouterStoreTest") { assert: dynamic ->
+            tests()
+            runFirstGiven(assert)
+        }
+    }
+
+    fun tests() {
+        var matchResult = ""
+        val runMatcher = {
+            RouterStore.match(
+                    "${Path.login}" to { params ->
+                        matchResult = "login"
+                    },
+                    "${Path.keyValue.root}?editedKeyValueId" to { params ->
+                        matchResult = "keyValue - ${params["editedKeyValueId"].orEmpty()}"
+                    },
+                    otherwise = {
+                        matchResult = "other"
+                    }
+            )
+        }
+        given("the URL = root") {
+            window.location.hash = Path.root
+            on("routing to the main screen") {
+                runMatcher()
+                it("should not match") {
+                    assertEquals("other", matchResult)
+                }
+            }
+        }
+        given("the URL = login") {
+            window.location.hash = Path.login
+            on("routing to the login screen") {
+                runMatcher()
+                it("should match to login") {
+                    assertEquals("login", matchResult)
+                }
+            }
+        }
+        given("the URL = login") {
+            window.location.hash = Path.keyValue.withOpenedEditorModal("69")
+            on("routing to the keyValue editor screen") {
+                runMatcher()
+                it("should match to login") {
+                    assertEquals("keyValue - 69", matchResult)
+                }
+            }
+        }
+    }
 }

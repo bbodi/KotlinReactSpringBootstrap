@@ -9,6 +9,7 @@ import javax.persistence.Id
 @Entity
 data class Account(@Id var username: String = "",
                    var passwordHash: String = "",
+                   var disabled: Boolean = false,
                    var roles: String = "") {
 }
 

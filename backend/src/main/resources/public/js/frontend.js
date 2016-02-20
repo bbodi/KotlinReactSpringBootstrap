@@ -3,8 +3,9 @@
   var _ = Kotlin.defineRootPackage(function () {
     this.Path = Kotlin.createObject(null, function () {
       this.root = '#';
-      this.login = '#login/';
+      this.login = 'login/';
       this.keyValue = _.keyValue();
+      this.account = _.account();
     });
   }, /** @lends _ */ {
     hu: Kotlin.definePackage(null, /** @lends _.hu */ {
@@ -142,8 +143,11 @@
           }),
           TestAjaxPoster: Kotlin.createClass(function () {
             return [_.hu.nevermind.common.AjaxPoster];
-          }, null, /** @lends _.hu.nevermind.common.TestAjaxPoster.prototype */ {
-            ajaxPost_i9h86c$: function (url, type, data, contentType, dataType, async, success) {
+          }, function () {
+            this.results_83af8n$ = Kotlin.modules['stdlib'].kotlin.collections.hashMapOf_eoa9s7$([]);
+          }, /** @lends _.hu.nevermind.common.TestAjaxPoster.prototype */ {
+            ajaxPost_i9h86c$: function (url, type, data, contentType, dataType, async, after) {
+              var tmp$0;
               if (type === void 0)
                 type = 'POST';
               if (data === void 0)
@@ -154,7 +158,18 @@
                 dataType = 'json';
               if (async === void 0)
                 async = true;
+              var value = Kotlin.modules['stdlib'].kotlin.collections.contains_qbyksu$(this.results_83af8n$, url);
+              if (!value) {
+                var message = "'" + url + "' is not found in TestAjaxPoster";
+                throw new Kotlin.IllegalArgumentException(message.toString());
+              }
+              var result = ((tmp$0 = this.results_83af8n$.get_za3rmp$(url)) != null ? tmp$0 : Kotlin.throwNPE())(data);
+              after(result);
+            },
+            pushResult_yuwyva$: function (url, resultBuilder) {
+              this.results_83af8n$.put_wn2jw4$(url, resultBuilder);
             }
+          }, /** @lends _.hu.nevermind.common.TestAjaxPoster */ {
           }),
           Result: Kotlin.createClass(null, function (ok, error) {
             this.ok = ok;
@@ -1956,17 +1971,57 @@
         }),
         app: Kotlin.definePackage(function () {
           this.globalDispatcher = new _.com.github.andrewoma.flux.Dispatcher();
+          this.NavMenuIds = Kotlin.createObject(null, function () {
+            this.root = 'navItem';
+            this.account = 'navItem_account';
+            this.keyValue = 'navItem_keyValue';
+          });
           this.Actions = Kotlin.createObject(null, function () {
-            this.setLoggedInuser = new _.com.github.andrewoma.flux.ActionDef();
-            this.modifyKeyValue = new _.com.github.andrewoma.flux.ActionDef();
             this.setEditingKeyValue = new _.com.github.andrewoma.flux.ActionDef();
+            this.setEditingAccount = new _.com.github.andrewoma.flux.ActionDef();
+            this.modifyKeyValue = new _.com.github.andrewoma.flux.ActionDef();
+            this.modifyAccount = new _.com.github.andrewoma.flux.ActionDef();
+            this.deleteKeyValue = new _.com.github.andrewoma.flux.ActionDef();
+            this.setLoggedInUser = new _.com.github.andrewoma.flux.ActionDef();
+          });
+          this.RestUrl = Kotlin.createObject(null, function () {
+            this.authenticate = '/user';
+            this.getKeyValuesFromServer = '/getKeyValues';
+            this.getAccountsFromServer = '/getAllAccounts';
+            this.saveKeyValue = '/saveKeyValue';
+            this.saveAccount = '/saveAccount';
+            this.deleteKeyValue = '/deleteKeyValue';
           });
         }, /** @lends _.hu.nevermind.app */ {
+          main_kand9s$f: function (it) {
+            return _.hu.nevermind.common.ok_za3rmp$(Kotlin.createObject(null, function () {
+              this.name = 'testUser';
+              this.roles = [_.hu.nevermind.app.store.Role.object.ROLE_ADMIN];
+            }));
+          },
+          main_kand9s$f_0: function (it) {
+            return _.hu.nevermind.common.ok_za3rmp$(Kotlin.nullArray(0));
+          },
+          main_kand9s$f_1: function (it) {
+            return _.hu.nevermind.common.ok_za3rmp$(Kotlin.nullArray(0));
+          },
+          main_kand9s$f_2: function (result) {
+            return _.hu.nevermind.common.ok_za3rmp$(result);
+          },
+          main_kand9s$f_3: function (it) {
+            return _.hu.nevermind.common.ok_za3rmp$('');
+          },
           main_kand9s$: function (arg) {
             var tmp$0, tmp$1;
             QUnit.config.autostart = false;
             if (Kotlin.modules['stdlib'].kotlin.text.contains_kzp0od$(window.location.search, 'tests')) {
-              _.hu.nevermind.app.communicator = new _.hu.nevermind.app.Communicator(new _.hu.nevermind.common.TestAjaxPoster());
+              _.hu.nevermind.app.testAjaxPoster = new _.hu.nevermind.common.TestAjaxPoster();
+              _.hu.nevermind.app.communicator = new _.hu.nevermind.app.Communicator(_.hu.nevermind.app.testAjaxPoster);
+              _.hu.nevermind.app.testAjaxPoster.pushResult_yuwyva$(_.hu.nevermind.app.RestUrl.authenticate, _.hu.nevermind.app.main_kand9s$f);
+              _.hu.nevermind.app.testAjaxPoster.pushResult_yuwyva$(_.hu.nevermind.app.RestUrl.getKeyValuesFromServer, _.hu.nevermind.app.main_kand9s$f_0);
+              _.hu.nevermind.app.testAjaxPoster.pushResult_yuwyva$(_.hu.nevermind.app.RestUrl.getAccountsFromServer, _.hu.nevermind.app.main_kand9s$f_1);
+              _.hu.nevermind.app.testAjaxPoster.pushResult_yuwyva$(_.hu.nevermind.app.RestUrl.saveKeyValue, _.hu.nevermind.app.main_kand9s$f_2);
+              _.hu.nevermind.app.testAjaxPoster.pushResult_yuwyva$(_.hu.nevermind.app.RestUrl.deleteKeyValue, _.hu.nevermind.app.main_kand9s$f_3);
               _.com.github.andrewoma.react.react.render_vbpb6g$(_.hu.nevermind.app.app(), (tmp$0 = $('#app').get(0)) != null ? tmp$0 : Kotlin.throwNPE());
               QUnit.start();
             }
@@ -1985,7 +2040,8 @@
             return {
               Login: new _.hu.nevermind.app.AppScreen(),
               Home: new _.hu.nevermind.app.AppScreen(),
-              Config: new _.hu.nevermind.app.AppScreen()
+              Config: new _.hu.nevermind.app.AppScreen(),
+              Account: new _.hu.nevermind.app.AppScreen()
             };
           }),
           AppState: Kotlin.createClass(null, function (screen) {
@@ -2019,7 +2075,7 @@
                 window.location.hash = _.Path.login;
               }
                else {
-                _.hu.nevermind.app.store.RouterStore.match_98xyu1$([Kotlin.modules['stdlib'].kotlin.to_l1ob02$('login', _.hu.nevermind.app.App.route$f(this)), Kotlin.modules['stdlib'].kotlin.to_l1ob02$('config/?editedConfId', _.hu.nevermind.app.App.route$f_0(this))], _.hu.nevermind.app.App.route$f_1(this));
+                _.hu.nevermind.app.store.RouterStore.match_98xyu1$([Kotlin.modules['stdlib'].kotlin.to_l1ob02$('login/', _.hu.nevermind.app.App.route$f(this)), Kotlin.modules['stdlib'].kotlin.to_l1ob02$('keyValue/?editedKeyValueId', _.hu.nevermind.app.App.route$f_0(this)), Kotlin.modules['stdlib'].kotlin.to_l1ob02$('account/?editedAccountId', _.hu.nevermind.app.App.route$f_1(this))], _.hu.nevermind.app.App.route$f_2(this));
               }
             },
             componentDidMount: function () {
@@ -2052,11 +2108,20 @@
                 if (this$App.state.screen !== _.hu.nevermind.app.AppScreen.object.Config) {
                   this$App.state = new _.hu.nevermind.app.AppState(_.hu.nevermind.app.AppScreen.object.Config);
                 }
-                var keyValue = _.hu.nevermind.app.store.KeyValueStore.keyValue_61zpoe$(Kotlin.modules['stdlib'].kotlin.text.orEmpty_pdl1w0$(params.get_za3rmp$('editedConfId')));
+                var keyValue = _.hu.nevermind.app.store.KeyValueStore.keyValue_61zpoe$(Kotlin.modules['stdlib'].kotlin.text.orEmpty_pdl1w0$(params.get_za3rmp$('editedKeyValueId')));
                 _.hu.nevermind.app.Actions.setEditingKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, keyValue);
               };
             },
             route$f_1: function (this$App) {
+              return function (params) {
+                if (this$App.state.screen !== _.hu.nevermind.app.AppScreen.object.Account) {
+                  this$App.state = new _.hu.nevermind.app.AppState(_.hu.nevermind.app.AppScreen.object.Account);
+                }
+                var account = _.hu.nevermind.app.store.AccountStore.account_61zpoe$(Kotlin.modules['stdlib'].kotlin.text.orEmpty_pdl1w0$(params.get_za3rmp$('editedAccountId')));
+                _.hu.nevermind.app.Actions.setEditingAccount.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, account);
+              };
+            },
+            route$f_2: function (this$App) {
               return function () {
                 this$App.state = new _.hu.nevermind.app.AppState(_.hu.nevermind.app.AppScreen.object.Home);
               };
@@ -2077,11 +2142,11 @@
                   var item = tmp$0[tmp$2];
                   destination.add_za3rmp$(_.hu.nevermind.app.store.Role.valueOf_61zpoe$(item));
                 }
-                var roles = Kotlin.copyToArray(destination);
-                _.hu.nevermind.app.Actions.setLoggedInuser.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.LoggedInUser(principal.name, roles));
+                var roles = destination;
+                _.hu.nevermind.app.Actions.setLoggedInUser.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.Account(principal.name, false, roles, ''));
               }
                else {
-                _.hu.nevermind.app.Actions.setLoggedInuser.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, null);
+                _.hu.nevermind.app.Actions.setLoggedInUser.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, null);
               }
             },
             render_sx5o3u$f: function () {
@@ -2101,133 +2166,143 @@
             },
             f_4: function () {
               this.title = 'Admin';
-              this.id = 'basic-nav-dropdown';
             },
-            f_5: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Accounts');
+            f_5: function (this$App) {
+              return function () {
+                this.id = _.hu.nevermind.app.NavMenuIds.account;
+                this.href = '#account/';
+                this.active = this$App.state.screen === _.hu.nevermind.app.AppScreen.object.Account;
+              };
             },
             f_6: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Another Action');
+              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Accounts');
             },
             f_7: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Something else here');
+              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Another Action');
             },
             f_8: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Separated link');
+              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Something else here');
             },
             f_9: function () {
-              _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_5);
-              _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_6);
-              _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_7);
-              _.hu.nevermind.reakt.bootstrap.bsMenuItemDivider_r2i6fj$(this);
-              _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_8);
+              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Separated link');
             },
-            f_10: function () {
-              this.title = 'Options';
-              this.id = 'basic-nav-dropdown';
-            },
-            f_11: function (this$App) {
+            f_10: function (this$App) {
               return function () {
-                this.id = 'configScreenNavItem';
-                this.href = _.Path.keyValue.root;
+                _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, _.hu.nevermind.app.App.f_5(this$App), _.hu.nevermind.app.App.f_6);
+                _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_7);
+                _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_8);
+                _.hu.nevermind.reakt.bootstrap.bsMenuItemDivider_r2i6fj$(this);
+                _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_9);
+              };
+            },
+            f_11: function () {
+              this.title = 'Options';
+            },
+            f_12: function (this$App) {
+              return function () {
+                this.id = _.hu.nevermind.app.NavMenuIds.keyValue;
+                this.href = '#keyValue/';
                 this.active = this$App.state.screen === _.hu.nevermind.app.AppScreen.object.Config;
               };
             },
-            f_12: function () {
+            f_13: function () {
               _.com.github.andrewoma.react.text_3pk7xh$(this, 'Configs');
-            },
-            f_13: function (this$App) {
-              return function () {
-                _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, _.hu.nevermind.app.App.f_11(this$App), _.hu.nevermind.app.App.f_12);
-              };
             },
             f_14: function (this$App) {
               return function () {
-                if (_.hu.nevermind.app.store.LoggedInUserStore.hasRole_4w2bpb$(_.hu.nevermind.app.store.Role.object.Admin)) {
-                  _.hu.nevermind.reakt.bootstrap.bsNavDropdown_sdj1l$(this, _.hu.nevermind.app.App.f_4, _.hu.nevermind.app.App.f_9);
-                }
-                _.hu.nevermind.reakt.bootstrap.bsNavDropdown_sdj1l$(this, _.hu.nevermind.app.App.f_10, _.hu.nevermind.app.App.f_13(this$App));
+                _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, _.hu.nevermind.app.App.f_12(this$App), _.hu.nevermind.app.App.f_13);
               };
             },
-            f_15: function () {
-              this.pullRight = true;
+            f_15: function (this$App) {
+              return function () {
+                if (_.hu.nevermind.app.store.LoggedInUserStore.loggedInUser.hasRole_4w2bpb$(_.hu.nevermind.app.store.Role.object.ROLE_ADMIN)) {
+                  _.hu.nevermind.reakt.bootstrap.bsNavDropdown_sdj1l$(this, _.hu.nevermind.app.App.f_4, _.hu.nevermind.app.App.f_10(this$App));
+                }
+                _.hu.nevermind.reakt.bootstrap.bsNavDropdown_sdj1l$(this, _.hu.nevermind.app.App.f_11, _.hu.nevermind.app.App.f_14(this$App));
+              };
             },
             f_16: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.store.LoggedInUserStore.username);
-              _.com.github.andrewoma.react.text_3pk7xh$(this, '(' + Kotlin.modules['stdlib'].kotlin.collections.joinToString_qtax42$(_.hu.nevermind.app.store.LoggedInUserStore.roles, ', ') + ')');
-            },
-            f_17: function (it) {
-              _.hu.nevermind.app.Actions.setLoggedInuser.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, null);
-            },
-            f_18: function () {
-              this.eventKey = 2;
-              this.href = '/logout';
-              this.onClick = _.hu.nevermind.app.App.f_17;
-            },
-            f_19: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Logout');
-            },
-            f_20: function () {
-              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, void 0, _.hu.nevermind.app.App.f_16);
-              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_18, _.hu.nevermind.app.App.f_19);
-            },
-            f_21: function () {
               this.pullRight = true;
             },
+            f_17: function () {
+              _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.store.LoggedInUserStore.loggedInUser.username);
+              _.com.github.andrewoma.react.text_3pk7xh$(this, '(' + Kotlin.modules['stdlib'].kotlin.collections.joinToString_sdec0h$(_.hu.nevermind.app.store.LoggedInUserStore.loggedInUser.roles, ', ') + ')');
+            },
+            f_18: function (it) {
+              _.hu.nevermind.app.Actions.setLoggedInUser.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, null);
+            },
+            f_19: function () {
+              this.eventKey = 2;
+              this.href = '/logout';
+              this.onClick = _.hu.nevermind.app.App.f_18;
+            },
+            f_20: function () {
+              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Logout');
+            },
+            f_21: function () {
+              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, void 0, _.hu.nevermind.app.App.f_17);
+              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_19, _.hu.nevermind.app.App.f_20);
+            },
             f_22: function () {
+              this.pullRight = true;
+            },
+            f_23: function () {
               this.eventKey = 2;
               this.href = '/';
             },
-            f_23: function () {
+            f_24: function () {
               _.com.github.andrewoma.react.text_3pk7xh$(this, 'Contact');
             },
-            f_24: function () {
-              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_22, _.hu.nevermind.app.App.f_23);
+            f_25: function () {
+              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_23, _.hu.nevermind.app.App.f_24);
             },
-            f_25: function (this$App) {
+            f_26: function (this$App) {
               return function () {
                 _.hu.nevermind.reakt.bootstrap.bsNavbarHeader_hn5u98$(this, void 0, _.hu.nevermind.app.App.f_3);
                 if (this$App.state.screen !== _.hu.nevermind.app.AppScreen.object.Login) {
-                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, void 0, _.hu.nevermind.app.App.f_14(this$App));
+                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, void 0, _.hu.nevermind.app.App.f_15(this$App));
                 }
                 if (this$App.state.screen !== _.hu.nevermind.app.AppScreen.object.Login) {
-                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, _.hu.nevermind.app.App.f_15, _.hu.nevermind.app.App.f_20);
+                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, _.hu.nevermind.app.App.f_16, _.hu.nevermind.app.App.f_21);
                 }
                  else {
-                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, _.hu.nevermind.app.App.f_21, _.hu.nevermind.app.App.f_24);
+                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, _.hu.nevermind.app.App.f_22, _.hu.nevermind.app.App.f_25);
                 }
               };
-            },
-            f_26: function () {
-              this.fluid = true;
             },
             f_27: function () {
-              this.md = 12;
+              this.fluid = true;
             },
-            f_28: function (this$App) {
-              return function () {
-                if (this$App.state.screen === _.hu.nevermind.app.AppScreen.object.Config) {
-                  _.hu.nevermind.app.keyvalue.keyValueScreen_sx5o3u$(this);
-                }
-                 else if (this$App.state.screen === _.hu.nevermind.app.AppScreen.object.Login) {
-                  _.hu.nevermind.app.keyvalue.loginScreen_sx5o3u$(this);
-                }
-              };
+            f_28: function () {
+              this.md = 12;
             },
             f_29: function (this$App) {
               return function () {
-                _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.App.f_27, _.hu.nevermind.app.App.f_28(this$App));
+                if (this$App.state.screen === _.hu.nevermind.app.AppScreen.object.Config) {
+                  _.hu.nevermind.app.screen.keyValueScreen_sx5o3u$(this);
+                }
+                 else if (this$App.state.screen === _.hu.nevermind.app.AppScreen.object.Account) {
+                  _.hu.nevermind.app.screen.accountScreen_sx5o3u$(this);
+                }
+                 else if (this$App.state.screen === _.hu.nevermind.app.AppScreen.object.Login) {
+                  _.hu.nevermind.app.screen.loginScreen_sx5o3u$(this);
+                }
               };
             },
             f_30: function (this$App) {
               return function () {
-                _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.App.f_29(this$App));
+                _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.App.f_28, _.hu.nevermind.app.App.f_29(this$App));
+              };
+            },
+            f_31: function (this$App) {
+              return function () {
+                _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.App.f_30(this$App));
               };
             },
             render_sx5o3u$f_0: function (this$App) {
               return function () {
-                _.hu.nevermind.reakt.bootstrap.bsNavbar_1x79tb$(this, void 0, _.hu.nevermind.app.App.f_25(this$App));
-                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$(this, _.hu.nevermind.app.App.f_26, _.hu.nevermind.app.App.f_30(this$App));
+                _.hu.nevermind.reakt.bootstrap.bsNavbar_1x79tb$(this, void 0, _.hu.nevermind.app.App.f_26(this$App));
+                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$(this, _.hu.nevermind.app.App.f_27, _.hu.nevermind.app.App.f_31(this$App));
               };
             }
           }),
@@ -2311,79 +2386,37 @@
             }
             return errorMessages;
           },
-          RoutingTest: Kotlin.createClass(null, null, /** @lends _.hu.nevermind.app.RoutingTest.prototype */ {
-            hack: function () {
-              Kotlin.modules['stdlib'].kotlin.test.assertTrue_8kj6y5$(true);
-              QUnit.test('RoutingTest', _.hu.nevermind.app.RoutingTest.hack$f(this));
-            },
-            tests: function () {
-              _.hu.nevermind.common.given_h3u0vh$('in any state', _.hu.nevermind.app.RoutingTest.tests$f);
-            }
-          }, /** @lends _.hu.nevermind.app.RoutingTest */ {
-            hack$f: function (this$RoutingTest) {
-              return function (assert) {
-                this$RoutingTest.tests();
-                _.hu.nevermind.common.runFirstGiven_za3rmp$(assert);
-              };
-            },
-            f: function () {
-              this.assertTrue_6taknv$($('#configScreen').size() === 0);
-            },
-            f_0: function () {
-              this.assertTrue_6taknv$(Kotlin.equals($('#configScreenNavItem').hasClass('active'), false));
-            },
-            f_1: function () {
-              window.location.hash = _.Path.root;
-              this.it_e6z94m$('should not render KeyValue screen', _.hu.nevermind.app.RoutingTest.f);
-              this.it_e6z94m$('should not make the KeyValue menupoint active', _.hu.nevermind.app.RoutingTest.f_0);
-            },
-            f_2: function () {
-              this.assertTrue_6taknv$($('#configScreen').size() === 1);
-            },
-            f_3: function () {
-              this.assertTrue_6taknv$($('#configScreenNavItem').hasClass('active'));
-            },
-            f_4: function () {
-              window.location.hash = _.Path.keyValue.root;
-              this.it_e6z94m$('should be rendered KeyValue screen', _.hu.nevermind.app.RoutingTest.f_2);
-              this.it_e6z94m$('should make the KeyValue menupoint active', _.hu.nevermind.app.RoutingTest.f_3);
-            },
-            tests$f: function () {
-              this.on_82t0p5$('routing to the main screen', _.hu.nevermind.app.RoutingTest.f_1);
-              this.on_82t0p5$('routing to the KeyValue screen', _.hu.nevermind.app.RoutingTest.f_4);
-            }
-          }),
           Communicator: Kotlin.createClass(null, function (ajaxPoster) {
             this.ajaxPoster = ajaxPoster;
           }, /** @lends _.hu.nevermind.app.Communicator.prototype */ {
-            getKeyValuesFromServer_stx1lv$: function (callback) {
-              this.ajaxPoster.ajaxPost_i9h86c$('/getKeyValues', 'GET', void 0, void 0, void 0, false, _.hu.nevermind.app.Communicator.getKeyValuesFromServer_stx1lv$f(callback));
+            getEntitiesFromServer_e6xufl$: function (url, callback) {
+              this.ajaxPoster.ajaxPost_i9h86c$(url, 'GET', void 0, void 0, void 0, false, _.hu.nevermind.app.Communicator.getEntitiesFromServer_e6xufl$f(callback));
             },
-            saveKeyValue_ej3bb1$: function (entity, callback) {
-              this.ajaxPoster.ajaxPost_i9h86c$('/putKeyValue', void 0, JSON.stringify(entity), void 0, void 0, false, _.hu.nevermind.app.Communicator.saveKeyValue_ej3bb1$f(callback));
+            saveEntity_24w3xd$: function (url, entity, callback) {
+              this.ajaxPoster.ajaxPost_i9h86c$(url, void 0, JSON.stringify(entity), void 0, void 0, false, _.hu.nevermind.app.Communicator.saveEntity_24w3xd$f(callback));
+            },
+            deleteKeyValue_i2qwbi$: function (entity, callback) {
+              this.ajaxPoster.ajaxPost_i9h86c$(_.hu.nevermind.app.RestUrl.deleteKeyValue, void 0, entity.key, void 0, void 0, false, _.hu.nevermind.app.Communicator.deleteKeyValue_i2qwbi$f(callback));
             },
             authenticate_6bhr7k$: function (after) {
-              this.ajaxPoster.ajaxPost_i9h86c$('/user', 'GET', void 0, void 0, void 0, false, after);
+              this.ajaxPoster.ajaxPost_i9h86c$(_.hu.nevermind.app.RestUrl.authenticate, 'GET', void 0, void 0, void 0, false, after);
             }
           }, /** @lends _.hu.nevermind.app.Communicator */ {
-            getKeyValuesFromServer_stx1lv$f: function (callback) {
+            getEntitiesFromServer_e6xufl$f: function (callback) {
               return function (result) {
                 var tmp$0;
-                if (result.error != null) {
-                  throw new Kotlin.Exception(result.error);
-                }
-                var returnedConfigs = (tmp$0 = result.ok) != null ? tmp$0 : Kotlin.throwNPE();
-                var destination = new Kotlin.ArrayList(returnedConfigs.length);
-                var tmp$3, tmp$1, tmp$2;
-                tmp$3 = returnedConfigs, tmp$1 = tmp$3.length;
-                for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
-                  var item = tmp$3[tmp$2];
-                  destination.add_za3rmp$(new _.hu.nevermind.app.store.KeyValue(item.key, item.value));
-                }
-                callback(Kotlin.copyToArray(destination));
+                Kotlin.modules['stdlib'].kotlin.requireNotNull_za3rmp$(result.ok);
+                var returnedEntities = (tmp$0 = result.ok) != null ? tmp$0 : Kotlin.throwNPE();
+                callback(returnedEntities);
               };
             },
-            saveKeyValue_ej3bb1$f: function (callback) {
+            saveEntity_24w3xd$f: function (callback) {
+              return function (result) {
+                Kotlin.modules['stdlib'].kotlin.requireNotNull_za3rmp$(result.ok);
+                callback();
+              };
+            },
+            deleteKeyValue_i2qwbi$f: function (callback) {
               return function (result) {
                 var tmp$0;
                 callback((tmp$0 = result.ok) != null ? tmp$0 : Kotlin.throwNPE());
@@ -2391,6 +2424,40 @@
             }
           }),
           store: Kotlin.definePackage(function () {
+            this.AccountStore = Kotlin.createObject(function () {
+              return [_.com.github.andrewoma.flux.Store];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+              this.accounts_7oe6ph$ = Kotlin.modules['stdlib'].kotlin.collections.arrayListOf_9mqe4v$([]);
+              this.$editingAccount_qdaqx0$ = null;
+              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setLoggedInUser, _.hu.nevermind.app.store.AccountStore$f(this));
+              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setEditingAccount, _.hu.nevermind.app.store.AccountStore$f_0(this));
+              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.modifyAccount, _.hu.nevermind.app.store.AccountStore$f_1(this));
+            }, {
+              editingAccount: {
+                get: function () {
+                  return this.$editingAccount_qdaqx0$;
+                },
+                set: function (editingAccount) {
+                  this.$editingAccount_qdaqx0$ = editingAccount;
+                }
+              },
+              accounts: function () {
+                return this.accounts_7oe6ph$;
+              },
+              account_61zpoe$: function (username) {
+                var $receiver = this.accounts();
+                var tmp$0;
+                tmp$0 = $receiver.iterator();
+                while (tmp$0.hasNext()) {
+                  var element = tmp$0.next();
+                  if (Kotlin.equals(element.username, Kotlin.modules['stdlib'].kotlin.text.orEmpty_pdl1w0$(username))) {
+                    return element;
+                  }
+                }
+                return null;
+              }
+            });
             this.RouterStore = Kotlin.createObject(function () {
               return [_.com.github.andrewoma.flux.Store];
             }, function $fun() {
@@ -2462,11 +2529,12 @@
               return [_.com.github.andrewoma.flux.Store];
             }, function $fun() {
               $fun.baseInitializer.call(this);
-              this.configs_pl3qvb$ = Kotlin.modules['stdlib'].kotlin.collections.arrayListOf_9mqe4v$([]);
+              this.keyValues_6s78i1$ = Kotlin.modules['stdlib'].kotlin.collections.arrayListOf_9mqe4v$([]);
               this.$editingKeyValue_ncr9eo$ = null;
-              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setLoggedInuser, _.hu.nevermind.app.store.KeyValueStore$f(this));
+              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setLoggedInUser, _.hu.nevermind.app.store.KeyValueStore$f(this));
               this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setEditingKeyValue, _.hu.nevermind.app.store.KeyValueStore$f_0(this));
               this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.modifyKeyValue, _.hu.nevermind.app.store.KeyValueStore$f_1(this));
+              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.deleteKeyValue, _.hu.nevermind.app.store.KeyValueStore$f_2(this));
             }, {
               editingKeyValue: {
                 get: function () {
@@ -2477,7 +2545,7 @@
                 }
               },
               keyValues: function () {
-                return this.configs_pl3qvb$;
+                return this.keyValues_6s78i1$;
               },
               keyValue_61zpoe$: function (key) {
                 var $receiver = this.keyValues();
@@ -2485,7 +2553,7 @@
                 tmp$0 = $receiver.iterator();
                 while (tmp$0.hasNext()) {
                   var element = tmp$0.next();
-                  if (Kotlin.equals(element.key, Kotlin.modules['stdlib'].kotlin.text.orEmpty_pdl1w0$(key))) {
+                  if (Kotlin.equals(element.key, key)) {
                     return element;
                   }
                 }
@@ -2496,56 +2564,159 @@
               return [_.com.github.andrewoma.flux.Store];
             }, function $fun() {
               $fun.baseInitializer.call(this);
-              this.loggedInUser_yzdszo$ = null;
-              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setLoggedInuser, _.hu.nevermind.app.store.LoggedInUserStore$f(this));
+              this.maybeLoggedInUser_og9640$ = null;
+              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setLoggedInUser, _.hu.nevermind.app.store.LoggedInUserStore$f(this));
             }, {
+              isLoggedIn: {
+                get: function () {
+                  return this.maybeLoggedInUser_og9640$ != null;
+                }
+              },
+              loggedInUser: {
+                get: function () {
+                  var tmp$0;
+                  return (tmp$0 = this.maybeLoggedInUser_og9640$) != null ? tmp$0 : Kotlin.throwNPE();
+                }
+              }
+            });
+          }, /** @lends _.hu.nevermind.app.store */ {
+            Role: Kotlin.createEnumClass(function () {
+              return [Kotlin.Enum];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+            }, function () {
+              return {
+                ROLE_ADMIN: new _.hu.nevermind.app.store.Role(),
+                ROLE_USER: new _.hu.nevermind.app.store.Role()
+              };
+            }),
+            Account: Kotlin.createClass(null, function (username, disabled, roles, plainPassword) {
+              if (username === void 0)
+                username = '';
+              if (disabled === void 0)
+                disabled = false;
+              this.username = username;
+              this.disabled = disabled;
+              this.roles = roles;
+              this.plainPassword = plainPassword;
+            }, /** @lends _.hu.nevermind.app.store.Account.prototype */ {
               hasRole_4w2bpb$: function (role) {
-                var tmp$0;
-                return Kotlin.modules['stdlib'].kotlin.collections.contains_ke19y6$(((tmp$0 = this.loggedInUser_yzdszo$) != null ? tmp$0 : Kotlin.throwNPE()).roles, role);
+                return this.roles.contains_za3rmp$(role);
               },
               hasAnyRoles_cgl70t$: function (roles) {
-                var predicate = _.hu.nevermind.app.store.hasAnyRoles_cgl70t$f(this);
                 var tmp$0, tmp$1, tmp$2;
                 tmp$0 = roles, tmp$1 = tmp$0.length;
                 for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
                   var element = tmp$0[tmp$2];
-                  if (predicate(element)) {
+                  if (Kotlin.modules['stdlib'].kotlin.collections.contains_ke19y6$(roles, element)) {
                     return true;
                   }
                 }
                 return false;
               },
               hasAllRoles_cgl70t$: function (roles) {
-                var predicate = _.hu.nevermind.app.store.hasAllRoles_cgl70t$f(this);
                 var tmp$0, tmp$1, tmp$2;
                 tmp$0 = roles, tmp$1 = tmp$0.length;
                 for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
                   var element = tmp$0[tmp$2];
-                  if (!predicate(element)) {
+                  if (!Kotlin.modules['stdlib'].kotlin.collections.contains_ke19y6$(roles, element)) {
                     return false;
                   }
                 }
                 return true;
               },
-              isLoggedIn: {
-                get: function () {
-                  return this.loggedInUser_yzdszo$ != null;
-                }
+              component1: function () {
+                return this.username;
               },
-              username: {
-                get: function () {
-                  var tmp$0;
-                  return ((tmp$0 = this.loggedInUser_yzdszo$) != null ? tmp$0 : Kotlin.throwNPE()).name;
-                }
+              component2: function () {
+                return this.disabled;
               },
-              roles: {
-                get: function () {
-                  var tmp$0;
-                  return ((tmp$0 = this.loggedInUser_yzdszo$) != null ? tmp$0 : Kotlin.throwNPE()).roles;
-                }
+              component3: function () {
+                return this.roles;
+              },
+              component4: function () {
+                return this.plainPassword;
+              },
+              copy_uye4cd$: function (username, disabled, roles, plainPassword) {
+                return new _.hu.nevermind.app.store.Account(username === void 0 ? this.username : username, disabled === void 0 ? this.disabled : disabled, roles === void 0 ? this.roles : roles, plainPassword === void 0 ? this.plainPassword : plainPassword);
+              },
+              toString: function () {
+                return 'Account(username=' + Kotlin.toString(this.username) + (', disabled=' + Kotlin.toString(this.disabled)) + (', roles=' + Kotlin.toString(this.roles)) + (', plainPassword=' + Kotlin.toString(this.plainPassword)) + ')';
+              },
+              hashCode: function () {
+                var result = 0;
+                result = result * 31 + Kotlin.hashCode(this.username) | 0;
+                result = result * 31 + Kotlin.hashCode(this.disabled) | 0;
+                result = result * 31 + Kotlin.hashCode(this.roles) | 0;
+                result = result * 31 + Kotlin.hashCode(this.plainPassword) | 0;
+                return result;
+              },
+              equals_za3rmp$: function (other) {
+                return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.username, other.username) && Kotlin.equals(this.disabled, other.disabled) && Kotlin.equals(this.roles, other.roles) && Kotlin.equals(this.plainPassword, other.plainPassword)))));
               }
-            });
-          }, /** @lends _.hu.nevermind.app.store */ {
+            }, /** @lends _.hu.nevermind.app.store.Account */ {
+            }),
+            f_1: function (this$AccountStore) {
+              return function (returnedArray) {
+                var destination = new Kotlin.ArrayList(returnedArray.length);
+                var tmp$0, tmp$1, tmp$2;
+                tmp$0 = returnedArray, tmp$1 = tmp$0.length;
+                for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
+                  var item = tmp$0[tmp$2];
+                  destination.add_za3rmp$(new _.hu.nevermind.app.store.Account(item.username, item.disabled, item.roles, ''));
+                }
+                var newAccounts = Kotlin.copyToArray(destination);
+                this$AccountStore.accounts_7oe6ph$ = Kotlin.modules['stdlib'].kotlin.collections.toArrayList_eg9ybj$(newAccounts);
+              };
+            },
+            AccountStore$f: function (this$AccountStore) {
+              return function (loggedInUser) {
+                if (loggedInUser == null) {
+                  this$AccountStore.accounts_7oe6ph$ = Kotlin.modules['stdlib'].kotlin.collections.arrayListOf_9mqe4v$([]);
+                }
+                 else {
+                  _.hu.nevermind.app.communicator.getEntitiesFromServer_e6xufl$(_.hu.nevermind.app.RestUrl.getAccountsFromServer, _.hu.nevermind.app.store.f_1(this$AccountStore));
+                }
+                this$AccountStore.emitChange();
+              };
+            },
+            AccountStore$f_0: function (this$AccountStore) {
+              return function (account) {
+                if (!Kotlin.equals(account, this$AccountStore.editingAccount)) {
+                  this$AccountStore.editingAccount = account;
+                  this$AccountStore.emitChange();
+                }
+              };
+            },
+            f_3: function (this$AccountStore, modifiedAccount) {
+              return function () {
+                var index;
+                indexOfFirst_rw062o$break: {
+                  var tmp$0, tmp$1, tmp$2, tmp$3;
+                  tmp$0 = Kotlin.modules['stdlib'].kotlin.collections.get_indices_4m3c68$(this$AccountStore.accounts_7oe6ph$), tmp$1 = tmp$0.start, tmp$2 = tmp$0.end, tmp$3 = tmp$0.increment;
+                  for (var index_0 = tmp$1; index_0 <= tmp$2; index_0 += tmp$3) {
+                    var it = this$AccountStore.accounts_7oe6ph$.get_za3lpa$(index_0);
+                    if (Kotlin.equals(it.username, modifiedAccount.username)) {
+                      index = index_0;
+                      break indexOfFirst_rw062o$break;
+                    }
+                  }
+                  index = -1;
+                }
+                if (index === -1) {
+                  this$AccountStore.accounts_7oe6ph$.add_za3rmp$(modifiedAccount);
+                }
+                 else {
+                  this$AccountStore.accounts_7oe6ph$.set_vux3hl$(index, modifiedAccount);
+                }
+                this$AccountStore.emitChange();
+              };
+            },
+            AccountStore$f_1: function (this$AccountStore) {
+              return function (modifiedAccount) {
+                _.hu.nevermind.app.communicator.saveEntity_24w3xd$(_.hu.nevermind.app.RestUrl.saveAccount, modifiedAccount, _.hu.nevermind.app.store.f_3(this$AccountStore, modifiedAccount));
+              };
+            },
             RouterStore$f: function (this$RouterStore) {
               return function (it) {
                 this$RouterStore.path = window.location.hash.substring(1);
@@ -2557,6 +2728,97 @@
                 return this$RouterStore.match_7srmwi$(pattern.first, pattern.second);
               };
             },
+            RouterStoreTest: Kotlin.createClass(null, null, /** @lends _.hu.nevermind.app.store.RouterStoreTest.prototype */ {
+              hack: function () {
+                Kotlin.modules['stdlib'].kotlin.test.assertTrue_8kj6y5$(true);
+                QUnit.test('RouterStoreTest', _.hu.nevermind.app.store.RouterStoreTest.hack$f(this));
+              },
+              tests: function () {
+                var matchResult = {v: ''};
+                var runMatcher = _.hu.nevermind.app.store.RouterStoreTest.tests$f(matchResult);
+                _.hu.nevermind.common.given_h3u0vh$('the URL = root', _.hu.nevermind.app.store.RouterStoreTest.tests$f_0(runMatcher, matchResult));
+                _.hu.nevermind.common.given_h3u0vh$('the URL = login', _.hu.nevermind.app.store.RouterStoreTest.tests$f_1(runMatcher, matchResult));
+                _.hu.nevermind.common.given_h3u0vh$('the URL = login', _.hu.nevermind.app.store.RouterStoreTest.tests$f_2(runMatcher, matchResult));
+              }
+            }, /** @lends _.hu.nevermind.app.store.RouterStoreTest */ {
+              hack$f: function (this$RouterStoreTest) {
+                return function (assert) {
+                  this$RouterStoreTest.tests();
+                  _.hu.nevermind.common.runFirstGiven_za3rmp$(assert);
+                };
+              },
+              f: function (matchResult) {
+                return function (params) {
+                  matchResult.v = 'login';
+                };
+              },
+              f_0: function (matchResult) {
+                return function (params) {
+                  matchResult.v = 'keyValue - ' + Kotlin.modules['stdlib'].kotlin.text.orEmpty_pdl1w0$(params.get_za3rmp$('editedKeyValueId'));
+                };
+              },
+              f_1: function (matchResult) {
+                return function () {
+                  matchResult.v = 'other';
+                };
+              },
+              tests$f: function (matchResult) {
+                return function () {
+                  _.hu.nevermind.app.store.RouterStore.match_98xyu1$([Kotlin.modules['stdlib'].kotlin.to_l1ob02$('login/', _.hu.nevermind.app.store.RouterStoreTest.f(matchResult)), Kotlin.modules['stdlib'].kotlin.to_l1ob02$('keyValue/?editedKeyValueId', _.hu.nevermind.app.store.RouterStoreTest.f_0(matchResult))], _.hu.nevermind.app.store.RouterStoreTest.f_1(matchResult));
+                };
+              },
+              f_2: function (matchResult) {
+                return function () {
+                  this.assertEquals_wn2jw4$('other', matchResult.v);
+                };
+              },
+              f_3: function (runMatcher, matchResult) {
+                return function () {
+                  runMatcher();
+                  this.it_e6z94m$('should not match', _.hu.nevermind.app.store.RouterStoreTest.f_2(matchResult));
+                };
+              },
+              tests$f_0: function (runMatcher, matchResult) {
+                return function () {
+                  window.location.hash = _.Path.root;
+                  this.on_82t0p5$('routing to the main screen', _.hu.nevermind.app.store.RouterStoreTest.f_3(runMatcher, matchResult));
+                };
+              },
+              f_4: function (matchResult) {
+                return function () {
+                  this.assertEquals_wn2jw4$('login', matchResult.v);
+                };
+              },
+              f_5: function (runMatcher, matchResult) {
+                return function () {
+                  runMatcher();
+                  this.it_e6z94m$('should match to login', _.hu.nevermind.app.store.RouterStoreTest.f_4(matchResult));
+                };
+              },
+              tests$f_1: function (runMatcher, matchResult) {
+                return function () {
+                  window.location.hash = _.Path.login;
+                  this.on_82t0p5$('routing to the login screen', _.hu.nevermind.app.store.RouterStoreTest.f_5(runMatcher, matchResult));
+                };
+              },
+              f_6: function (matchResult) {
+                return function () {
+                  this.assertEquals_wn2jw4$('keyValue - 69', matchResult.v);
+                };
+              },
+              f_7: function (runMatcher, matchResult) {
+                return function () {
+                  runMatcher();
+                  this.it_e6z94m$('should match to login', _.hu.nevermind.app.store.RouterStoreTest.f_6(matchResult));
+                };
+              },
+              tests$f_2: function (runMatcher, matchResult) {
+                return function () {
+                  window.location.hash = _.Path.keyValue.withOpenedEditorModal('69');
+                  this.on_82t0p5$('routing to the keyValue editor screen', _.hu.nevermind.app.store.RouterStoreTest.f_7(runMatcher, matchResult));
+                };
+              }
+            }),
             KeyValue: Kotlin.createClass(null, function (key, value) {
               this.key = key;
               this.value = value;
@@ -2583,37 +2845,47 @@
                 return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.key, other.key) && Kotlin.equals(this.value, other.value)))));
               }
             }),
-            f: function (this$KeyValueStore) {
-              return function (newConfigs) {
-                this$KeyValueStore.configs_pl3qvb$ = Kotlin.modules['stdlib'].kotlin.collections.toArrayList_eg9ybj$(newConfigs);
+            f_6: function (this$KeyValueStore) {
+              return function (returnedArray) {
+                var destination = new Kotlin.ArrayList(returnedArray.length);
+                var tmp$0, tmp$1, tmp$2;
+                tmp$0 = returnedArray, tmp$1 = tmp$0.length;
+                for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
+                  var item = tmp$0[tmp$2];
+                  destination.add_za3rmp$(new _.hu.nevermind.app.store.KeyValue(item.key, item.value));
+                }
+                var newConfigs = Kotlin.copyToArray(destination);
+                this$KeyValueStore.keyValues_6s78i1$ = Kotlin.modules['stdlib'].kotlin.collections.toArrayList_eg9ybj$(newConfigs);
               };
             },
             KeyValueStore$f: function (this$KeyValueStore) {
-              return function (loggedInuser) {
-                if (loggedInuser == null) {
-                  this$KeyValueStore.configs_pl3qvb$ = Kotlin.modules['stdlib'].kotlin.collections.arrayListOf_9mqe4v$([]);
+              return function (loggedInUser) {
+                if (loggedInUser == null) {
+                  this$KeyValueStore.keyValues_6s78i1$ = Kotlin.modules['stdlib'].kotlin.collections.arrayListOf_9mqe4v$([]);
                 }
                  else {
-                  _.hu.nevermind.app.communicator.getKeyValuesFromServer_stx1lv$(_.hu.nevermind.app.store.f(this$KeyValueStore));
+                  _.hu.nevermind.app.communicator.getEntitiesFromServer_e6xufl$(_.hu.nevermind.app.RestUrl.getKeyValuesFromServer, _.hu.nevermind.app.store.f_6(this$KeyValueStore));
                 }
                 this$KeyValueStore.emitChange();
               };
             },
             KeyValueStore$f_0: function (this$KeyValueStore) {
               return function (keyValue) {
-                this$KeyValueStore.editingKeyValue = keyValue;
-                this$KeyValueStore.emitChange();
+                if (!Kotlin.equals(keyValue, this$KeyValueStore.editingKeyValue)) {
+                  this$KeyValueStore.editingKeyValue = keyValue;
+                  this$KeyValueStore.emitChange();
+                }
               };
             },
-            f_1: function (this$KeyValueStore, modifiedConfig) {
-              return function (it) {
+            f_8: function (this$KeyValueStore, modifiedKeyValue) {
+              return function () {
                 var index;
                 indexOfFirst_rw062o$break: {
                   var tmp$0, tmp$1, tmp$2, tmp$3;
-                  tmp$0 = Kotlin.modules['stdlib'].kotlin.collections.get_indices_4m3c68$(this$KeyValueStore.configs_pl3qvb$), tmp$1 = tmp$0.start, tmp$2 = tmp$0.end, tmp$3 = tmp$0.increment;
+                  tmp$0 = Kotlin.modules['stdlib'].kotlin.collections.get_indices_4m3c68$(this$KeyValueStore.keyValues_6s78i1$), tmp$1 = tmp$0.start, tmp$2 = tmp$0.end, tmp$3 = tmp$0.increment;
                   for (var index_0 = tmp$1; index_0 <= tmp$2; index_0 += tmp$3) {
-                    var it_0 = this$KeyValueStore.configs_pl3qvb$.get_za3lpa$(index_0);
-                    if (Kotlin.equals(it_0.key, modifiedConfig.key)) {
+                    var it = this$KeyValueStore.keyValues_6s78i1$.get_za3lpa$(index_0);
+                    if (Kotlin.equals(it.key, modifiedKeyValue.key)) {
                       index = index_0;
                       break indexOfFirst_rw062o$break;
                     }
@@ -2621,86 +2893,70 @@
                   index = -1;
                 }
                 if (index === -1) {
-                  this$KeyValueStore.configs_pl3qvb$.add_za3rmp$(modifiedConfig);
+                  this$KeyValueStore.keyValues_6s78i1$.add_za3rmp$(modifiedKeyValue);
                 }
                  else {
-                  this$KeyValueStore.configs_pl3qvb$.set_vux3hl$(index, modifiedConfig);
+                  this$KeyValueStore.keyValues_6s78i1$.set_vux3hl$(index, modifiedKeyValue);
                 }
                 this$KeyValueStore.emitChange();
               };
             },
             KeyValueStore$f_1: function (this$KeyValueStore) {
-              return function (modifiedConfig) {
-                _.hu.nevermind.app.communicator.saveKeyValue_ej3bb1$(modifiedConfig, _.hu.nevermind.app.store.f_1(this$KeyValueStore, modifiedConfig));
+              return function (modifiedKeyValue) {
+                _.hu.nevermind.app.communicator.saveEntity_24w3xd$(_.hu.nevermind.app.RestUrl.saveKeyValue, modifiedKeyValue, _.hu.nevermind.app.store.f_8(this$KeyValueStore, modifiedKeyValue));
               };
             },
-            Role: Kotlin.createEnumClass(function () {
-              return [Kotlin.Enum];
-            }, function $fun() {
-              $fun.baseInitializer.call(this);
-            }, function () {
-              return {
-                Admin: new _.hu.nevermind.app.store.Role(),
-                User: new _.hu.nevermind.app.store.Role()
+            f_10: function (this$KeyValueStore, deletingKeyValue) {
+              return function (it) {
+                var index;
+                indexOfFirst_rw062o$break: {
+                  var tmp$0, tmp$1, tmp$2, tmp$3;
+                  tmp$0 = Kotlin.modules['stdlib'].kotlin.collections.get_indices_4m3c68$(this$KeyValueStore.keyValues_6s78i1$), tmp$1 = tmp$0.start, tmp$2 = tmp$0.end, tmp$3 = tmp$0.increment;
+                  for (var index_0 = tmp$1; index_0 <= tmp$2; index_0 += tmp$3) {
+                    var it_0 = this$KeyValueStore.keyValues_6s78i1$.get_za3lpa$(index_0);
+                    if (Kotlin.equals(it_0.key, deletingKeyValue.key)) {
+                      index = index_0;
+                      break indexOfFirst_rw062o$break;
+                    }
+                  }
+                  index = -1;
+                }
+                if (index > -1) {
+                  this$KeyValueStore.keyValues_6s78i1$.removeAt_za3lpa$(index);
+                  this$KeyValueStore.emitChange();
+                }
               };
-            }),
-            LoggedInUser: Kotlin.createClass(null, function (name, roles) {
-              this.name = name;
-              this.roles = roles;
-            }, /** @lends _.hu.nevermind.app.store.LoggedInUser.prototype */ {
-              component1: function () {
-                return this.name;
-              },
-              component2: function () {
-                return this.roles;
-              },
-              copy_d8unq9$: function (name, roles) {
-                return new _.hu.nevermind.app.store.LoggedInUser(name === void 0 ? this.name : name, roles === void 0 ? this.roles : roles);
-              },
-              toString: function () {
-                return 'LoggedInUser(name=' + Kotlin.toString(this.name) + (', roles=' + Kotlin.toString(this.roles)) + ')';
-              },
-              hashCode: function () {
-                var result = 0;
-                result = result * 31 + Kotlin.hashCode(this.name) | 0;
-                result = result * 31 + Kotlin.hashCode(this.roles) | 0;
-                return result;
-              },
-              equals_za3rmp$: function (other) {
-                return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.name, other.name) && Kotlin.equals(this.roles, other.roles)))));
-              }
-            }),
+            },
+            KeyValueStore$f_2: function (this$KeyValueStore) {
+              return function (deletingKeyValue) {
+                _.hu.nevermind.app.communicator.deleteKeyValue_i2qwbi$(deletingKeyValue, _.hu.nevermind.app.store.f_10(this$KeyValueStore, deletingKeyValue));
+              };
+            },
             LoggedInUserStore$f: function (this$LoggedInUserStore) {
               return function (newLoggedInUser) {
-                this$LoggedInUserStore.loggedInUser_yzdszo$ = newLoggedInUser;
+                this$LoggedInUserStore.maybeLoggedInUser_og9640$ = newLoggedInUser;
                 this$LoggedInUserStore.emitChange();
-              };
-            },
-            hasAnyRoles_cgl70t$f: function (this$LoggedInUserStore) {
-              return function (it) {
-                var tmp$0;
-                return Kotlin.modules['stdlib'].kotlin.collections.contains_ke19y6$(((tmp$0 = this$LoggedInUserStore.loggedInUser_yzdszo$) != null ? tmp$0 : Kotlin.throwNPE()).roles, it);
-              };
-            },
-            hasAllRoles_cgl70t$f: function (this$LoggedInUserStore) {
-              return function (it) {
-                var tmp$0;
-                return Kotlin.modules['stdlib'].kotlin.collections.contains_ke19y6$(((tmp$0 = this$LoggedInUserStore.loggedInUser_yzdszo$) != null ? tmp$0 : Kotlin.throwNPE()).roles, it);
               };
             }
           }),
-          keyvalue: Kotlin.definePackage(function () {
-            this.NodeIds = Kotlin.createObject(null, function () {
-              this.screenId = 'configScreen';
-              this.addButton = 'configScreen_addButton';
-              this.row = _.hu.nevermind.app.keyvalue.row(this);
-              this.modal = _.hu.nevermind.app.keyvalue.modal();
+          screen: Kotlin.definePackage(function () {
+            this.AccountScreenIds = Kotlin.createObject(null, function () {
+              this.screenId = 'accountScreen';
+              this.addButton = 'accountScreen_addButton';
+              this.table = _.hu.nevermind.app.screen.table();
+              this.modal = _.hu.nevermind.app.screen.modal();
             });
-          }, /** @lends _.hu.nevermind.app.keyvalue */ {
+            this.KeyValueScreenIds = Kotlin.createObject(null, function () {
+              this.screenId = 'keyValueScreen';
+              this.addButton = 'keyValueScreen_addButton';
+              this.table = _.hu.nevermind.app.screen.table_0();
+              this.modal = _.hu.nevermind.app.screen.modal_0();
+            });
+          }, /** @lends _.hu.nevermind.app.screen */ {
             LoginScreenState: Kotlin.createClass(null, function (username, password) {
               this.username = username;
               this.password = password;
-            }, /** @lends _.hu.nevermind.app.keyvalue.LoginScreenState.prototype */ {
+            }, /** @lends _.hu.nevermind.app.screen.LoginScreenState.prototype */ {
               component1: function () {
                 return this.username;
               },
@@ -2708,7 +2964,7 @@
                 return this.password;
               },
               copy: function (username, password) {
-                return new _.hu.nevermind.app.keyvalue.LoginScreenState(username === void 0 ? this.username : username, password === void 0 ? this.password : password);
+                return new _.hu.nevermind.app.screen.LoginScreenState(username === void 0 ? this.username : username, password === void 0 ? this.password : password);
               },
               toString: function () {
                 return 'LoginScreenState(username=' + Kotlin.toString(this.username) + (', password=' + Kotlin.toString(this.password)) + ')';
@@ -2727,17 +2983,17 @@
               return [_.com.github.andrewoma.react.ComponentSpec];
             }, function $fun() {
               $fun.baseInitializer.call(this);
-            }, /** @lends _.hu.nevermind.app.keyvalue.LoginScreen.prototype */ {
+            }, /** @lends _.hu.nevermind.app.screen.LoginScreen.prototype */ {
               initialState: function () {
-                return new _.hu.nevermind.app.keyvalue.LoginScreenState('', '');
+                return new _.hu.nevermind.app.screen.LoginScreenState('', '');
               },
               render_sx5o3u$: function ($receiver) {
-                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$($receiver, _.hu.nevermind.app.keyvalue.LoginScreen.render_sx5o3u$f, _.hu.nevermind.app.keyvalue.LoginScreen.render_sx5o3u$f_0(this));
+                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$($receiver, _.hu.nevermind.app.screen.LoginScreen.render_sx5o3u$f, _.hu.nevermind.app.screen.LoginScreen.render_sx5o3u$f_0(this));
               }
-            }, /** @lends _.hu.nevermind.app.keyvalue.LoginScreen */ {
+            }, /** @lends _.hu.nevermind.app.screen.LoginScreen */ {
               object_initializer$: function () {
                 return Kotlin.createObject(null, function () {
-                  this.factory = _.com.github.andrewoma.react.react.createFactory_oqkx6a$(new _.hu.nevermind.app.keyvalue.LoginScreen());
+                  this.factory = _.com.github.andrewoma.react.react.createFactory_oqkx6a$(new _.hu.nevermind.app.screen.LoginScreen());
                 });
               },
               render_sx5o3u$f: function () {
@@ -2768,7 +3024,7 @@
                   this.placeholder = 'Username';
                   this.value = this$LoginScreen.state.username;
                   this.name = 'username';
-                  this.onChange = _.hu.nevermind.app.keyvalue.LoginScreen.f_2(this$LoginScreen);
+                  this.onChange = _.hu.nevermind.app.screen.LoginScreen.f_2(this$LoginScreen);
                   var errorMessage = Kotlin.modules['stdlib'].kotlin.collections.joinToString_sdec0h$(_.hu.nevermind.app.validate_pn0x65$(this$LoginScreen.state.username, [new _.hu.nevermind.app.Min(3), new _.hu.nevermind.app.Max(20)]), '\n');
                   if (Kotlin.modules['stdlib'].kotlin.text.isNotEmpty_gw00vq$(errorMessage)) {
                     this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Error;
@@ -2787,7 +3043,7 @@
                   this.placeholder = 'Password';
                   this.value = this$LoginScreen.state.password;
                   this.name = 'password';
-                  this.onChange = _.hu.nevermind.app.keyvalue.LoginScreen.f_4(this$LoginScreen);
+                  this.onChange = _.hu.nevermind.app.screen.LoginScreen.f_4(this$LoginScreen);
                   var errorMessage = Kotlin.modules['stdlib'].kotlin.collections.joinToString_sdec0h$(_.hu.nevermind.app.validate_pn0x65$(this$LoginScreen.state.password, [new _.hu.nevermind.app.Min(5), new _.hu.nevermind.app.Max(20)]), '\n');
                   if (Kotlin.modules['stdlib'].kotlin.text.isNotEmpty_gw00vq$(errorMessage)) {
                     this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Error;
@@ -2806,80 +3062,637 @@
               },
               f_8: function (this$LoginScreen) {
                 return function () {
-                  _.com.github.andrewoma.react.h1_w5u0dm$(this, void 0, _.hu.nevermind.app.keyvalue.LoginScreen.f_1);
-                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.keyvalue.LoginScreen.f_3(this$LoginScreen));
-                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.keyvalue.LoginScreen.f_5(this$LoginScreen));
-                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.keyvalue.LoginScreen.f_6, _.hu.nevermind.app.keyvalue.LoginScreen.f_7);
+                  _.com.github.andrewoma.react.h1_w5u0dm$(this, void 0, _.hu.nevermind.app.screen.LoginScreen.f_1);
+                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.LoginScreen.f_3(this$LoginScreen));
+                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.LoginScreen.f_5(this$LoginScreen));
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.LoginScreen.f_6, _.hu.nevermind.app.screen.LoginScreen.f_7);
                 };
               },
               f_9: function (this$LoginScreen) {
                 return function () {
-                  _.com.github.andrewoma.react.form_aej7ls$(this, _.hu.nevermind.app.keyvalue.LoginScreen.f_0, _.hu.nevermind.app.keyvalue.LoginScreen.f_8(this$LoginScreen));
+                  _.com.github.andrewoma.react.form_aej7ls$(this, _.hu.nevermind.app.screen.LoginScreen.f_0, _.hu.nevermind.app.screen.LoginScreen.f_8(this$LoginScreen));
                 };
               },
               f_10: function (this$LoginScreen) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.keyvalue.LoginScreen.f, _.hu.nevermind.app.keyvalue.LoginScreen.f_9(this$LoginScreen));
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.LoginScreen.f, _.hu.nevermind.app.screen.LoginScreen.f_9(this$LoginScreen));
                 };
               },
               render_sx5o3u$f_0: function (this$LoginScreen) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.keyvalue.LoginScreen.f_10(this$LoginScreen));
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.LoginScreen.f_10(this$LoginScreen));
                 };
               }
             }),
             loginScreen_sx5o3u$f: function (it) {
-              return _.hu.nevermind.app.keyvalue.LoginScreen.object.factory.invoke(new _.com.github.andrewoma.react.Ref(null));
+              return _.hu.nevermind.app.screen.LoginScreen.object.factory.invoke(new _.com.github.andrewoma.react.Ref(null));
             },
             loginScreen_sx5o3u$: function ($receiver) {
-              return $receiver.constructAndInsert_ad91at$(new _.com.github.andrewoma.react.Component(_.hu.nevermind.app.keyvalue.loginScreen_sx5o3u$f));
+              return $receiver.constructAndInsert_ad91at$(new _.com.github.andrewoma.react.Component(_.hu.nevermind.app.screen.loginScreen_sx5o3u$f));
             },
-            ModalResult: Kotlin.createEnumClass(function () {
-              return [Kotlin.Enum];
-            }, function $fun() {
-              $fun.baseInitializer.call(this);
-            }, function () {
-              return {
-                Save: new _.hu.nevermind.app.keyvalue.ModalResult(),
-                Close: new _.hu.nevermind.app.keyvalue.ModalResult()
-              };
-            }),
-            editButton$f: function (this$NodeIds) {
+            editButton$f: function (this$table) {
               return function (rowIndex) {
-                return this$NodeIds.screenId + '_editButton_' + rowIndex;
+                return this$table.id + '_editButton_' + rowIndex;
               };
             },
-            row: function (this$NodeIds) {
+            row: function (this$table) {
               return Kotlin.createObject(null, function () {
-                this.editButton = _.hu.nevermind.app.keyvalue.editButton$f(this$NodeIds);
+                this.editButton = _.hu.nevermind.app.screen.editButton$f(this$table);
+              });
+            },
+            table: function () {
+              return Kotlin.createObject(null, function () {
+                this.id = 'accountScreen_table';
+                this.row = _.hu.nevermind.app.screen.row(this);
               });
             },
             inputs: function () {
               return Kotlin.createObject(null, function () {
-                this.key = 'configScreen_modal_key';
-                this.value = 'configScreen_modal_value';
+                this.username = 'accountScreen_modal_username';
+                this.password = 'accountScreen_modal_password';
+                this.disabled = 'accountScreen_modal_disabled';
               });
             },
             buttons: function () {
               return Kotlin.createObject(null, function () {
-                this.save = 'configScreen_modal_saveButton';
-                this.close = 'configScreen_modal_closeButton';
+                this.save = 'accountScreen_modal_saveButton';
+                this.close = 'accountScreen_modal_closeButton';
               });
             },
             modal: function () {
               return Kotlin.createObject(null, function () {
-                this.id = 'configScreen_modal';
-                this.inputs = _.hu.nevermind.app.keyvalue.inputs();
-                this.buttons = _.hu.nevermind.app.keyvalue.buttons();
+                this.id = 'accountScreen_modal';
+                this.inputs = _.hu.nevermind.app.screen.inputs();
+                this.buttons = _.hu.nevermind.app.screen.buttons();
+              });
+            },
+            AccountScreen: Kotlin.createClass(function () {
+              return [_.com.github.andrewoma.react.ComponentSpec];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+            }, /** @lends _.hu.nevermind.app.screen.AccountScreen.prototype */ {
+              componentDidMount: function () {
+                _.hu.nevermind.app.store.AccountStore.addChangeListener_o7wwlr$(this, _.hu.nevermind.app.screen.AccountScreen.componentDidMount$f(this));
+              },
+              componentWillUnmount: function () {
+                _.hu.nevermind.app.store.AccountStore.removeListener_za3rmp$(this);
+              },
+              render_sx5o3u$: function ($receiver) {
+                var accounts = _.hu.nevermind.app.store.AccountStore.accounts();
+                var editingAccount = _.hu.nevermind.app.store.AccountStore.editingAccount;
+                var rowIndex = {v: 0};
+                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$($receiver, _.hu.nevermind.app.screen.AccountScreen.render_sx5o3u$f, _.hu.nevermind.app.screen.AccountScreen.render_sx5o3u$f_0(accounts, rowIndex, editingAccount));
+              }
+            }, /** @lends _.hu.nevermind.app.screen.AccountScreen */ {
+              object_initializer$: function () {
+                return Kotlin.createObject(null, function () {
+                  this.factory = _.com.github.andrewoma.react.react.createFactory_oqkx6a$(new _.hu.nevermind.app.screen.AccountScreen());
+                });
+              },
+              componentDidMount$f: function (this$AccountScreen) {
+                return function () {
+                  this$AccountScreen.forceUpdate();
+                };
+              },
+              render_sx5o3u$f: function () {
+                this.id = _.hu.nevermind.app.screen.AccountScreenIds.screenId;
+              },
+              f: function (it) {
+                _.hu.nevermind.app.Actions.setEditingAccount.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.Account('', false, Kotlin.modules['stdlib'].kotlin.collections.arrayListOf_9mqe4v$([]), ''));
+              },
+              f_0: function () {
+                this.id = _.hu.nevermind.app.screen.AccountScreenIds.addButton;
+                this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Primary;
+                this.onClick = _.hu.nevermind.app.screen.AccountScreen.f;
+              },
+              f_1: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Hozz\xE1ad\xE1s');
+              },
+              f_2: function () {
+                this.md = 10;
+              },
+              f_3: function (accounts) {
+                return function () {
+                  this.data = Kotlin.copyToArray(accounts);
+                  this.hover = true;
+                  this.selectRow = new _.hu.nevermind.reakt.bootstrap.table.SelectRowProp(_.hu.nevermind.reakt.bootstrap.table.SelectionMode.radio, true, void 0, void 0, void 0, void 0, void 0, true);
+                  this.search = true;
+                };
+              },
+              f_4: function () {
+                this.bsSize = _.hu.nevermind.reakt.bootstrap.BsSize.ExtraSmall;
+              },
+              f_5: function (account) {
+                return function (it) {
+                  window.location.hash = _.Path.account.withOpenedEditorModal(account.username);
+                };
+              },
+              f_6: function (rowIndex, account) {
+                return function () {
+                  this.id = _.hu.nevermind.app.screen.AccountScreenIds.table.row.editButton(rowIndex.v);
+                  this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Primary;
+                  this.onClick = _.hu.nevermind.app.screen.AccountScreen.f_5(account);
+                };
+              },
+              f_7: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Szerkeszt\xE9s');
+              },
+              f_8: function (rowIndex, account) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.AccountScreen.f_6(rowIndex, account), _.hu.nevermind.app.screen.AccountScreen.f_7);
+                };
+              },
+              f_9: function (rowIndex, account) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, _.hu.nevermind.app.screen.AccountScreen.f_4, _.hu.nevermind.app.screen.AccountScreen.f_8(rowIndex, account));
+                };
+              },
+              f_10: function (rowIndex) {
+                return function (cell, account) {
+                  return _.hu.nevermind.reakt.bootstrap.createReactElement_i41a89$(_.hu.nevermind.app.screen.AccountScreen.f_9(rowIndex, account));
+                };
+              },
+              f_11: function (rowIndex) {
+                return function () {
+                  this.width = '50';
+                  this.dataFormat = _.hu.nevermind.app.screen.AccountScreen.f_10(rowIndex);
+                };
+              },
+              f_12: function () {
+                this.isKey = true;
+                this.dataField = 'username';
+                this.width = '100';
+              },
+              f_13: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Username');
+              },
+              f_14: function (account) {
+                return function () {
+                  this.type = _.com.github.andrewoma.react.InputType.Checkbox;
+                  this.checked = account.disabled ? 'checked' : '';
+                  this.readOnly = true;
+                };
+              },
+              f_15: function (account) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.AccountScreen.f_14(account));
+                };
+              },
+              f_16: function (cell, account) {
+                return _.hu.nevermind.reakt.bootstrap.createReactElement_i41a89$(_.hu.nevermind.app.screen.AccountScreen.f_15(account));
+              },
+              f_17: function () {
+                this.width = '75';
+                this.dataFormat = _.hu.nevermind.app.screen.AccountScreen.f_16;
+              },
+              f_18: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Disabled');
+              },
+              f_19: function (rowIndex) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.AccountScreen.f_11(rowIndex));
+                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.AccountScreen.f_12, _.hu.nevermind.app.screen.AccountScreen.f_13);
+                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.AccountScreen.f_17, _.hu.nevermind.app.screen.AccountScreen.f_18);
+                };
+              },
+              f_20: function (accounts, rowIndex) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.table.bootstrapTable_b7jpzj$(this, _.hu.nevermind.app.screen.AccountScreen.f_3(accounts), _.hu.nevermind.app.screen.AccountScreen.f_19(rowIndex));
+                };
+              },
+              f_21: function (accounts, rowIndex) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountScreen.f_2, _.hu.nevermind.app.screen.AccountScreen.f_20(accounts, rowIndex));
+                };
+              },
+              closeModal: function (result, entity) {
+                if (result === _.hu.nevermind.app.screen.ModalResult.object.Save) {
+                  _.hu.nevermind.app.Actions.modifyAccount.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, entity != null ? entity : Kotlin.throwNPE());
+                }
+                _.hu.nevermind.app.Actions.setEditingAccount.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, null);
+                window.location.hash = _.Path.account.root;
+              },
+              render_sx5o3u$f_0: function (accounts, rowIndex, editingAccount) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.AccountScreen.f_0, _.hu.nevermind.app.screen.AccountScreen.f_1);
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.AccountScreen.f_21(accounts, rowIndex));
+                  if (editingAccount != null) {
+                    var closeModal = _.hu.nevermind.app.screen.AccountScreen.closeModal;
+                    _.hu.nevermind.app.screen.editorDialog(this, new _.hu.nevermind.app.screen.AccountEditorDialogProps(editingAccount, closeModal));
+                  }
+                };
+              }
+            }),
+            AccountEditorDialogProps: Kotlin.createClass(null, function (editedAccount, close) {
+              this.editedAccount = editedAccount;
+              this.close = close;
+            }, /** @lends _.hu.nevermind.app.screen.AccountEditorDialogProps.prototype */ {
+              component1: function () {
+                return this.editedAccount;
+              },
+              component2: function () {
+                return this.close;
+              },
+              copy_ixv1k$: function (editedAccount, close) {
+                return new _.hu.nevermind.app.screen.AccountEditorDialogProps(editedAccount === void 0 ? this.editedAccount : editedAccount, close === void 0 ? this.close : close);
+              },
+              toString: function () {
+                return 'AccountEditorDialogProps(editedAccount=' + Kotlin.toString(this.editedAccount) + (', close=' + Kotlin.toString(this.close)) + ')';
+              },
+              hashCode: function () {
+                var result = 0;
+                result = result * 31 + Kotlin.hashCode(this.editedAccount) | 0;
+                result = result * 31 + Kotlin.hashCode(this.close) | 0;
+                return result;
+              },
+              equals_za3rmp$: function (other) {
+                return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.editedAccount, other.editedAccount) && Kotlin.equals(this.close, other.close)))));
+              }
+            }),
+            AccountEditorDialogState: Kotlin.createClass(null, function (editedAccount) {
+              this.editedAccount = editedAccount;
+            }, /** @lends _.hu.nevermind.app.screen.AccountEditorDialogState.prototype */ {
+              component1: function () {
+                return this.editedAccount;
+              },
+              copy_eueooy$: function (editedAccount) {
+                return new _.hu.nevermind.app.screen.AccountEditorDialogState(editedAccount === void 0 ? this.editedAccount : editedAccount);
+              },
+              toString: function () {
+                return 'AccountEditorDialogState(editedAccount=' + Kotlin.toString(this.editedAccount) + ')';
+              },
+              hashCode: function () {
+                var result = 0;
+                result = result * 31 + Kotlin.hashCode(this.editedAccount) | 0;
+                return result;
+              },
+              equals_za3rmp$: function (other) {
+                return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.editedAccount, other.editedAccount))));
+              }
+            }),
+            AccountEditorDialog: Kotlin.createClass(function () {
+              return [_.com.github.andrewoma.react.ComponentSpec];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+            }, /** @lends _.hu.nevermind.app.screen.AccountEditorDialog.prototype */ {
+              componentDidMount: function () {
+                _.hu.nevermind.app.store.AccountStore.addChangeListener_o7wwlr$(this, _.hu.nevermind.app.screen.AccountEditorDialog.componentDidMount$f(this));
+              },
+              componentWillUnmount: function () {
+                _.hu.nevermind.app.store.AccountStore.removeListener_za3rmp$(this);
+              },
+              initialState: function () {
+                return new _.hu.nevermind.app.screen.AccountEditorDialogState(this.props.editedAccount);
+              },
+              updateEntity: function (event, updater) {
+                var value = event.currentTarget.value;
+                this.state = new _.hu.nevermind.app.screen.AccountEditorDialogState(updater(value));
+              },
+              render_sx5o3u$: function ($receiver) {
+                var account = this.state.editedAccount;
+                var errors = Kotlin.modules['stdlib'].kotlin.collections.hashMapOf_eoa9s7$([]);
+                this.fillWithErrors(errors);
+                _.hu.nevermind.reakt.bootstrap.bsModal_dslzk$($receiver, _.hu.nevermind.app.screen.AccountEditorDialog.render_sx5o3u$f(this), _.hu.nevermind.app.screen.AccountEditorDialog.render_sx5o3u$f_0(account, this, errors));
+              },
+              fillWithErrors: function (errors) {
+                var account = this.state.editedAccount;
+                var $receiver = [Kotlin.modules['stdlib'].kotlin.to_l1ob02$('username', account.username), Kotlin.modules['stdlib'].kotlin.to_l1ob02$('password', account.plainPassword)];
+                var tmp$0, tmp$1, tmp$2;
+                tmp$0 = $receiver, tmp$1 = tmp$0.length;
+                for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
+                  var element = tmp$0[tmp$2];
+                  var errorMessages = _.hu.nevermind.app.validate_pn0x65$(element.second, [new _.hu.nevermind.app.Min(3), new _.hu.nevermind.app.Max(100)]);
+                  if (Kotlin.modules['stdlib'].kotlin.collections.isNotEmpty_4m3c68$(errorMessages)) {
+                    errors.put_wn2jw4$(element.first, Kotlin.modules['stdlib'].kotlin.collections.joinToString_sdec0h$(errorMessages, '\n'));
+                  }
+                }
+              }
+            }, /** @lends _.hu.nevermind.app.screen.AccountEditorDialog */ {
+              object_initializer$: function () {
+                return Kotlin.createObject(null, function () {
+                  this.factory = _.com.github.andrewoma.react.react.createFactory_oqkx6a$(new _.hu.nevermind.app.screen.AccountEditorDialog());
+                });
+              },
+              componentDidMount$f: function (this$AccountEditorDialog) {
+                return function () {
+                  var newAccount = _.hu.nevermind.app.store.AccountStore.editingAccount;
+                  if (newAccount != null) {
+                    this$AccountEditorDialog.state = new _.hu.nevermind.app.screen.AccountEditorDialogState(newAccount.copy_uye4cd$());
+                  }
+                };
+              },
+              f: function (this$AccountEditorDialog) {
+                return function () {
+                  this$AccountEditorDialog.props.close(_.hu.nevermind.app.screen.ModalResult.object.Close, null);
+                };
+              },
+              render_sx5o3u$f: function (this$AccountEditorDialog) {
+                return function () {
+                  this.id = _.hu.nevermind.app.screen.AccountScreenIds.modal.id;
+                  this.show = true;
+                  this.onHide = _.hu.nevermind.app.screen.AccountEditorDialog.f(this$AccountEditorDialog);
+                };
+              },
+              f_0: function () {
+                this.closeButton = true;
+              },
+              f_1: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Szerkeszt\xE9s');
+              },
+              f_2: function () {
+                _.hu.nevermind.reakt.bootstrap.bsModalTitle_k848lm$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_1);
+              },
+              f_3: function () {
+                this.closeButton = true;
+              },
+              f_4: function () {
+                this.md = 12;
+              },
+              f_5: function () {
+                this.md = 4;
+              },
+              f_6: function (account) {
+                return function (value) {
+                  return account.copy_uye4cd$(value);
+                };
+              },
+              f_7: function (account, this$AccountEditorDialog) {
+                return function (it) {
+                  this$AccountEditorDialog.updateEntity(it, _.hu.nevermind.app.screen.AccountEditorDialog.f_6(account));
+                };
+              },
+              f_8: function (this$) {
+                return function (errorMessage) {
+                  this$.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Error;
+                  this$.help = errorMessage;
+                };
+              },
+              f_9: function (account, this$AccountEditorDialog, errors) {
+                return function () {
+                  var tmp$0;
+                  this.id = _.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.username;
+                  this.type = _.com.github.andrewoma.react.InputType.Text;
+                  this.label = 'Username';
+                  this.defaultValue = account.username;
+                  this.onChange = _.hu.nevermind.app.screen.AccountEditorDialog.f_7(account, this$AccountEditorDialog);
+                  (tmp$0 = errors.get_za3rmp$('username')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.screen.AccountEditorDialog.f_8(this)) : null;
+                };
+              },
+              f_10: function (account, this$AccountEditorDialog, errors) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_9(account, this$AccountEditorDialog, errors));
+                };
+              },
+              f_11: function () {
+                this.md = 4;
+              },
+              f_12: function (account) {
+                return function (value) {
+                  return account.copy_uye4cd$(void 0, void 0, void 0, value);
+                };
+              },
+              f_13: function (account, this$AccountEditorDialog) {
+                return function (it) {
+                  this$AccountEditorDialog.updateEntity(it, _.hu.nevermind.app.screen.AccountEditorDialog.f_12(account));
+                };
+              },
+              f_14: function (this$) {
+                return function (errorMessage) {
+                  this$.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Error;
+                  this$.help = errorMessage;
+                };
+              },
+              f_15: function (account, this$AccountEditorDialog, errors) {
+                return function () {
+                  var tmp$0;
+                  this.id = _.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.password;
+                  this.type = _.com.github.andrewoma.react.InputType.Password;
+                  this.label = 'Password';
+                  this.defaultValue = '';
+                  this.onChange = _.hu.nevermind.app.screen.AccountEditorDialog.f_13(account, this$AccountEditorDialog);
+                  (tmp$0 = errors.get_za3rmp$('password')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.screen.AccountEditorDialog.f_14(this)) : null;
+                };
+              },
+              f_16: function (account, this$AccountEditorDialog, errors) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_15(account, this$AccountEditorDialog, errors));
+                };
+              },
+              f_17: function () {
+                this.md = 4;
+              },
+              f_18: function (account) {
+                return function (value) {
+                  return account.copy_uye4cd$(void 0, Kotlin.equals(value, 'on'));
+                };
+              },
+              f_19: function (account, this$AccountEditorDialog) {
+                return function (it) {
+                  this$AccountEditorDialog.updateEntity(it, _.hu.nevermind.app.screen.AccountEditorDialog.f_18(account));
+                };
+              },
+              f_20: function (account, this$AccountEditorDialog) {
+                return function () {
+                  this.id = _.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.disabled;
+                  this.type = _.com.github.andrewoma.react.InputType.Checkbox;
+                  this.checked = account.disabled;
+                  this.label = 'Disabled';
+                  this.onChange = _.hu.nevermind.app.screen.AccountEditorDialog.f_19(account, this$AccountEditorDialog);
+                };
+              },
+              f_21: function (account, this$AccountEditorDialog) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_20(account, this$AccountEditorDialog));
+                };
+              },
+              f_22: function (account, this$AccountEditorDialog, errors) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_5, _.hu.nevermind.app.screen.AccountEditorDialog.f_10(account, this$AccountEditorDialog, errors));
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_11, _.hu.nevermind.app.screen.AccountEditorDialog.f_16(account, this$AccountEditorDialog, errors));
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_17, _.hu.nevermind.app.screen.AccountEditorDialog.f_21(account, this$AccountEditorDialog));
+                };
+              },
+              f_23: function () {
+                this.md = 4;
+              },
+              f_24: function (it) {
+                console.log(it);
+              },
+              f_25: function () {
+                this.type = _.com.github.andrewoma.react.InputType.Select;
+                this.onChange = _.hu.nevermind.app.screen.AccountEditorDialog.f_24;
+              },
+              f_26: function (account, role) {
+                return function () {
+                  this.selected = account.hasRole_4w2bpb$(role);
+                };
+              },
+              f_27: function (role) {
+                return function () {
+                  _.com.github.andrewoma.react.text_3pk7xh$(this, role.name);
+                };
+              },
+              f_28: function (account, this$) {
+                return function (role) {
+                  _.com.github.andrewoma.react.option_ouidv5$(this$, _.hu.nevermind.app.screen.AccountEditorDialog.f_26(account, role), _.hu.nevermind.app.screen.AccountEditorDialog.f_27(role));
+                };
+              },
+              f_29: function (account) {
+                return function () {
+                  var $receiver = _.hu.nevermind.app.store.Role.values();
+                  var action = _.hu.nevermind.app.screen.AccountEditorDialog.f_28(account, this);
+                  var tmp$0, tmp$1, tmp$2;
+                  tmp$0 = $receiver, tmp$1 = tmp$0.length;
+                  for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
+                    var element = tmp$0[tmp$2];
+                    action(element);
+                  }
+                };
+              },
+              f_30: function (account) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_25, _.hu.nevermind.app.screen.AccountEditorDialog.f_29(account));
+                };
+              },
+              f_31: function (account) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_23, _.hu.nevermind.app.screen.AccountEditorDialog.f_30(account));
+                };
+              },
+              f_32: function (account, this$AccountEditorDialog, errors) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_22(account, this$AccountEditorDialog, errors));
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_31(account));
+                };
+              },
+              f_33: function (account, this$AccountEditorDialog, errors) {
+                return function () {
+                  _.com.github.andrewoma.react.form_aej7ls$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_32(account, this$AccountEditorDialog, errors));
+                };
+              },
+              f_34: function (account, this$AccountEditorDialog, errors) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_4, _.hu.nevermind.app.screen.AccountEditorDialog.f_33(account, this$AccountEditorDialog, errors));
+                };
+              },
+              f_35: function (account, this$AccountEditorDialog, errors) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_34(account, this$AccountEditorDialog, errors));
+                };
+              },
+              f_36: function (this$AccountEditorDialog) {
+                return function (it) {
+                  this$AccountEditorDialog.props.close(_.hu.nevermind.app.screen.ModalResult.object.Save, this$AccountEditorDialog.state.editedAccount);
+                };
+              },
+              f_37: function (this$AccountEditorDialog) {
+                return function () {
+                  this.id = _.hu.nevermind.app.screen.AccountScreenIds.modal.buttons.save;
+                  this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Success;
+                  this.onClick = _.hu.nevermind.app.screen.AccountEditorDialog.f_36(this$AccountEditorDialog);
+                };
+              },
+              f_38: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Ment\xE9s');
+              },
+              f_39: function (this$AccountEditorDialog) {
+                return function (it) {
+                  this$AccountEditorDialog.props.close(_.hu.nevermind.app.screen.ModalResult.object.Close, null);
+                };
+              },
+              f_40: function (this$AccountEditorDialog) {
+                return function () {
+                  this.id = _.hu.nevermind.app.screen.AccountScreenIds.modal.buttons.close;
+                  this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Danger;
+                  this.onClick = _.hu.nevermind.app.screen.AccountEditorDialog.f_39(this$AccountEditorDialog);
+                };
+              },
+              f_41: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, 'M\xE9gsem');
+              },
+              f_42: function (errors, this$AccountEditorDialog) {
+                return function () {
+                  if (errors.isEmpty()) {
+                    _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_37(this$AccountEditorDialog), _.hu.nevermind.app.screen.AccountEditorDialog.f_38);
+                  }
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_40(this$AccountEditorDialog), _.hu.nevermind.app.screen.AccountEditorDialog.f_41);
+                };
+              },
+              f_43: function (errors, this$AccountEditorDialog) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_42(errors, this$AccountEditorDialog));
+                };
+              },
+              render_sx5o3u$f_0: function (account, this$AccountEditorDialog, errors) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsModalHeader_bv4bc3$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_0, _.hu.nevermind.app.screen.AccountEditorDialog.f_2);
+                  _.hu.nevermind.reakt.bootstrap.bsModalBody_9g1czy$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_3, _.hu.nevermind.app.screen.AccountEditorDialog.f_35(account, this$AccountEditorDialog, errors));
+                  _.hu.nevermind.reakt.bootstrap.bsModalFooter_4ko09h$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_43(errors, this$AccountEditorDialog));
+                };
+              }
+            }),
+            editorDialog$f: function (props) {
+              return function (it) {
+                return _.hu.nevermind.app.screen.AccountEditorDialog.object.factory.invoke(new _.com.github.andrewoma.react.Ref(props));
+              };
+            },
+            editorDialog: function ($receiver, props) {
+              return $receiver.constructAndInsert_ad91at$(new _.com.github.andrewoma.react.Component(_.hu.nevermind.app.screen.editorDialog$f(props)));
+            },
+            accountScreen_sx5o3u$f: function (it) {
+              return _.hu.nevermind.app.screen.AccountScreen.object.factory.invoke(new _.com.github.andrewoma.react.Ref(null));
+            },
+            accountScreen_sx5o3u$: function ($receiver) {
+              return $receiver.constructAndInsert_ad91at$(new _.com.github.andrewoma.react.Component(_.hu.nevermind.app.screen.accountScreen_sx5o3u$f));
+            },
+            editButton$f_0: function (this$table) {
+              return function (rowIndex) {
+                return this$table.id + '_editButton_' + rowIndex;
+              };
+            },
+            deleteButton$f: function (this$table) {
+              return function (rowIndex) {
+                return this$table.id + '_deleteButton_' + rowIndex;
+              };
+            },
+            row_0: function (this$table) {
+              return Kotlin.createObject(null, function () {
+                this.editButton = _.hu.nevermind.app.screen.editButton$f_0(this$table);
+                this.deleteButton = _.hu.nevermind.app.screen.deleteButton$f(this$table);
+              });
+            },
+            table_0: function () {
+              return Kotlin.createObject(null, function () {
+                this.id = 'keyValueScreen_table';
+                this.row = _.hu.nevermind.app.screen.row_0(this);
+              });
+            },
+            inputs_0: function () {
+              return Kotlin.createObject(null, function () {
+                this.key = 'keyValueScreen_modal_key';
+                this.value = 'keyValueScreen_modal_value';
+              });
+            },
+            buttons_0: function () {
+              return Kotlin.createObject(null, function () {
+                this.save = 'keyValueScreen_modal_saveButton';
+                this.close = 'keyValueScreen_modal_closeButton';
+              });
+            },
+            modal_0: function () {
+              return Kotlin.createObject(null, function () {
+                this.id = 'keyValueScreen_modal';
+                this.inputs = _.hu.nevermind.app.screen.inputs_0();
+                this.buttons = _.hu.nevermind.app.screen.buttons_0();
               });
             },
             KeyValueScreen: Kotlin.createClass(function () {
               return [_.com.github.andrewoma.react.ComponentSpec];
             }, function $fun() {
               $fun.baseInitializer.call(this);
-            }, /** @lends _.hu.nevermind.app.keyvalue.KeyValueScreen.prototype */ {
+            }, /** @lends _.hu.nevermind.app.screen.KeyValueScreen.prototype */ {
               componentDidMount: function () {
-                _.hu.nevermind.app.store.KeyValueStore.addChangeListener_o7wwlr$(this, _.hu.nevermind.app.keyvalue.KeyValueScreen.componentDidMount$f(this));
+                _.hu.nevermind.app.store.KeyValueStore.addChangeListener_o7wwlr$(this, _.hu.nevermind.app.screen.KeyValueScreen.componentDidMount$f(this));
               },
               componentWillUnmount: function () {
                 _.hu.nevermind.app.store.KeyValueStore.removeListener_za3rmp$(this);
@@ -2888,12 +3701,12 @@
                 var keyValues = _.hu.nevermind.app.store.KeyValueStore.keyValues();
                 var editingKeyValue = _.hu.nevermind.app.store.KeyValueStore.editingKeyValue;
                 var rowIndex = {v: 0};
-                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$($receiver, _.hu.nevermind.app.keyvalue.KeyValueScreen.render_sx5o3u$f, _.hu.nevermind.app.keyvalue.KeyValueScreen.render_sx5o3u$f_0(keyValues, rowIndex, editingKeyValue));
+                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$($receiver, _.hu.nevermind.app.screen.KeyValueScreen.render_sx5o3u$f, _.hu.nevermind.app.screen.KeyValueScreen.render_sx5o3u$f_0(keyValues, rowIndex, editingKeyValue));
               }
-            }, /** @lends _.hu.nevermind.app.keyvalue.KeyValueScreen */ {
+            }, /** @lends _.hu.nevermind.app.screen.KeyValueScreen */ {
               object_initializer$: function () {
                 return Kotlin.createObject(null, function () {
-                  this.factory = _.com.github.andrewoma.react.react.createFactory_oqkx6a$(new _.hu.nevermind.app.keyvalue.KeyValueScreen());
+                  this.factory = _.com.github.andrewoma.react.react.createFactory_oqkx6a$(new _.hu.nevermind.app.screen.KeyValueScreen());
                 });
               },
               componentDidMount$f: function (this$KeyValueScreen) {
@@ -2902,15 +3715,15 @@
                 };
               },
               render_sx5o3u$f: function () {
-                this.id = _.hu.nevermind.app.keyvalue.NodeIds.screenId;
+                this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.screenId;
               },
               f: function (it) {
                 _.hu.nevermind.app.Actions.setEditingKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.KeyValue('', ''));
               },
               f_0: function () {
-                this.id = _.hu.nevermind.app.keyvalue.NodeIds.addButton;
+                this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.addButton;
                 this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Primary;
-                this.onClick = _.hu.nevermind.app.keyvalue.KeyValueScreen.f;
+                this.onClick = _.hu.nevermind.app.screen.KeyValueScreen.f;
               },
               f_1: function () {
                 _.com.github.andrewoma.react.text_3pk7xh$(this, 'Hozz\xE1ad\xE1s');
@@ -2931,86 +3744,95 @@
               },
               f_5: function (keyValue) {
                 return function (it) {
-                  window.location.hash = _.Path.keyValue.keyValueWithOpenedEditorModal(keyValue.key);
+                  window.location.hash = _.Path.keyValue.withOpenedEditorModal(keyValue.key);
                 };
               },
               f_6: function (rowIndex, keyValue) {
                 return function () {
-                  this.id = _.hu.nevermind.app.keyvalue.NodeIds.row.editButton(rowIndex.v++);
+                  this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.table.row.editButton(rowIndex.v);
                   this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Primary;
-                  this.onClick = _.hu.nevermind.app.keyvalue.KeyValueScreen.f_5(keyValue);
+                  this.onClick = _.hu.nevermind.app.screen.KeyValueScreen.f_5(keyValue);
                 };
               },
               f_7: function () {
                 _.com.github.andrewoma.react.text_3pk7xh$(this, 'Szerkeszt\xE9s');
               },
-              f_8: function () {
-                this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Danger;
-              },
-              f_9: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'T\xF6rl\xE9s');
-              },
-              f_10: function (rowIndex, keyValue) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_6(rowIndex, keyValue), _.hu.nevermind.app.keyvalue.KeyValueScreen.f_7);
-                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_8, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_9);
+              f_8: function (keyValue) {
+                return function (it) {
+                  _.hu.nevermind.app.Actions.deleteKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, keyValue);
                 };
+              },
+              f_9: function (rowIndex, keyValue) {
+                return function () {
+                  this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.table.row.deleteButton(rowIndex.v++);
+                  this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Danger;
+                  this.onClick = _.hu.nevermind.app.screen.KeyValueScreen.f_8(keyValue);
+                };
+              },
+              f_10: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, 'T\xF6rl\xE9s');
               },
               f_11: function (rowIndex, keyValue) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_4, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_10(rowIndex, keyValue));
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_6(rowIndex, keyValue), _.hu.nevermind.app.screen.KeyValueScreen.f_7);
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_9(rowIndex, keyValue), _.hu.nevermind.app.screen.KeyValueScreen.f_10);
                 };
               },
-              f_12: function (rowIndex) {
-                return function (cell, keyValue) {
-                  return _.hu.nevermind.reakt.bootstrap.createReactElement_i41a89$(_.hu.nevermind.app.keyvalue.KeyValueScreen.f_11(rowIndex, keyValue));
+              f_12: function (rowIndex, keyValue) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_4, _.hu.nevermind.app.screen.KeyValueScreen.f_11(rowIndex, keyValue));
                 };
               },
               f_13: function (rowIndex) {
-                return function () {
-                  this.width = '50';
-                  this.dataFormat = _.hu.nevermind.app.keyvalue.KeyValueScreen.f_12(rowIndex);
+                return function (cell, keyValue) {
+                  return _.hu.nevermind.reakt.bootstrap.createReactElement_i41a89$(_.hu.nevermind.app.screen.KeyValueScreen.f_12(rowIndex, keyValue));
                 };
               },
-              f_14: function () {
+              f_14: function (rowIndex) {
+                return function () {
+                  this.width = '50';
+                  this.dataFormat = _.hu.nevermind.app.screen.KeyValueScreen.f_13(rowIndex);
+                };
+              },
+              f_15: function () {
                 this.isKey = true;
                 this.dataField = 'key';
                 this.width = '100';
               },
-              f_15: function () {
+              f_16: function () {
                 _.com.github.andrewoma.react.text_3pk7xh$(this, 'Key');
               },
-              f_16: function (cell, keyValue) {
+              f_17: function (cell, keyValue) {
                 return accounting.formatNumber(cell, 3, ' ');
               },
-              f_17: function () {
+              f_18: function () {
                 this.dataField = 'value';
                 this.dataAlign = _.hu.nevermind.reakt.bootstrap.table.DataAlign.Right;
                 this.width = '75';
-                this.dataFormat = _.hu.nevermind.app.keyvalue.KeyValueScreen.f_16;
+                this.dataFormat = _.hu.nevermind.app.screen.KeyValueScreen.f_17;
               },
-              f_18: function () {
+              f_19: function () {
                 _.com.github.andrewoma.react.text_3pk7xh$(this, 'Value');
               },
-              f_19: function (rowIndex) {
+              f_20: function (rowIndex) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_13(rowIndex));
-                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_14, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_15);
-                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_17, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_18);
-                };
-              },
-              f_20: function (keyValues, rowIndex) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.table.bootstrapTable_b7jpzj$(this, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_3(keyValues), _.hu.nevermind.app.keyvalue.KeyValueScreen.f_19(rowIndex));
+                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_14(rowIndex));
+                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_15, _.hu.nevermind.app.screen.KeyValueScreen.f_16);
+                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_18, _.hu.nevermind.app.screen.KeyValueScreen.f_19);
                 };
               },
               f_21: function (keyValues, rowIndex) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_2, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_20(keyValues, rowIndex));
+                  _.hu.nevermind.reakt.bootstrap.table.bootstrapTable_b7jpzj$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_3(keyValues), _.hu.nevermind.app.screen.KeyValueScreen.f_20(rowIndex));
+                };
+              },
+              f_22: function (keyValues, rowIndex) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_2, _.hu.nevermind.app.screen.KeyValueScreen.f_21(keyValues, rowIndex));
                 };
               },
               closeModal: function (result, entity) {
-                if (result === _.hu.nevermind.app.keyvalue.ModalResult.object.Save) {
+                if (result === _.hu.nevermind.app.screen.ModalResult.object.Save) {
                   _.hu.nevermind.app.Actions.modifyKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, entity != null ? entity : Kotlin.throwNPE());
                 }
                 _.hu.nevermind.app.Actions.setEditingKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, null);
@@ -3018,11 +3840,11 @@
               },
               render_sx5o3u$f_0: function (keyValues, rowIndex, editingKeyValue) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_0, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_1);
-                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.keyvalue.KeyValueScreen.f_21(keyValues, rowIndex));
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_0, _.hu.nevermind.app.screen.KeyValueScreen.f_1);
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.KeyValueScreen.f_22(keyValues, rowIndex));
                   if (editingKeyValue != null) {
-                    var closeModal = _.hu.nevermind.app.keyvalue.KeyValueScreen.closeModal;
-                    _.hu.nevermind.app.keyvalue.editorDialog_aqufh1$(this, new _.hu.nevermind.app.keyvalue.KeyValueEditorDialogProps(editingKeyValue, closeModal));
+                    var closeModal = _.hu.nevermind.app.screen.KeyValueScreen.closeModal;
+                    _.hu.nevermind.app.screen.editorDialog_1(this, new _.hu.nevermind.app.screen.KeyValueEditorDialogProps(editingKeyValue, closeModal));
                   }
                 };
               }
@@ -3030,15 +3852,15 @@
             KeyValueEditorDialogProps: Kotlin.createClass(null, function (editedKeyValue, close) {
               this.editedKeyValue = editedKeyValue;
               this.close = close;
-            }, /** @lends _.hu.nevermind.app.keyvalue.KeyValueEditorDialogProps.prototype */ {
+            }, /** @lends _.hu.nevermind.app.screen.KeyValueEditorDialogProps.prototype */ {
               component1: function () {
                 return this.editedKeyValue;
               },
               component2: function () {
                 return this.close;
               },
-              copy_h8idqa$: function (editedKeyValue, close) {
-                return new _.hu.nevermind.app.keyvalue.KeyValueEditorDialogProps(editedKeyValue === void 0 ? this.editedKeyValue : editedKeyValue, close === void 0 ? this.close : close);
+              copy_z78w90$: function (editedKeyValue, close) {
+                return new _.hu.nevermind.app.screen.KeyValueEditorDialogProps(editedKeyValue === void 0 ? this.editedKeyValue : editedKeyValue, close === void 0 ? this.close : close);
               },
               toString: function () {
                 return 'KeyValueEditorDialogProps(editedKeyValue=' + Kotlin.toString(this.editedKeyValue) + (', close=' + Kotlin.toString(this.close)) + ')';
@@ -3055,12 +3877,12 @@
             }),
             KeyValueEditorDialogState: Kotlin.createClass(null, function (editedKeyValue) {
               this.editedKeyValue = editedKeyValue;
-            }, /** @lends _.hu.nevermind.app.keyvalue.KeyValueEditorDialogState.prototype */ {
+            }, /** @lends _.hu.nevermind.app.screen.KeyValueEditorDialogState.prototype */ {
               component1: function () {
                 return this.editedKeyValue;
               },
               copy_6gbzj1$: function (editedKeyValue) {
-                return new _.hu.nevermind.app.keyvalue.KeyValueEditorDialogState(editedKeyValue === void 0 ? this.editedKeyValue : editedKeyValue);
+                return new _.hu.nevermind.app.screen.KeyValueEditorDialogState(editedKeyValue === void 0 ? this.editedKeyValue : editedKeyValue);
               },
               toString: function () {
                 return 'KeyValueEditorDialogState(editedKeyValue=' + Kotlin.toString(this.editedKeyValue) + ')';
@@ -3078,25 +3900,25 @@
               return [_.com.github.andrewoma.react.ComponentSpec];
             }, function $fun() {
               $fun.baseInitializer.call(this);
-            }, /** @lends _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.prototype */ {
+            }, /** @lends _.hu.nevermind.app.screen.KeyValueEditorDialog.prototype */ {
               componentDidMount: function () {
-                _.hu.nevermind.app.store.KeyValueStore.addChangeListener_o7wwlr$(this, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.componentDidMount$f(this));
+                _.hu.nevermind.app.store.KeyValueStore.addChangeListener_o7wwlr$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.componentDidMount$f(this));
               },
               componentWillUnmount: function () {
                 _.hu.nevermind.app.store.KeyValueStore.removeListener_za3rmp$(this);
               },
               initialState: function () {
-                return new _.hu.nevermind.app.keyvalue.KeyValueEditorDialogState(this.props.editedKeyValue);
+                return new _.hu.nevermind.app.screen.KeyValueEditorDialogState(this.props.editedKeyValue);
               },
               updateEntity: function (event, updater) {
                 var value = event.currentTarget.value;
-                this.state = new _.hu.nevermind.app.keyvalue.KeyValueEditorDialogState(updater(value));
+                this.state = new _.hu.nevermind.app.screen.KeyValueEditorDialogState(updater(value));
               },
               render_sx5o3u$: function ($receiver) {
                 var keyValue = this.state.editedKeyValue;
                 var errors = Kotlin.modules['stdlib'].kotlin.collections.hashMapOf_eoa9s7$([]);
                 this.fillWithErrors(errors);
-                _.hu.nevermind.reakt.bootstrap.bsModal_dslzk$($receiver, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.render_sx5o3u$f(this), _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.render_sx5o3u$f_0(keyValue, this, errors));
+                _.hu.nevermind.reakt.bootstrap.bsModal_dslzk$($receiver, _.hu.nevermind.app.screen.KeyValueEditorDialog.render_sx5o3u$f(this), _.hu.nevermind.app.screen.KeyValueEditorDialog.render_sx5o3u$f_0(keyValue, this, errors));
               },
               fillWithErrors: function (errors) {
                 var conf = this.state.editedKeyValue;
@@ -3111,30 +3933,30 @@
                   }
                 }
               }
-            }, /** @lends _.hu.nevermind.app.keyvalue.KeyValueEditorDialog */ {
+            }, /** @lends _.hu.nevermind.app.screen.KeyValueEditorDialog */ {
               object_initializer$: function () {
                 return Kotlin.createObject(null, function () {
-                  this.factory = _.com.github.andrewoma.react.react.createFactory_oqkx6a$(new _.hu.nevermind.app.keyvalue.KeyValueEditorDialog());
+                  this.factory = _.com.github.andrewoma.react.react.createFactory_oqkx6a$(new _.hu.nevermind.app.screen.KeyValueEditorDialog());
                 });
               },
               componentDidMount$f: function (this$KeyValueEditorDialog) {
                 return function () {
                   var newKeyValue = _.hu.nevermind.app.store.KeyValueStore.editingKeyValue;
                   if (newKeyValue != null) {
-                    this$KeyValueEditorDialog.state = new _.hu.nevermind.app.keyvalue.KeyValueEditorDialogState(newKeyValue.copy_puj7f4$());
+                    this$KeyValueEditorDialog.state = new _.hu.nevermind.app.screen.KeyValueEditorDialogState(newKeyValue.copy_puj7f4$());
                   }
                 };
               },
               f: function (this$KeyValueEditorDialog) {
                 return function () {
-                  this$KeyValueEditorDialog.props.close(_.hu.nevermind.app.keyvalue.ModalResult.object.Close, null);
+                  this$KeyValueEditorDialog.props.close(_.hu.nevermind.app.screen.ModalResult.object.Close, null);
                 };
               },
               render_sx5o3u$f: function (this$KeyValueEditorDialog) {
                 return function () {
-                  this.id = _.hu.nevermind.app.keyvalue.NodeIds.modal.id;
+                  this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.modal.id;
                   this.show = true;
-                  this.onHide = _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f(this$KeyValueEditorDialog);
+                  this.onHide = _.hu.nevermind.app.screen.KeyValueEditorDialog.f(this$KeyValueEditorDialog);
                 };
               },
               f_0: function () {
@@ -3144,7 +3966,7 @@
                 _.com.github.andrewoma.react.text_3pk7xh$(this, 'Szerkeszt\xE9s');
               },
               f_2: function () {
-                _.hu.nevermind.reakt.bootstrap.bsModalTitle_k848lm$(this, void 0, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_1);
+                _.hu.nevermind.reakt.bootstrap.bsModalTitle_k848lm$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_1);
               },
               f_3: function () {
                 this.closeButton = true;
@@ -3162,7 +3984,7 @@
               },
               f_7: function (keyValue, this$KeyValueEditorDialog) {
                 return function (it) {
-                  this$KeyValueEditorDialog.updateEntity(it, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_6(keyValue));
+                  this$KeyValueEditorDialog.updateEntity(it, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_6(keyValue));
                 };
               },
               f_8: function (this$) {
@@ -3174,17 +3996,17 @@
               f_9: function (keyValue, this$KeyValueEditorDialog, errors) {
                 return function () {
                   var tmp$0;
-                  this.id = _.hu.nevermind.app.keyvalue.NodeIds.modal.inputs.key;
+                  this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.modal.inputs.key;
                   this.type = _.com.github.andrewoma.react.InputType.Text;
                   this.label = 'Key';
                   this.defaultValue = keyValue.key;
-                  this.onChange = _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_7(keyValue, this$KeyValueEditorDialog);
-                  (tmp$0 = errors.get_za3rmp$('key')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_8(this)) : null;
+                  this.onChange = _.hu.nevermind.app.screen.KeyValueEditorDialog.f_7(keyValue, this$KeyValueEditorDialog);
+                  (tmp$0 = errors.get_za3rmp$('key')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_8(this)) : null;
                 };
               },
               f_10: function (keyValue, this$KeyValueEditorDialog, errors) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_9(keyValue, this$KeyValueEditorDialog, errors));
+                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_9(keyValue, this$KeyValueEditorDialog, errors));
                 };
               },
               f_11: function () {
@@ -3197,7 +4019,7 @@
               },
               f_13: function (keyValue, this$KeyValueEditorDialog) {
                 return function (it) {
-                  this$KeyValueEditorDialog.updateEntity(it, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_12(keyValue));
+                  this$KeyValueEditorDialog.updateEntity(it, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_12(keyValue));
                 };
               },
               f_14: function (this$) {
@@ -3209,55 +4031,55 @@
               f_15: function (keyValue, this$KeyValueEditorDialog, errors) {
                 return function () {
                   var tmp$0;
-                  this.id = _.hu.nevermind.app.keyvalue.NodeIds.modal.inputs.value;
+                  this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.modal.inputs.value;
                   this.type = _.com.github.andrewoma.react.InputType.Text;
                   this.label = 'Value';
                   this.defaultValue = keyValue.value;
-                  this.onChange = _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_13(keyValue, this$KeyValueEditorDialog);
-                  (tmp$0 = errors.get_za3rmp$('value')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_14(this)) : null;
+                  this.onChange = _.hu.nevermind.app.screen.KeyValueEditorDialog.f_13(keyValue, this$KeyValueEditorDialog);
+                  (tmp$0 = errors.get_za3rmp$('value')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_14(this)) : null;
                 };
               },
               f_16: function (keyValue, this$KeyValueEditorDialog, errors) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_15(keyValue, this$KeyValueEditorDialog, errors));
+                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_15(keyValue, this$KeyValueEditorDialog, errors));
                 };
               },
               f_17: function (keyValue, this$KeyValueEditorDialog, errors) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_5, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_10(keyValue, this$KeyValueEditorDialog, errors));
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_11, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_16(keyValue, this$KeyValueEditorDialog, errors));
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_5, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_10(keyValue, this$KeyValueEditorDialog, errors));
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_11, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_16(keyValue, this$KeyValueEditorDialog, errors));
                 };
               },
               f_18: function (keyValue, this$KeyValueEditorDialog, errors) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_17(keyValue, this$KeyValueEditorDialog, errors));
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_17(keyValue, this$KeyValueEditorDialog, errors));
                 };
               },
               f_19: function (keyValue, this$KeyValueEditorDialog, errors) {
                 return function () {
-                  _.com.github.andrewoma.react.form_aej7ls$(this, void 0, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_18(keyValue, this$KeyValueEditorDialog, errors));
+                  _.com.github.andrewoma.react.form_aej7ls$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_18(keyValue, this$KeyValueEditorDialog, errors));
                 };
               },
               f_20: function (keyValue, this$KeyValueEditorDialog, errors) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_4, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_19(keyValue, this$KeyValueEditorDialog, errors));
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_4, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_19(keyValue, this$KeyValueEditorDialog, errors));
                 };
               },
               f_21: function (keyValue, this$KeyValueEditorDialog, errors) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_20(keyValue, this$KeyValueEditorDialog, errors));
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_20(keyValue, this$KeyValueEditorDialog, errors));
                 };
               },
               f_22: function (this$KeyValueEditorDialog) {
                 return function (it) {
-                  this$KeyValueEditorDialog.props.close(_.hu.nevermind.app.keyvalue.ModalResult.object.Save, this$KeyValueEditorDialog.state.editedKeyValue);
+                  this$KeyValueEditorDialog.props.close(_.hu.nevermind.app.screen.ModalResult.object.Save, this$KeyValueEditorDialog.state.editedKeyValue);
                 };
               },
               f_23: function (this$KeyValueEditorDialog) {
                 return function () {
-                  this.id = _.hu.nevermind.app.keyvalue.NodeIds.modal.buttons.save;
+                  this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.modal.buttons.save;
                   this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Success;
-                  this.onClick = _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_22(this$KeyValueEditorDialog);
+                  this.onClick = _.hu.nevermind.app.screen.KeyValueEditorDialog.f_22(this$KeyValueEditorDialog);
                 };
               },
               f_24: function () {
@@ -3265,14 +4087,14 @@
               },
               f_25: function (this$KeyValueEditorDialog) {
                 return function (it) {
-                  this$KeyValueEditorDialog.props.close(_.hu.nevermind.app.keyvalue.ModalResult.object.Close, null);
+                  this$KeyValueEditorDialog.props.close(_.hu.nevermind.app.screen.ModalResult.object.Close, null);
                 };
               },
               f_26: function (this$KeyValueEditorDialog) {
                 return function () {
-                  this.id = _.hu.nevermind.app.keyvalue.NodeIds.modal.buttons.close;
+                  this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.modal.buttons.close;
                   this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Danger;
-                  this.onClick = _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_25(this$KeyValueEditorDialog);
+                  this.onClick = _.hu.nevermind.app.screen.KeyValueEditorDialog.f_25(this$KeyValueEditorDialog);
                 };
               },
               f_27: function () {
@@ -3281,49 +4103,50 @@
               f_28: function (errors, this$KeyValueEditorDialog) {
                 return function () {
                   if (errors.isEmpty()) {
-                    _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_23(this$KeyValueEditorDialog), _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_24);
+                    _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_23(this$KeyValueEditorDialog), _.hu.nevermind.app.screen.KeyValueEditorDialog.f_24);
                   }
-                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_26(this$KeyValueEditorDialog), _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_27);
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_26(this$KeyValueEditorDialog), _.hu.nevermind.app.screen.KeyValueEditorDialog.f_27);
                 };
               },
               f_29: function (errors, this$KeyValueEditorDialog) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, void 0, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_28(errors, this$KeyValueEditorDialog));
+                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_28(errors, this$KeyValueEditorDialog));
                 };
               },
               render_sx5o3u$f_0: function (keyValue, this$KeyValueEditorDialog, errors) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsModalHeader_bv4bc3$(this, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_0, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_2);
-                  _.hu.nevermind.reakt.bootstrap.bsModalBody_9g1czy$(this, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_3, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_21(keyValue, this$KeyValueEditorDialog, errors));
-                  _.hu.nevermind.reakt.bootstrap.bsModalFooter_4ko09h$(this, void 0, _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.f_29(errors, this$KeyValueEditorDialog));
+                  _.hu.nevermind.reakt.bootstrap.bsModalHeader_bv4bc3$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_2);
+                  _.hu.nevermind.reakt.bootstrap.bsModalBody_9g1czy$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_3, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_21(keyValue, this$KeyValueEditorDialog, errors));
+                  _.hu.nevermind.reakt.bootstrap.bsModalFooter_4ko09h$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_29(errors, this$KeyValueEditorDialog));
                 };
               }
             }),
-            editorDialog_aqufh1$f: function (props) {
+            editorDialog_1$f: function (props) {
               return function (it) {
-                return _.hu.nevermind.app.keyvalue.KeyValueEditorDialog.object.factory.invoke(new _.com.github.andrewoma.react.Ref(props));
+                return _.hu.nevermind.app.screen.KeyValueEditorDialog.object.factory.invoke(new _.com.github.andrewoma.react.Ref(props));
               };
             },
-            editorDialog_aqufh1$: function ($receiver, props) {
-              return $receiver.constructAndInsert_ad91at$(new _.com.github.andrewoma.react.Component(_.hu.nevermind.app.keyvalue.editorDialog_aqufh1$f(props)));
+            editorDialog_1: function ($receiver, props) {
+              return $receiver.constructAndInsert_ad91at$(new _.com.github.andrewoma.react.Component(_.hu.nevermind.app.screen.editorDialog_1$f(props)));
             },
             keyValueScreen_sx5o3u$f: function (it) {
-              return _.hu.nevermind.app.keyvalue.KeyValueScreen.object.factory.invoke(new _.com.github.andrewoma.react.Ref(null));
+              return _.hu.nevermind.app.screen.KeyValueScreen.object.factory.invoke(new _.com.github.andrewoma.react.Ref(null));
             },
             keyValueScreen_sx5o3u$: function ($receiver) {
-              return $receiver.constructAndInsert_ad91at$(new _.com.github.andrewoma.react.Component(_.hu.nevermind.app.keyvalue.keyValueScreen_sx5o3u$f));
+              return $receiver.constructAndInsert_ad91at$(new _.com.github.andrewoma.react.Component(_.hu.nevermind.app.screen.keyValueScreen_sx5o3u$f));
             },
-            KeyValueScreenTest: Kotlin.createClass(null, null, /** @lends _.hu.nevermind.app.keyvalue.KeyValueScreenTest.prototype */ {
+            KeyValueScreenTest: Kotlin.createClass(null, null, /** @lends _.hu.nevermind.app.screen.KeyValueScreenTest.prototype */ {
               hack: function () {
                 Kotlin.modules['stdlib'].kotlin.test.assertTrue_8kj6y5$(true);
-                QUnit.test('KeyValueScreenTest', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.hack$f(this));
+                QUnit.test('KeyValueScreenTest', _.hu.nevermind.app.screen.KeyValueScreenTest.hack$f(this));
               },
               tests: function () {
-                _.hu.nevermind.common.given_h3u0vh$('KeyValueScreenTest in default state', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.tests$f);
-                _.hu.nevermind.common.given_h3u0vh$('KeyValueScreenTest new KeyValue editor is open with filled inputs', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.tests$f_0);
-                _.hu.nevermind.common.given_h3u0vh$('KeyValueScreenTest: the Modal editor is open', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.tests$f_1);
+                _.hu.nevermind.common.given_h3u0vh$('in any state', _.hu.nevermind.app.screen.KeyValueScreenTest.tests$f);
+                _.hu.nevermind.common.given_h3u0vh$('KeyValueScreenTest in default state', _.hu.nevermind.app.screen.KeyValueScreenTest.tests$f_0);
+                _.hu.nevermind.common.given_h3u0vh$('KeyValueScreenTest new KeyValue editor is open with filled inputs', _.hu.nevermind.app.screen.KeyValueScreenTest.tests$f_1);
+                _.hu.nevermind.common.given_h3u0vh$('KeyValueScreenTest: the Modal editor is open', _.hu.nevermind.app.screen.KeyValueScreenTest.tests$f_2);
               }
-            }, /** @lends _.hu.nevermind.app.keyvalue.KeyValueScreenTest */ {
+            }, /** @lends _.hu.nevermind.app.screen.KeyValueScreenTest */ {
               hack$f: function (this$KeyValueScreenTest) {
                 return function (assert) {
                   this$KeyValueScreenTest.tests();
@@ -3331,186 +4154,234 @@
                 };
               },
               f: function () {
-                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.id));
+                this.assertTrue_6taknv$($('#keyValueScreen').size() === 1);
               },
               f_0: function () {
-                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.inputs.key));
-                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.inputs.value));
+                this.assertTrue_6taknv$($('#navItem_keyValue').parent().hasClass('active'));
               },
               f_1: function () {
-                this.assertEquals_wn2jw4$('key1', $('#configScreen_modal_key').val());
-                this.assertEquals_wn2jw4$('100', $('#configScreen_modal_value').val());
-              },
-              f_2: function () {
-                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.buttons.close));
-              },
-              f_3: function () {
-                window.location.hash = _.Path.keyValue.keyValueWithOpenedEditorModal('key1');
-                this.it_e6z94m$('should open the modal', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f);
-                this.it_e6z94m$('should render the input fields', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_0);
-                this.it_e6z94m$('should fill the input fields with the values of the references KeyValue', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_1);
-                this.it_e6z94m$('should render the close button', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_2);
-              },
-              f_4: function () {
-                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.id));
-              },
-              f_5: function () {
-                this.assertEquals_wn2jw4$('key1', $('#configScreen_modal_key').val());
-                this.assertEquals_wn2jw4$('100', $('#configScreen_modal_value').val());
-              },
-              f_6: function () {
-                this.assertEquals_wn2jw4$('config/key1/', _.hu.nevermind.app.store.RouterStore.path);
-              },
-              f_7: function () {
-                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.row.editButton(0));
-                this.it_e6z94m$('should open the modal', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_4);
-                this.it_e6z94m$('should fill the input fields with the values of the references KeyValue', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_5);
-                this.it_e6z94m$('should change the URL, appending the editing key to it', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_6);
-              },
-              f_8: function () {
-                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.id));
-              },
-              f_9: function () {
-                this.assertEquals_wn2jw4$('', $('#configScreen_modal_key').val());
-                this.assertEquals_wn2jw4$('', $('#configScreen_modal_value').val());
-              },
-              f_10: function () {
-                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.addButton);
-                this.it_e6z94m$('should open the modal', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_8);
-                this.it_e6z94m$('should render the input values empty', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_9);
+                window.location.hash = _.Path.keyValue.root;
+                this.it_e6z94m$('should be rendered KeyValue screen', _.hu.nevermind.app.screen.KeyValueScreenTest.f);
+                this.it_e6z94m$('should make the KeyValue menupoint active', _.hu.nevermind.app.screen.KeyValueScreenTest.f_0);
               },
               tests$f: function () {
-                window.location.hash = _.Path.keyValue.root;
-                _.hu.nevermind.app.Actions.modifyKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.KeyValue('key1', '100'));
-                this.on_82t0p5$('changing the URl to .../keyValue/editedkey', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_3);
-                this.on_82t0p5$('Clicking on the Edit button', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_7);
-                this.on_82t0p5$('Clicking on Add button', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_10);
+                this.on_82t0p5$('routing to the KeyValue screen', _.hu.nevermind.app.screen.KeyValueScreenTest.f_1);
               },
-              f_11: function (input) {
-                input.value = 'key2';
+              f_2: function () {
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.id));
               },
-              f_12: function (input) {
-                input.value = '123';
+              f_3: function () {
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.inputs.key));
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.inputs.value));
+              },
+              f_4: function () {
+                this.assertEquals_wn2jw4$('key1', $('#keyValueScreen_modal_key').val());
+                this.assertEquals_wn2jw4$('100', $('#keyValueScreen_modal_value').val());
+              },
+              f_5: function () {
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.buttons.close));
+              },
+              f_6: function () {
+                window.location.hash = _.Path.keyValue.withOpenedEditorModal('key1');
+                this.it_e6z94m$('should open the modal', _.hu.nevermind.app.screen.KeyValueScreenTest.f_2);
+                this.it_e6z94m$('should render the input fields', _.hu.nevermind.app.screen.KeyValueScreenTest.f_3);
+                this.it_e6z94m$('should fill the input fields with the values of the references KeyValue', _.hu.nevermind.app.screen.KeyValueScreenTest.f_4);
+                this.it_e6z94m$('should render the close button', _.hu.nevermind.app.screen.KeyValueScreenTest.f_5);
+              },
+              f_7: function () {
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.id));
+              },
+              f_8: function () {
+                this.assertEquals_wn2jw4$('key1', $('#keyValueScreen_modal_key').val());
+                this.assertEquals_wn2jw4$('100', $('#keyValueScreen_modal_value').val());
+              },
+              f_9: function () {
+                this.assertEquals_wn2jw4$(_.Path.keyValue.withOpenedEditorModal('key1'), _.hu.nevermind.app.store.RouterStore.path);
+              },
+              f_10: function () {
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.table.row.editButton(0));
+                this.it_e6z94m$('should open the modal', _.hu.nevermind.app.screen.KeyValueScreenTest.f_7);
+                this.it_e6z94m$('should fill the input fields with the values of the references KeyValue', _.hu.nevermind.app.screen.KeyValueScreenTest.f_8);
+                this.it_e6z94m$('should change the URL, appending the editing key to it', _.hu.nevermind.app.screen.KeyValueScreenTest.f_9);
+              },
+              f_11: function () {
+                this.assertEquals_wn2jw4$(0, _.hu.nevermind.app.store.KeyValueStore.keyValues().size);
+              },
+              f_12: function () {
+                this.assertEquals_wn2jw4$(0, $('#keyValueScreen_table').find('tr').size());
               },
               f_13: function () {
-                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.id));
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.table.row.deleteButton(0));
+                this.it_e6z94m$('should remove the KeyValue', _.hu.nevermind.app.screen.KeyValueScreenTest.f_11);
+                this.it_e6z94m$('should remove the row from the table', _.hu.nevermind.app.screen.KeyValueScreenTest.f_12);
               },
               f_14: function () {
-                this.assertEquals_wn2jw4$('config/', _.hu.nevermind.app.store.RouterStore.path);
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.id));
               },
               f_15: function () {
-                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.buttons.close);
-                this.it_e6z94m$('should close the Modal dialog window', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_13);
-                this.it_e6z94m$('should not change the URL', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_14);
+                this.assertEquals_wn2jw4$('', $('#keyValueScreen_modal_key').val());
+                this.assertEquals_wn2jw4$('', $('#keyValueScreen_modal_value').val());
               },
               f_16: function () {
-                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.id));
-              },
-              f_17: function () {
-                this.assertEquals_wn2jw4$('config/', _.hu.nevermind.app.store.RouterStore.path);
-              },
-              f_18: function () {
-                this.assertEquals_wn2jw4$(2, _.hu.nevermind.app.store.KeyValueStore.keyValues().size);
-              },
-              f_19: function () {
-                this.assertTrue_6taknv$($('#configScreen').find("div:contains('123.000'):last").size() === 1);
-              },
-              f_20: function () {
-                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.buttons.save);
-                this.it_e6z94m$('should close the Modal dialog window', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_16);
-                this.it_e6z94m$('should not change the URL', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_17);
-                this.it_e6z94m$('should add the new KeyValue to the Store', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_18);
-                this.it_e6z94m$('should render the new KeyValue in the table', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_19);
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.addButton);
+                this.it_e6z94m$('should open the modal', _.hu.nevermind.app.screen.KeyValueScreenTest.f_14);
+                this.it_e6z94m$('should render the input values empty', _.hu.nevermind.app.screen.KeyValueScreenTest.f_15);
               },
               tests$f_0: function () {
+                _.hu.nevermind.app.Actions.setLoggedInUser.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.Account('testUser', false, Kotlin.modules['stdlib'].kotlin.collections.arrayListOf_9mqe4v$([_.hu.nevermind.app.store.Role.object.ROLE_ADMIN]), ''));
                 window.location.hash = _.Path.keyValue.root;
-                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.addButton);
-                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.keyvalue.NodeIds.modal.inputs.key, _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_11);
-                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.keyvalue.NodeIds.modal.inputs.value, _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_12);
-                this.on_82t0p5$('clicking on the Close button', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_15);
-                this.on_82t0p5$('clicking on the Save button', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_20);
+                _.hu.nevermind.app.Actions.modifyKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.KeyValue('key1', '100'));
+                this.on_82t0p5$('changing the URl to .../keyValue/editedkey', _.hu.nevermind.app.screen.KeyValueScreenTest.f_6);
+                this.on_82t0p5$('Clicking on the Edit button', _.hu.nevermind.app.screen.KeyValueScreenTest.f_10);
+                this.on_82t0p5$('Clicking on the Delete button', _.hu.nevermind.app.screen.KeyValueScreenTest.f_13);
+                this.on_82t0p5$('Clicking on Add button', _.hu.nevermind.app.screen.KeyValueScreenTest.f_16);
+              },
+              f_17: function (input) {
+                input.value = 'key2';
+              },
+              f_18: function (input) {
+                input.value = '123';
+              },
+              f_19: function () {
+                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.id));
+              },
+              f_20: function () {
+                this.assertEquals_wn2jw4$(_.Path.keyValue.root, _.hu.nevermind.app.store.RouterStore.path);
               },
               f_21: function () {
-                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.id));
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.buttons.close);
+                this.it_e6z94m$('should close the Modal dialog window', _.hu.nevermind.app.screen.KeyValueScreenTest.f_19);
+                this.it_e6z94m$('should not change the URL', _.hu.nevermind.app.screen.KeyValueScreenTest.f_20);
               },
               f_22: function () {
-                this.assertEquals_wn2jw4$('config/', _.hu.nevermind.app.store.RouterStore.path);
+                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.id));
               },
               f_23: function () {
-                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.buttons.close);
-                this.it_e6z94m$('should close the Modal dialog window', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_21);
-                this.it_e6z94m$('should change the URL, deleting the .../key/ parts', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_22);
+                this.assertEquals_wn2jw4$(_.Path.keyValue.root, _.hu.nevermind.app.store.RouterStore.path);
               },
               f_24: function () {
-                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.id));
+                this.assertEquals_wn2jw4$(2, _.hu.nevermind.app.store.KeyValueStore.keyValues().size);
               },
               f_25: function () {
-                this.assertEquals_wn2jw4$('config/', _.hu.nevermind.app.store.RouterStore.path);
+                this.assertTrue_6taknv$($('#keyValueScreen').find("div:contains('123.000'):last").size() === 1);
               },
               f_26: function () {
-                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.buttons.save);
-                this.it_e6z94m$('should close the Modal dialog window', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_24);
-                this.it_e6z94m$('should change the URL, deleting the .../key/ parts', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_25);
-              },
-              f_27: function (keyInput) {
-                keyInput.value = '';
-              },
-              f_28: function () {
-                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.buttons.save));
-              },
-              f_29: function () {
-                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.keyvalue.NodeIds.modal.inputs.key, _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_27);
-                this.it_e6z94m$('should hide the Save button (through the validators)', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_28);
-              },
-              f_30: function (input) {
-                input.value = '';
-              },
-              f_31: function () {
-                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.buttons.save));
-              },
-              f_32: function () {
-                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.keyvalue.NodeIds.modal.inputs.value, _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_30);
-                this.it_e6z94m$('should hide the Save button (through the validators)', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_31);
-              },
-              f_33: function (input) {
-                input.value = '200';
-              },
-              f_34: function () {
-                this.assertEquals_wn2jw4$('200', Kotlin.modules['stdlib'].kotlin.collections.first_fvq2g0$(_.hu.nevermind.app.store.KeyValueStore.keyValues()).value);
-              },
-              f_35: function () {
-                this.assertTrue_6taknv$($('#configScreen').find("div:contains('200.000'):last").size() === 1);
-              },
-              f_36: function () {
-                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.keyvalue.NodeIds.modal.inputs.value, _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_33);
-                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.keyvalue.NodeIds.modal.buttons.save);
-                this.it_e6z94m$('should save the changed value to the Store', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_34);
-                this.it_e6z94m$('the table should render the new, changed value', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_35);
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.buttons.save);
+                this.it_e6z94m$('should close the Modal dialog window', _.hu.nevermind.app.screen.KeyValueScreenTest.f_22);
+                this.it_e6z94m$('should not change the URL', _.hu.nevermind.app.screen.KeyValueScreenTest.f_23);
+                this.it_e6z94m$('should add the new KeyValue to the Store', _.hu.nevermind.app.screen.KeyValueScreenTest.f_24);
+                this.it_e6z94m$('should render the new KeyValue in the table', _.hu.nevermind.app.screen.KeyValueScreenTest.f_25);
               },
               tests$f_1: function () {
                 window.location.hash = _.Path.keyValue.root;
-                window.location.hash = _.Path.keyValue.keyValueWithOpenedEditorModal('key1');
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.addButton);
+                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.inputs.key, _.hu.nevermind.app.screen.KeyValueScreenTest.f_17);
+                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.inputs.value, _.hu.nevermind.app.screen.KeyValueScreenTest.f_18);
+                this.on_82t0p5$('clicking on the Close button', _.hu.nevermind.app.screen.KeyValueScreenTest.f_21);
+                this.on_82t0p5$('clicking on the Save button', _.hu.nevermind.app.screen.KeyValueScreenTest.f_26);
+              },
+              f_27: function () {
+                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.id));
+              },
+              f_28: function () {
+                this.assertEquals_wn2jw4$(_.Path.keyValue.root, _.hu.nevermind.app.store.RouterStore.path);
+              },
+              f_29: function () {
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.buttons.close);
+                this.it_e6z94m$('should close the Modal dialog window', _.hu.nevermind.app.screen.KeyValueScreenTest.f_27);
+                this.it_e6z94m$('should change the URL, deleting the .../key/ parts', _.hu.nevermind.app.screen.KeyValueScreenTest.f_28);
+              },
+              f_30: function () {
+                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.id));
+              },
+              f_31: function () {
+                this.assertEquals_wn2jw4$(_.Path.keyValue.root, _.hu.nevermind.app.store.RouterStore.path);
+              },
+              f_32: function () {
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.buttons.save);
+                this.it_e6z94m$('should close the Modal dialog window', _.hu.nevermind.app.screen.KeyValueScreenTest.f_30);
+                this.it_e6z94m$('should change the URL, deleting the .../key/ parts', _.hu.nevermind.app.screen.KeyValueScreenTest.f_31);
+              },
+              f_33: function (keyInput) {
+                keyInput.value = '';
+              },
+              f_34: function () {
+                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.buttons.save));
+              },
+              f_35: function () {
+                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.inputs.key, _.hu.nevermind.app.screen.KeyValueScreenTest.f_33);
+                this.it_e6z94m$('should hide the Save button (through the validators)', _.hu.nevermind.app.screen.KeyValueScreenTest.f_34);
+              },
+              f_36: function (input) {
+                input.value = '';
+              },
+              f_37: function () {
+                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.buttons.save));
+              },
+              f_38: function () {
+                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.inputs.value, _.hu.nevermind.app.screen.KeyValueScreenTest.f_36);
+                this.it_e6z94m$('should hide the Save button (through the validators)', _.hu.nevermind.app.screen.KeyValueScreenTest.f_37);
+              },
+              f_39: function (input) {
+                input.value = '200';
+              },
+              f_40: function () {
+                this.assertEquals_wn2jw4$('200', Kotlin.modules['stdlib'].kotlin.collections.first_fvq2g0$(_.hu.nevermind.app.store.KeyValueStore.keyValues()).value);
+              },
+              f_41: function () {
+                this.assertTrue_6taknv$($('#keyValueScreen').find("div:contains('200.000'):last").size() === 1);
+              },
+              f_42: function () {
+                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.inputs.value, _.hu.nevermind.app.screen.KeyValueScreenTest.f_39);
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.KeyValueScreenIds.modal.buttons.save);
+                this.it_e6z94m$('should save the changed value to the Store', _.hu.nevermind.app.screen.KeyValueScreenTest.f_40);
+                this.it_e6z94m$('the table should render the new, changed value', _.hu.nevermind.app.screen.KeyValueScreenTest.f_41);
+              },
+              tests$f_2: function () {
+                window.location.hash = _.Path.keyValue.root;
+                window.location.hash = _.Path.keyValue.withOpenedEditorModal('key1');
                 _.hu.nevermind.app.Actions.modifyKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.KeyValue('key1', '100'));
-                this.on_82t0p5$('clicking on the Close button', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_23);
-                this.on_82t0p5$('clicking on the Save button', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_26);
-                this.on_82t0p5$('Emptying the Key input field', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_29);
-                this.on_82t0p5$('Emptying the Value input field', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_32);
-                this.on_82t0p5$('Clicking on Save after changing the input value', _.hu.nevermind.app.keyvalue.KeyValueScreenTest.f_36);
+                this.on_82t0p5$('clicking on the Close button', _.hu.nevermind.app.screen.KeyValueScreenTest.f_29);
+                this.on_82t0p5$('clicking on the Save button', _.hu.nevermind.app.screen.KeyValueScreenTest.f_32);
+                this.on_82t0p5$('Emptying the Key input field', _.hu.nevermind.app.screen.KeyValueScreenTest.f_35);
+                this.on_82t0p5$('Emptying the Value input field', _.hu.nevermind.app.screen.KeyValueScreenTest.f_38);
+                this.on_82t0p5$('Clicking on Save after changing the input value', _.hu.nevermind.app.screen.KeyValueScreenTest.f_42);
               }
+            }),
+            ModalResult: Kotlin.createEnumClass(function () {
+              return [Kotlin.Enum];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+            }, function () {
+              return {
+                Save: new _.hu.nevermind.app.screen.ModalResult(),
+                Close: new _.hu.nevermind.app.screen.ModalResult()
+              };
             })
           })
         })
       })
     }),
-    keyValueWithOpenedEditorModal$f: function (this$keyValue) {
-      return function (confId) {
-        return this$keyValue.root + confId + '/';
+    withOpenedEditorModal$f: function (this$keyValue) {
+      return function (key) {
+        return this$keyValue.root + key + '/';
       };
     },
     keyValue: function () {
       return Kotlin.createObject(null, function () {
-        this.root = '#config/';
-        this.keyValueWithOpenedEditorModal = _.keyValueWithOpenedEditorModal$f(this);
+        this.root = 'keyValue/';
+        this.withOpenedEditorModal = _.withOpenedEditorModal$f(this);
+      });
+    },
+    withOpenedEditorModal$f_0: function (this$account) {
+      return function (username) {
+        return this$account.root + username + '/';
+      };
+    },
+    account: function () {
+      return Kotlin.createObject(null, function () {
+        this.root = 'account/';
+        this.withOpenedEditorModal = _.withOpenedEditorModal$f_0(this);
       });
     },
     com: Kotlin.definePackage(null, /** @lends _.com */ {
@@ -3528,6 +4399,7 @@
               this.Password = 'password';
               this.Textarea = 'textarea';
               this.Checkbox = 'checkbox';
+              this.Select = 'select';
             });
             this.log = new _.com.github.andrewoma.react.Log(_.com.github.andrewoma.react.logLevelFromLocation(document.location.search));
             this.react = new _.com.github.andrewoma.react.React();
@@ -8377,10 +9249,10 @@
   });
   Kotlin.defineModule('frontend', _);
   _.hu.nevermind.app.main_kand9s$([]);
-  QUnit.test('RoutingTest.hack', function () {
-    (new _.hu.nevermind.app.RoutingTest()).hack();
+  QUnit.test('RouterStoreTest.hack', function () {
+    (new _.hu.nevermind.app.store.RouterStoreTest()).hack();
   });
   QUnit.test('KeyValueScreenTest.hack', function () {
-    (new _.hu.nevermind.app.keyvalue.KeyValueScreenTest()).hack();
+    (new _.hu.nevermind.app.screen.KeyValueScreenTest()).hack();
   });
 }(Kotlin));

@@ -59,10 +59,10 @@ class TestAjaxPoster() : AjaxPoster {
                                    contentType: String,
                                    dataType: String,
                                    async: Boolean,
-                                   success: (Result<RESULT, String>) -> Unit) {
+                                   after: (Result<RESULT, String>) -> Unit) {
         require(url in results) {"'$url' is not found in TestAjaxPoster"}
         val result = results[url]!!(data) as Result<RESULT, String>
-        success(result)
+        after(result)
     }
 
     private val results: MutableMap<String, (Any?) -> Result<*, String>> = hashMapOf()
@@ -84,6 +84,6 @@ interface AjaxPoster {
             contentType: String = "application/json; charset=utf-8",
             dataType: String = "json",
             async: Boolean = true,
-            success: ((Result<RESULT, String>) -> Unit)
+            after: ((Result<RESULT, String>) -> Unit)
     ): Unit
 }
