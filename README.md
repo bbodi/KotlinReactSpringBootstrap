@@ -9,17 +9,17 @@ Kotlin 1.0.0-beta-4589
    ```
 bsModalBody ({ closeButton = true }) {
       bsRow {
-         bsCol({ md = 12 }) {
-            form {
-               bsRow {
-                  bsCol({ md = 6 }) {
-                     bsInput(){}
+            bsCol({ md = 12 }) {
+                  form {
+                        bsRow {
+                              bsCol({ md = 6 }) {
+                                    bsInput(){}
+                              }
+                        }
                   }
-              }
-           }
-         }
-     }
-   }
+            }
+      }
+}
 ```
 - Typesafe HTML enums
 
