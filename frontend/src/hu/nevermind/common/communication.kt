@@ -31,9 +31,11 @@ class JqueryAjaxPoster() : AjaxPoster {
                                    async: Boolean,
                                    after: (Result<RESULT, String>) -> Unit) {
         val error = {jqXHR: dynamic, textStatus: String, errorThrown: String ->
+            console.error("ERROR: $url")
             after(err("$textStatus $errorThrown"))
         }
         val success = { data: RESULT->
+            console.log("SUCCESS: $url")
             after(ok(data))
         }
         val ajaxRequest: dynamic = object {

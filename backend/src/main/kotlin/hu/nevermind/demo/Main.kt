@@ -10,6 +10,11 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
+
+object Profiles {
+    const val dev = "dev"
+}
+
 @SpringBootApplication
 @ComponentScan
 open class Main {

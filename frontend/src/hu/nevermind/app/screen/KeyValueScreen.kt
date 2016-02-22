@@ -229,7 +229,7 @@ class KeyValueEditorDialog() : ComponentSpec<KeyValueEditorDialogProps, KeyValue
         val conf = state.editedKeyValue
         arrayOf("key" to conf.key,
                 "value" to conf.value).forEach {
-            val errorMessages = validate(it.second, Min(3), Max(100))
+            val errorMessages = validate(it.second, Min(1), Max(100))
             if (errorMessages.isNotEmpty()) {
                 errors[it.first] = errorMessages.joinToString("\n")
             }

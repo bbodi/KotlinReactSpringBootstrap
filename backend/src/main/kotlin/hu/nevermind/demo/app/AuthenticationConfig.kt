@@ -30,7 +30,7 @@ open class AuthenticationConfig : GlobalAuthenticationConfigurerAdapter() {
                 User(
                         account.username,
                         account.passwordHash,
-                        true, // enabled
+                        !account.disabled, // enabled
                         true, // accountNonExpired
                         true, // credentialsNonExpired
                         true, // accountNonLocked

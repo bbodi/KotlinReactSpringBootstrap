@@ -7,11 +7,10 @@ import javax.persistence.Id
 
 
 @Entity
-data class Account(@Id var username: String = "",
-                   var passwordHash: String = "",
-                   var disabled: Boolean = false,
-                   var role: String = "") {
-}
+class Account(@Id var username: String = "",
+              var passwordHash: String = "",
+              var disabled: Boolean = false,
+              var role: String = "") : AbstractEntity()
 
 @Repository
 interface AccountRepository : CrudRepository<Account, String> {

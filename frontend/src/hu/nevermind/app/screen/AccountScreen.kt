@@ -59,7 +59,7 @@ class AccountScreen : ComponentSpec<Unit, Unit>() {
             bsButton ({
                 id = AccountScreenIds.addButton
                 bsStyle = BsStyle.Primary
-                onClick = { Actions.setEditingAccount(globalDispatcher, Account("", false, Role.ROLE_USER, "")) }
+                onClick = { Actions.setEditingAccount(globalDispatcher, EditingAccount(Account("", false, Role.ROLE_USER, ""), true)) }
             }) { text("Hozzáadás") }
             bsRow {
                 bsCol ({ md = 10 }) {
@@ -120,7 +120,7 @@ class AccountScreen : ComponentSpec<Unit, Unit>() {
 }
 
 
-data class AccountEditorDialogProps(val editedAccount: Account, val close: (ModalResult, Account?) -> Unit)
+data class AccountEditorDialogProps(val editedAccount: EditingAccount, val close: (ModalResult, Account?) -> Unit)
 data class AccountEditorDialogState(val editedAccount: Account)
 
 class AccountEditorDialog() : ComponentSpec<AccountEditorDialogProps, AccountEditorDialogState>() {
@@ -133,7 +133,7 @@ class AccountEditorDialog() : ComponentSpec<AccountEditorDialogProps, AccountEdi
         AccountStore.addChangeListener(this) {
             val newAccount = AccountStore.editingAccount
             if (newAccount != null) {
-                state = AccountEditorDialogState(newAccount.copy())
+                state = AccountEditorDialogState(newAccount.account.copy())
             }
         }
     }
@@ -143,7 +143,7 @@ class AccountEditorDialog() : ComponentSpec<AccountEditorDialogProps, AccountEdi
     }
 
     override fun initialState(): AccountEditorDialogState? {
-        return AccountEditorDialogState(props.editedAccount)
+        return AccountEditorDialogState(props.editedAccount.account)
     }
 
     private fun updateEntity(event: FormEvent, updater: (String) -> Account) {
@@ -173,6 +173,9 @@ class AccountEditorDialog() : ComponentSpec<AccountEditorDialogProps, AccountEdi
                                         id = AccountScreenIds.modal.inputs.username
                                         type = InputType.Text
                                         label = "Username"
+                                        if (!props.editedAccount.new) {
+                                            readOnly = true
+                                        }
                                         autoComplete = "off"
                                         defaultValue = account.username
                                         onChange = {

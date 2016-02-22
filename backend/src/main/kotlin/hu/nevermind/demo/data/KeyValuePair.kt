@@ -8,10 +8,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "key_value")
-data class KeyValuePair(@Id var key: String = "", var value: String = "") {
-
-
-}
+class KeyValuePair(@Id var key: String = "", var value: String = "") : AbstractEntity()
 
 @Repository
 interface KeyValuePairRepository : CrudRepository<KeyValuePair, String>

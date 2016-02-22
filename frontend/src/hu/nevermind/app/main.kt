@@ -83,7 +83,11 @@ class App : ComponentSpec<Unit, AppState>() {
                             state = AppState(AppScreen.Account)
                         }
                         val account = AccountStore.account(params["editedAccountId"].orEmpty())
-                        Actions.setEditingAccount(globalDispatcher, account)
+                        if (account != null) {
+                            Actions.setEditingAccount(globalDispatcher, EditingAccount(account, false))
+                        } else {
+                            Actions.setEditingAccount(globalDispatcher, null)
+                        }
                     },
                     otherwise = {
                         state = AppState(AppScreen.Home)
