@@ -5,7 +5,8 @@ Kotlin 1.0.0-beta-4589
 
 ## Features:
 - Type safe React (thanks to [Reakt](https://github.com/andrewoma/reakt)) and [React Bootstrap](https://react-bootstrap.github.io/) builders
-```
+
+   ```
 bsModalBody ({ closeButton = true }) {
     bsRow {
       bsCol({ md = 12 }) {
@@ -21,25 +22,30 @@ bsModalBody ({ closeButton = true }) {
 }
 ```
 - Typesafe HTML enums
-```kotlin
+
+ ```kotlin
 bsInput({type = InputType.Text}){...}
 bsButton ({bsStyle = BsStyle.Success}){}
 ```
 - Typesafe element ID-s
-```kotlin
+
+ ```kotlin
 bsButton ({id = KeyValueScreenIds.addButton}) { text("Add") }
 ```
 - ... and helper methods for readable unit tests
-```kotlin
+
+ ```kotlin
 assertTrue(KeyValueScreenIds.addButton.appearOnScreen())
 KeyValueScreenIds.addButton.simulateClick()
 ```
 - Typesafe hash URL-s
-```
+
+ ```
 href = "#${Path.account.root}"
 ```
 - BDD frontend testing (inspired by [Spek](https://github.com/JetBrains/spek))
-```kotlin
+
+ ```kotlin
 given("in any state") {
     on("routing to the KeyValue screen") {
       window.location.hash = Path.keyValue.root // these initialization code runs before every "it" invocations
@@ -49,7 +55,8 @@ given("in any state") {
 }
 ```
 - Router
-```kotlin
+
+ ```kotlin
 RouterStore.match(
     "${Path.login}" to { params ->
         ...
@@ -66,11 +73,13 @@ RouterStore.match(
   )
 ```
 - Frontend unit testing without any backend
-```
+
+ ```
 file:///path_to/web_framework/frontend/tests.html?tests
 ```
 - Authentication
-```
+
+ ```
 admin, admin, ROLE_ADMIN
 user, user, ROLE_USER
 ```
