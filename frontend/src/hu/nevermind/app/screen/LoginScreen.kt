@@ -6,6 +6,8 @@ import hu.nevermind.reakt.bootstrap.*
 
 private data class LoginScreenState(val username: String, val password: String)
 
+private val loginScreenMsg = msg.screen.login
+
 private class LoginScreen : ComponentSpec<Unit, LoginScreenState>() {
 
     companion object {
@@ -19,10 +21,10 @@ private class LoginScreen : ComponentSpec<Unit, LoginScreenState>() {
             bsRow() {
                 bsCol({ smOffset=4; sm=4; mdOffset = 4; md = 4 }) {
                     form({ action = "/login"; method = "POST" }) {
-                        h1 { text("Login") }
+                        h1 { text(loginScreenMsg.login) }
                         bsInput({
                             type = InputType.Text
-                            placeholder = "Username"
+                            placeholder = loginScreenMsg.username
                             value = state.username
                             name = "username"
                             onChange = { event ->
@@ -37,7 +39,7 @@ private class LoginScreen : ComponentSpec<Unit, LoginScreenState>() {
                         })
                         bsInput({
                             type = InputType.Password
-                            placeholder = "Password"
+                            placeholder = loginScreenMsg.password
                             value = state.password
                             name = "password"
                             onChange = {
@@ -54,7 +56,7 @@ private class LoginScreen : ComponentSpec<Unit, LoginScreenState>() {
                             bsSize = BsSize.Large
                             block = true
                             type = BsButtonType.Submit
-                        }) { text("Login") }
+                        }) { text(loginScreenMsg.login) }
                     }
                 }
             }

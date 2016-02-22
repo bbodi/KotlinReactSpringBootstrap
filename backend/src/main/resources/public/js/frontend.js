@@ -112,19 +112,21 @@
                 dataType = 'json';
               if (async === void 0)
                 async = true;
-              var error = _.hu.nevermind.common.JqueryAjaxPoster.ajaxPost_i9h86c$f(after);
-              var success = _.hu.nevermind.common.JqueryAjaxPoster.ajaxPost_i9h86c$f_0(after);
+              var error = _.hu.nevermind.common.JqueryAjaxPoster.ajaxPost_i9h86c$f(url, after);
+              var success = _.hu.nevermind.common.JqueryAjaxPoster.ajaxPost_i9h86c$f_0(url, after);
               var ajaxRequest = _.hu.nevermind.common.JqueryAjaxPoster.ajaxPost_i9h86c$f_1(url, type, data, contentType, dataType, async, error, success);
               $.ajax(ajaxRequest);
             }
           }, /** @lends _.hu.nevermind.common.JqueryAjaxPoster */ {
-            ajaxPost_i9h86c$f: function (after) {
+            ajaxPost_i9h86c$f: function (url, after) {
               return function (jqXHR, textStatus, errorThrown) {
+                console.error('ERROR: ' + url);
                 after(_.hu.nevermind.common.err_za3rmp$(textStatus + ' ' + errorThrown));
               };
             },
-            ajaxPost_i9h86c$f_0: function (after) {
+            ajaxPost_i9h86c$f_0: function (url, after) {
               return function (data) {
+                console.log('SUCCESS: ' + url);
                 after(_.hu.nevermind.common.ok_za3rmp$(data));
               };
             },
@@ -2010,6 +2012,26 @@
             this.saveAccount = '/saveAccount';
             this.deleteKeyValue = '/deleteKeyValue';
           });
+          this.msg = Kotlin.createObject(function () {
+            return [_.hu.nevermind.app.LocalizedTexts];
+          }, function $fun() {
+            $fun.baseInitializer.call(this);
+            this.$common_pgq9ln$ = _.hu.nevermind.app.common$f();
+            this.$screen_i2itne$ = _.hu.nevermind.app.screen$f();
+          }, {
+            common: {
+              get: function () {
+                return this.$common_pgq9ln$;
+              }
+            },
+            screen: {
+              get: function () {
+                return this.$screen_i2itne$;
+              }
+            }
+          });
+          this.commonMsg = _.hu.nevermind.app.msg.common;
+          this.homeScreenMsg = _.hu.nevermind.app.msg.screen.home;
         }, /** @lends _.hu.nevermind.app */ {
           main_kand9s$f: function (it) {
             return _.hu.nevermind.common.ok_za3rmp$(Kotlin.createObject(null, function () {
@@ -2170,7 +2192,7 @@
               this.href = _.hu.nevermind.reakt.bootstrap.nullHref;
             },
             f_0: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Project name');
+              _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.homeScreenMsg.title);
             },
             f_1: function () {
               _.com.github.andrewoma.react.a_z74dev$(this, _.hu.nevermind.app.App.f, _.hu.nevermind.app.App.f_0);
@@ -2179,7 +2201,7 @@
               _.hu.nevermind.reakt.bootstrap.bsNavbarBrand_xt4fwq$(this, void 0, _.hu.nevermind.app.App.f_1);
             },
             f_3: function () {
-              this.title = 'Admin';
+              this.title = _.hu.nevermind.app.homeScreenMsg.menuAdmin;
             },
             f_4: function (this$App) {
               return function () {
@@ -2189,108 +2211,95 @@
               };
             },
             f_5: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Accounts');
+              _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.homeScreenMsg.menuAccounts);
             },
-            f_6: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Another Action');
-            },
-            f_7: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Something else here');
-            },
-            f_8: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Separated link');
-            },
-            f_9: function (this$App) {
+            f_6: function (this$App) {
               return function () {
                 _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, _.hu.nevermind.app.App.f_4(this$App), _.hu.nevermind.app.App.f_5);
-                _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_6);
-                _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_7);
-                _.hu.nevermind.reakt.bootstrap.bsMenuItemDivider_r2i6fj$(this);
-                _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, void 0, _.hu.nevermind.app.App.f_8);
               };
             },
-            f_10: function () {
-              this.title = 'Options';
+            f_7: function () {
+              this.title = _.hu.nevermind.app.homeScreenMsg.menuOptions;
             },
-            f_11: function (this$App) {
+            f_8: function (this$App) {
               return function () {
                 this.id = _.hu.nevermind.app.NavMenuIds.keyValue;
                 this.href = '#keyValue/';
                 this.active = this$App.state.screen === _.hu.nevermind.app.AppScreen.object.Config;
               };
             },
-            f_12: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Configs');
+            f_9: function () {
+              _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.homeScreenMsg.menuKeyValue);
             },
-            f_13: function (this$App) {
+            f_10: function (this$App) {
               return function () {
-                _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, _.hu.nevermind.app.App.f_11(this$App), _.hu.nevermind.app.App.f_12);
+                _.hu.nevermind.reakt.bootstrap.bsMenuItem_r2i6fj$(this, _.hu.nevermind.app.App.f_8(this$App), _.hu.nevermind.app.App.f_9);
               };
             },
-            f_14: function (this$App) {
+            f_11: function (this$App) {
               return function () {
                 if (_.hu.nevermind.app.store.LoggedInUserStore.loggedInUser.role === _.hu.nevermind.app.store.Role.object.ROLE_ADMIN) {
-                  _.hu.nevermind.reakt.bootstrap.bsNavDropdown_sdj1l$(this, _.hu.nevermind.app.App.f_3, _.hu.nevermind.app.App.f_9(this$App));
+                  _.hu.nevermind.reakt.bootstrap.bsNavDropdown_sdj1l$(this, _.hu.nevermind.app.App.f_3, _.hu.nevermind.app.App.f_6(this$App));
                 }
-                _.hu.nevermind.reakt.bootstrap.bsNavDropdown_sdj1l$(this, _.hu.nevermind.app.App.f_10, _.hu.nevermind.app.App.f_13(this$App));
+                _.hu.nevermind.reakt.bootstrap.bsNavDropdown_sdj1l$(this, _.hu.nevermind.app.App.f_7, _.hu.nevermind.app.App.f_10(this$App));
               };
             },
-            f_15: function () {
+            f_12: function () {
               this.pullRight = true;
             },
-            f_16: function () {
+            f_13: function () {
               _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.store.LoggedInUserStore.loggedInUser.username);
               _.com.github.andrewoma.react.text_3pk7xh$(this, '(' + _.hu.nevermind.app.store.LoggedInUserStore.loggedInUser.role + ')');
             },
-            f_17: function (it) {
+            f_14: function (it) {
               _.hu.nevermind.app.Actions.setLoggedInUser.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, null);
             },
-            f_18: function () {
+            f_15: function () {
               this.eventKey = 2;
               this.href = '/logout';
-              this.onClick = _.hu.nevermind.app.App.f_17;
+              this.onClick = _.hu.nevermind.app.App.f_14;
             },
-            f_19: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Logout');
+            f_16: function () {
+              _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.homeScreenMsg.logout);
             },
-            f_20: function () {
-              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, void 0, _.hu.nevermind.app.App.f_16);
-              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_18, _.hu.nevermind.app.App.f_19);
+            f_17: function () {
+              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, void 0, _.hu.nevermind.app.App.f_13);
+              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_15, _.hu.nevermind.app.App.f_16);
             },
-            f_21: function () {
+            f_18: function () {
               this.pullRight = true;
             },
-            f_22: function () {
+            f_19: function () {
               this.eventKey = 2;
               this.href = '/';
             },
-            f_23: function () {
-              _.com.github.andrewoma.react.text_3pk7xh$(this, 'Contact');
+            f_20: function () {
+              _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.homeScreenMsg.contact);
             },
-            f_24: function () {
-              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_22, _.hu.nevermind.app.App.f_23);
+            f_21: function () {
+              _.hu.nevermind.reakt.bootstrap.bsNavItem_8pat5z$(this, _.hu.nevermind.app.App.f_19, _.hu.nevermind.app.App.f_20);
             },
-            f_25: function (this$App) {
+            f_22: function (this$App) {
               return function () {
                 _.hu.nevermind.reakt.bootstrap.bsNavbarHeader_hn5u98$(this, void 0, _.hu.nevermind.app.App.f_2);
                 if (this$App.state.screen !== _.hu.nevermind.app.AppScreen.object.Login) {
-                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, void 0, _.hu.nevermind.app.App.f_14(this$App));
+                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, void 0, _.hu.nevermind.app.App.f_11(this$App));
                 }
                 if (this$App.state.screen !== _.hu.nevermind.app.AppScreen.object.Login) {
-                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, _.hu.nevermind.app.App.f_15, _.hu.nevermind.app.App.f_20);
+                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, _.hu.nevermind.app.App.f_12, _.hu.nevermind.app.App.f_17);
                 }
                  else {
-                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, _.hu.nevermind.app.App.f_21, _.hu.nevermind.app.App.f_24);
+                  _.hu.nevermind.reakt.bootstrap.bsNav_b466ai$(this, _.hu.nevermind.app.App.f_18, _.hu.nevermind.app.App.f_21);
                 }
               };
             },
-            f_26: function () {
+            f_23: function () {
               this.fluid = true;
             },
-            f_27: function () {
+            f_24: function () {
               this.md = 12;
             },
-            f_28: function (this$App) {
+            f_25: function (this$App) {
               return function () {
                 if (this$App.state.screen === _.hu.nevermind.app.AppScreen.object.Config) {
                   _.hu.nevermind.app.screen.keyValueScreen_sx5o3u$(this);
@@ -2303,20 +2312,20 @@
                 }
               };
             },
-            f_29: function (this$App) {
+            f_26: function (this$App) {
               return function () {
-                _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.App.f_27, _.hu.nevermind.app.App.f_28(this$App));
+                _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.App.f_24, _.hu.nevermind.app.App.f_25(this$App));
               };
             },
-            f_30: function (this$App) {
+            f_27: function (this$App) {
               return function () {
-                _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.App.f_29(this$App));
+                _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.App.f_26(this$App));
               };
             },
             render_sx5o3u$f_0: function (this$App) {
               return function () {
-                _.hu.nevermind.reakt.bootstrap.bsNavbar_1x79tb$(this, void 0, _.hu.nevermind.app.App.f_25(this$App));
-                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$(this, _.hu.nevermind.app.App.f_26, _.hu.nevermind.app.App.f_30(this$App));
+                _.hu.nevermind.reakt.bootstrap.bsNavbar_1x79tb$(this, void 0, _.hu.nevermind.app.App.f_22(this$App));
+                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$(this, _.hu.nevermind.app.App.f_23, _.hu.nevermind.app.App.f_27(this$App));
               };
             }
           }),
@@ -2495,6 +2504,223 @@
               };
             }
           }),
+          LocalizedTextsScreenAccount: Kotlin.createClass(null, null),
+          LocalizedTextsScreenKeyValue: Kotlin.createClass(null, null),
+          LocalizedTextsScreen: Kotlin.createClass(null, null),
+          LocalizedTextsCommon: Kotlin.createClass(null, null),
+          LocalizedTextsHome: Kotlin.createClass(null, null),
+          LocalizedTextsLogin: Kotlin.createClass(null, null),
+          LocalizedTexts: Kotlin.createClass(null, null),
+          common$f: function () {
+            return Kotlin.createObject(function () {
+              return [_.hu.nevermind.app.LocalizedTextsCommon];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+              this.$edit_6n6p5y$ = 'Edit';
+              this.$add_yl0xmt$ = 'Add';
+              this.$delete_8arb7d$ = 'Delete';
+              this.$cancel_8tyvu2$ = 'Cancel';
+              this.$save_6nfl21$ = 'Save';
+            }, {
+              edit: {
+                get: function () {
+                  return this.$edit_6n6p5y$;
+                }
+              },
+              add: {
+                get: function () {
+                  return this.$add_yl0xmt$;
+                }
+              },
+              delete: {
+                get: function () {
+                  return this.$delete_8arb7d$;
+                }
+              },
+              cancel: {
+                get: function () {
+                  return this.$cancel_8tyvu2$;
+                }
+              },
+              save: {
+                get: function () {
+                  return this.$save_6nfl21$;
+                }
+              }
+            });
+          },
+          account$f: function () {
+            return Kotlin.createObject(function () {
+              return [_.hu.nevermind.app.LocalizedTextsScreenAccount];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+              this.$disabled_4sv331$ = 'disabled';
+              this.$username_dodg5f$ = 'Username';
+              this.$password_audxvm$ = 'Password';
+              this.$state_gydz9m$ = 'disabled';
+              this.$enabled_wnl1kq$ = 'enabled';
+              this.$columnDisabled_qvl6ft$ = 'Disabled';
+            }, {
+              disabled: {
+                get: function () {
+                  return this.$disabled_4sv331$;
+                }
+              },
+              username: {
+                get: function () {
+                  return this.$username_dodg5f$;
+                }
+              },
+              password: {
+                get: function () {
+                  return this.$password_audxvm$;
+                }
+              },
+              state: {
+                get: function () {
+                  return this.$state_gydz9m$;
+                }
+              },
+              enabled: {
+                get: function () {
+                  return this.$enabled_wnl1kq$;
+                }
+              },
+              columnDisabled: {
+                get: function () {
+                  return this.$columnDisabled_qvl6ft$;
+                }
+              }
+            });
+          },
+          keyValue$f: function () {
+            return Kotlin.createObject(function () {
+              return [_.hu.nevermind.app.LocalizedTextsScreenKeyValue];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+              this.$key_r11ncp$ = 'Key';
+              this.$value_m88p9x$ = 'Value';
+            }, {
+              key: {
+                get: function () {
+                  return this.$key_r11ncp$;
+                }
+              },
+              value: {
+                get: function () {
+                  return this.$value_m88p9x$;
+                }
+              }
+            });
+          },
+          login$f: function () {
+            return Kotlin.createObject(function () {
+              return [_.hu.nevermind.app.LocalizedTextsLogin];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+              this.$username_btll3b$ = 'Username';
+              this.$password_cp5sxq$ = 'Password';
+              this.$login_k0n17e$ = 'Login';
+            }, {
+              username: {
+                get: function () {
+                  return this.$username_btll3b$;
+                }
+              },
+              password: {
+                get: function () {
+                  return this.$password_cp5sxq$;
+                }
+              },
+              login: {
+                get: function () {
+                  return this.$login_k0n17e$;
+                }
+              }
+            });
+          },
+          home$f: function () {
+            return Kotlin.createObject(function () {
+              return [_.hu.nevermind.app.LocalizedTextsHome];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+              this.$contact_w84vzn$ = 'Contact';
+              this.$logout_88kyrn$ = 'Logout';
+              this.$title_bb64cl$ = 'Project name';
+              this.$menuAdmin_imds0z$ = 'Admin';
+              this.$menuAccounts_s9sinc$ = 'Accounts';
+              this.$menuOptions_2h6ld8$ = 'Options';
+              this.$menuKeyValue_f7ol50$ = 'KeyValue';
+            }, {
+              contact: {
+                get: function () {
+                  return this.$contact_w84vzn$;
+                }
+              },
+              logout: {
+                get: function () {
+                  return this.$logout_88kyrn$;
+                }
+              },
+              title: {
+                get: function () {
+                  return this.$title_bb64cl$;
+                }
+              },
+              menuAdmin: {
+                get: function () {
+                  return this.$menuAdmin_imds0z$;
+                }
+              },
+              menuAccounts: {
+                get: function () {
+                  return this.$menuAccounts_s9sinc$;
+                }
+              },
+              menuOptions: {
+                get: function () {
+                  return this.$menuOptions_2h6ld8$;
+                }
+              },
+              menuKeyValue: {
+                get: function () {
+                  return this.$menuKeyValue_f7ol50$;
+                }
+              }
+            });
+          },
+          screen$f: function () {
+            return Kotlin.createObject(function () {
+              return [_.hu.nevermind.app.LocalizedTextsScreen];
+            }, function $fun() {
+              $fun.baseInitializer.call(this);
+              this.$account_5c7yo$ = _.hu.nevermind.app.account$f();
+              this.$keyValue_w55sy9$ = _.hu.nevermind.app.keyValue$f();
+              this.$login_fjq018$ = _.hu.nevermind.app.login$f();
+              this.$home_2sgzzw$ = _.hu.nevermind.app.home$f();
+            }, {
+              account: {
+                get: function () {
+                  return this.$account_5c7yo$;
+                }
+              },
+              keyValue: {
+                get: function () {
+                  return this.$keyValue_w55sy9$;
+                }
+              },
+              login: {
+                get: function () {
+                  return this.$login_fjq018$;
+                }
+              },
+              home: {
+                get: function () {
+                  return this.$home_2sgzzw$;
+                }
+              }
+            });
+          },
           store: Kotlin.definePackage(function () {
             this.AccountStore = Kotlin.createObject(function () {
               return [_.com.github.andrewoma.flux.Store];
@@ -2502,9 +2728,9 @@
               $fun.baseInitializer.call(this);
               this.accounts_7oe6ph$ = Kotlin.modules['stdlib'].kotlin.collections.arrayListOf_9mqe4v$([]);
               this.$editingAccount_qdaqx0$ = null;
+              this.setEditingAccountToken = null;
+              this.modifyAccountToken = null;
               this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setLoggedInUser, _.hu.nevermind.app.store.AccountStore$f(this));
-              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setEditingAccount, _.hu.nevermind.app.store.AccountStore$f_0(this));
-              this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.modifyAccount, _.hu.nevermind.app.store.AccountStore$f_1(this));
             }, {
               editingAccount: {
                 get: function () {
@@ -2513,6 +2739,10 @@
                 set: function (editingAccount) {
                   this.$editingAccount_qdaqx0$ = editingAccount;
                 }
+              },
+              registerAccountEditingHandlers: function () {
+                this.setEditingAccountToken = this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.setEditingAccount, _.hu.nevermind.app.store.registerAccountEditingHandlers$f(this));
+                this.modifyAccountToken = this.register_80p2z8$(_.hu.nevermind.app.globalDispatcher, _.hu.nevermind.app.Actions.modifyAccount, _.hu.nevermind.app.store.registerAccountEditingHandlers$f_0(this));
               },
               accounts: function () {
                 return this.accounts_7oe6ph$;
@@ -2722,11 +2952,16 @@
                 }
                  else {
                   _.hu.nevermind.app.communicator.getEntitiesFromServer_e6xufl$(_.hu.nevermind.app.RestUrl.getAccountsFromServer, _.hu.nevermind.app.store.f_0(this$AccountStore));
+                  if (this$AccountStore.setEditingAccountToken != null) {
+                  }
+                  if (loggedInUser.role === _.hu.nevermind.app.store.Role.object.ROLE_ADMIN) {
+                    this$AccountStore.registerAccountEditingHandlers();
+                  }
                 }
                 this$AccountStore.emitChange();
               };
             },
-            AccountStore$f_0: function (this$AccountStore) {
+            registerAccountEditingHandlers$f: function (this$AccountStore) {
               return function (editingAccountPayload) {
                 if (!Kotlin.equals(editingAccountPayload, this$AccountStore.editingAccount)) {
                   this$AccountStore.editingAccount = editingAccountPayload;
@@ -2766,7 +3001,7 @@
                 this$AccountStore.emitChange();
               };
             },
-            AccountStore$f_1: function (this$AccountStore) {
+            registerAccountEditingHandlers$f_0: function (this$AccountStore) {
               return function (modifiedAccount) {
                 var sendingEntity = _.hu.nevermind.app.store.f_1(modifiedAccount);
                 _.hu.nevermind.app.communicator.saveEntity_24w3xd$(_.hu.nevermind.app.RestUrl.saveAccount, sendingEntity, _.hu.nevermind.app.store.f_3(this$AccountStore, modifiedAccount));
@@ -2995,18 +3230,21 @@
             }
           }),
           screen: Kotlin.definePackage(function () {
+            this.loginScreenMsg_go3wz4$ = _.hu.nevermind.app.msg.screen.login;
             this.AccountScreenIds = Kotlin.createObject(null, function () {
               this.screenId = 'accountScreen';
               this.addButton = 'accountScreen_addButton';
               this.table = _.hu.nevermind.app.screen.table();
               this.modal = _.hu.nevermind.app.screen.modal();
             });
+            this.accountScreenMsg_qdl4vo$ = _.hu.nevermind.app.msg.screen.account;
             this.KeyValueScreenIds = Kotlin.createObject(null, function () {
               this.screenId = 'keyValueScreen';
               this.addButton = 'keyValueScreen_addButton';
               this.table = _.hu.nevermind.app.screen.table_0();
               this.modal = _.hu.nevermind.app.screen.modal_0();
             });
+            this.keyValueScreenMsg_ws3e67$ = _.hu.nevermind.app.msg.screen.keyValue;
           }, /** @lends _.hu.nevermind.app.screen */ {
             LoginScreenState: Kotlin.createClass(null, function (username, password) {
               this.username = username;
@@ -3065,7 +3303,7 @@
                 this.method = 'POST';
               },
               f_1: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Login');
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.screen.loginScreenMsg_go3wz4$.login);
               },
               f_2: function (this$LoginScreen) {
                 return function (event) {
@@ -3076,7 +3314,7 @@
               f_3: function (this$LoginScreen) {
                 return function () {
                   this.type = _.com.github.andrewoma.react.InputType.Text;
-                  this.placeholder = 'Username';
+                  this.placeholder = _.hu.nevermind.app.screen.loginScreenMsg_go3wz4$.username;
                   this.value = this$LoginScreen.state.username;
                   this.name = 'username';
                   this.onChange = _.hu.nevermind.app.screen.LoginScreen.f_2(this$LoginScreen);
@@ -3095,7 +3333,7 @@
               f_5: function (this$LoginScreen) {
                 return function () {
                   this.type = _.com.github.andrewoma.react.InputType.Password;
-                  this.placeholder = 'Password';
+                  this.placeholder = _.hu.nevermind.app.screen.loginScreenMsg_go3wz4$.password;
                   this.value = this$LoginScreen.state.password;
                   this.name = 'password';
                   this.onChange = _.hu.nevermind.app.screen.LoginScreen.f_4(this$LoginScreen);
@@ -3113,7 +3351,7 @@
                 this.type = _.hu.nevermind.reakt.bootstrap.BsButtonType.Submit;
               },
               f_7: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Login');
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.screen.loginScreenMsg_go3wz4$.login);
               },
               f_8: function (this$LoginScreen) {
                 return function () {
@@ -3196,7 +3434,23 @@
                 var accounts = _.hu.nevermind.app.store.AccountStore.accounts();
                 var editingAccount = _.hu.nevermind.app.store.AccountStore.editingAccount;
                 var rowIndex = {v: 0};
-                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$($receiver, _.hu.nevermind.app.screen.AccountScreen.render_sx5o3u$f, _.hu.nevermind.app.screen.AccountScreen.render_sx5o3u$f_0(accounts, rowIndex, editingAccount));
+                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$($receiver, _.hu.nevermind.app.screen.AccountScreen.render_sx5o3u$f, _.hu.nevermind.app.screen.AccountScreen.render_sx5o3u$f_0(this, accounts, rowIndex, editingAccount));
+              },
+              addButton: function ($receiver) {
+                _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$($receiver, _.hu.nevermind.app.screen.AccountScreen.addButton$f, _.hu.nevermind.app.screen.AccountScreen.addButton$f_0);
+              },
+              buttonColumn: function ($receiver, rowIndex) {
+                _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$($receiver, _.hu.nevermind.app.screen.AccountScreen.buttonColumn$f(rowIndex));
+              },
+              usernameColumn: function ($receiver) {
+                _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$($receiver, _.hu.nevermind.app.screen.AccountScreen.usernameColumn$f, _.hu.nevermind.app.screen.AccountScreen.usernameColumn$f_0);
+              },
+              stateColumn: function ($receiver) {
+                _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$($receiver, _.hu.nevermind.app.screen.AccountScreen.stateColumn$f, _.hu.nevermind.app.screen.AccountScreen.stateColumn$f_0);
+              },
+              editorDialog: function ($receiver, editingAccount) {
+                var closeModal = _.hu.nevermind.app.screen.AccountScreen.editorDialog$closeModal;
+                _.hu.nevermind.app.screen.editorDialog($receiver, new _.hu.nevermind.app.screen.AccountEditorDialogProps(editingAccount, closeModal));
               }
             }, /** @lends _.hu.nevermind.app.screen.AccountScreen */ {
               object_initializer$: function () {
@@ -3212,21 +3466,10 @@
               render_sx5o3u$f: function () {
                 this.id = _.hu.nevermind.app.screen.AccountScreenIds.screenId;
               },
-              f: function (it) {
-                _.hu.nevermind.app.Actions.setEditingAccount.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.EditingAccount(new _.hu.nevermind.app.store.Account('', false, _.hu.nevermind.app.store.Role.object.ROLE_USER, ''), true));
-              },
-              f_0: function () {
-                this.id = _.hu.nevermind.app.screen.AccountScreenIds.addButton;
-                this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Primary;
-                this.onClick = _.hu.nevermind.app.screen.AccountScreen.f;
-              },
-              f_1: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Hozz\xE1ad\xE1s');
-              },
-              f_2: function () {
+              f: function () {
                 this.md = 10;
               },
-              f_3: function (accounts) {
+              f_0: function (accounts) {
                 return function () {
                   this.data = Kotlin.copyToArray(accounts);
                   this.hover = true;
@@ -3234,118 +3477,128 @@
                   this.search = true;
                 };
               },
-              f_4: function () {
+              f_1: function (rowIndex, this$AccountScreen) {
+                return function () {
+                  this$AccountScreen.buttonColumn(this, rowIndex.v++);
+                  this$AccountScreen.usernameColumn(this);
+                  this$AccountScreen.stateColumn(this);
+                };
+              },
+              f_2: function (accounts, rowIndex, this$AccountScreen) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.table.bootstrapTable_b7jpzj$(this, _.hu.nevermind.app.screen.AccountScreen.f_0(accounts), _.hu.nevermind.app.screen.AccountScreen.f_1(rowIndex, this$AccountScreen));
+                };
+              },
+              f_3: function (accounts, rowIndex, this$AccountScreen) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountScreen.f, _.hu.nevermind.app.screen.AccountScreen.f_2(accounts, rowIndex, this$AccountScreen));
+                };
+              },
+              render_sx5o3u$f_0: function (this$AccountScreen, accounts, rowIndex, editingAccount) {
+                return function () {
+                  this$AccountScreen.addButton(this);
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.AccountScreen.f_3(accounts, rowIndex, this$AccountScreen));
+                  if (editingAccount != null) {
+                    this$AccountScreen.editorDialog(this, editingAccount);
+                  }
+                };
+              },
+              f_4: function (it) {
+                _.hu.nevermind.app.Actions.setEditingAccount.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.EditingAccount(new _.hu.nevermind.app.store.Account('', false, _.hu.nevermind.app.store.Role.object.ROLE_USER, ''), true));
+              },
+              addButton$f: function () {
+                this.id = _.hu.nevermind.app.screen.AccountScreenIds.addButton;
+                this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Primary;
+                this.onClick = _.hu.nevermind.app.screen.AccountScreen.f_4;
+              },
+              addButton$f_0: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.commonMsg.add);
+              },
+              f_5: function () {
                 this.bsSize = _.hu.nevermind.reakt.bootstrap.BsSize.ExtraSmall;
               },
-              f_5: function (account) {
+              f_6: function (account) {
                 return function (it) {
                   window.location.hash = _.Path.account.withOpenedEditorModal(account.username);
                 };
               },
-              f_6: function (rowIndex, account) {
+              f_7: function (rowIndex, account) {
                 return function () {
-                  this.id = _.hu.nevermind.app.screen.AccountScreenIds.table.row.editButton(rowIndex.v);
+                  this.id = _.hu.nevermind.app.screen.AccountScreenIds.table.row.editButton(rowIndex);
                   this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Primary;
-                  this.onClick = _.hu.nevermind.app.screen.AccountScreen.f_5(account);
+                  this.onClick = _.hu.nevermind.app.screen.AccountScreen.f_6(account);
                 };
               },
-              f_7: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Szerkeszt\xE9s');
-              },
-              f_8: function (rowIndex, account) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.AccountScreen.f_6(rowIndex, account), _.hu.nevermind.app.screen.AccountScreen.f_7);
-                };
+              f_8: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.commonMsg.edit);
               },
               f_9: function (rowIndex, account) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, _.hu.nevermind.app.screen.AccountScreen.f_4, _.hu.nevermind.app.screen.AccountScreen.f_8(rowIndex, account));
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.AccountScreen.f_7(rowIndex, account), _.hu.nevermind.app.screen.AccountScreen.f_8);
                 };
               },
-              f_10: function (rowIndex) {
-                return function (cell, account) {
-                  return _.hu.nevermind.reakt.bootstrap.createReactElement_i41a89$(_.hu.nevermind.app.screen.AccountScreen.f_9(rowIndex, account));
+              f_10: function (rowIndex, account) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, _.hu.nevermind.app.screen.AccountScreen.f_5, _.hu.nevermind.app.screen.AccountScreen.f_9(rowIndex, account));
                 };
               },
               f_11: function (rowIndex) {
-                return function () {
-                  this.width = '50';
-                  this.dataFormat = _.hu.nevermind.app.screen.AccountScreen.f_10(rowIndex);
+                return function (cell, account) {
+                  return _.hu.nevermind.reakt.bootstrap.createReactElement_i41a89$(_.hu.nevermind.app.screen.AccountScreen.f_10(rowIndex, account));
                 };
               },
-              f_12: function () {
+              buttonColumn$f: function (rowIndex) {
+                return function () {
+                  this.width = '50';
+                  this.dataFormat = _.hu.nevermind.app.screen.AccountScreen.f_11(rowIndex);
+                };
+              },
+              usernameColumn$f: function () {
                 this.isKey = true;
                 this.dataField = 'username';
                 this.width = '100';
               },
-              f_13: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Username');
+              usernameColumn$f_0: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.screen.accountScreenMsg_qdl4vo$.username);
               },
-              f_14: function () {
+              f_12: function () {
                 this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Error;
               },
-              f_15: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Disabled');
+              f_13: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.screen.accountScreenMsg_qdl4vo$.disabled);
               },
-              f_16: function () {
+              f_14: function () {
                 this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Success;
               },
-              f_17: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Enabled');
+              f_15: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.screen.accountScreenMsg_qdl4vo$.enabled);
               },
-              f_18: function (account) {
+              f_16: function (account) {
                 return function () {
                   if (account.disabled) {
-                    _.hu.nevermind.reakt.bootstrap.bsLabel_cbz1q2$(this, _.hu.nevermind.app.screen.AccountScreen.f_14, _.hu.nevermind.app.screen.AccountScreen.f_15);
+                    _.hu.nevermind.reakt.bootstrap.bsLabel_cbz1q2$(this, _.hu.nevermind.app.screen.AccountScreen.f_12, _.hu.nevermind.app.screen.AccountScreen.f_13);
                   }
                    else {
-                    _.hu.nevermind.reakt.bootstrap.bsLabel_cbz1q2$(this, _.hu.nevermind.app.screen.AccountScreen.f_16, _.hu.nevermind.app.screen.AccountScreen.f_17);
+                    _.hu.nevermind.reakt.bootstrap.bsLabel_cbz1q2$(this, _.hu.nevermind.app.screen.AccountScreen.f_14, _.hu.nevermind.app.screen.AccountScreen.f_15);
                   }
                 };
               },
-              f_19: function (cell, account) {
-                return _.hu.nevermind.reakt.bootstrap.createReactElement_i41a89$(_.hu.nevermind.app.screen.AccountScreen.f_18(account));
+              f_17: function (cell, account) {
+                return _.hu.nevermind.reakt.bootstrap.createReactElement_i41a89$(_.hu.nevermind.app.screen.AccountScreen.f_16(account));
               },
-              f_20: function () {
+              stateColumn$f: function () {
                 this.width = '75';
-                this.dataFormat = _.hu.nevermind.app.screen.AccountScreen.f_19;
+                this.dataFormat = _.hu.nevermind.app.screen.AccountScreen.f_17;
               },
-              f_21: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'State');
+              stateColumn$f_0: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.screen.accountScreenMsg_qdl4vo$.state);
               },
-              f_22: function (rowIndex) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.AccountScreen.f_11(rowIndex));
-                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.AccountScreen.f_12, _.hu.nevermind.app.screen.AccountScreen.f_13);
-                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.AccountScreen.f_20, _.hu.nevermind.app.screen.AccountScreen.f_21);
-                };
-              },
-              f_23: function (accounts, rowIndex) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.table.bootstrapTable_b7jpzj$(this, _.hu.nevermind.app.screen.AccountScreen.f_3(accounts), _.hu.nevermind.app.screen.AccountScreen.f_22(rowIndex));
-                };
-              },
-              f_24: function (accounts, rowIndex) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountScreen.f_2, _.hu.nevermind.app.screen.AccountScreen.f_23(accounts, rowIndex));
-                };
-              },
-              closeModal: function (result, entity) {
+              editorDialog$closeModal: function (result, entity) {
                 if (result === _.hu.nevermind.app.screen.ModalResult.object.Save) {
                   _.hu.nevermind.app.Actions.modifyAccount.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, entity != null ? entity : Kotlin.throwNPE());
                 }
                 _.hu.nevermind.app.Actions.setEditingAccount.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, null);
                 window.location.hash = _.Path.account.root;
-              },
-              render_sx5o3u$f_0: function (accounts, rowIndex, editingAccount) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.AccountScreen.f_0, _.hu.nevermind.app.screen.AccountScreen.f_1);
-                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.AccountScreen.f_24(accounts, rowIndex));
-                  if (editingAccount != null) {
-                    var closeModal = _.hu.nevermind.app.screen.AccountScreen.closeModal;
-                    _.hu.nevermind.app.screen.editorDialog(this, new _.hu.nevermind.app.screen.AccountEditorDialogProps(editingAccount, closeModal));
-                  }
-                };
               }
             }),
             AccountEditorDialogProps: Kotlin.createClass(null, function (editedAccount, close) {
@@ -3414,10 +3667,26 @@
                 this.state = new _.hu.nevermind.app.screen.AccountEditorDialogState(updater(value));
               },
               render_sx5o3u$: function ($receiver) {
+                _.hu.nevermind.reakt.bootstrap.bsModal_dslzk$($receiver, _.hu.nevermind.app.screen.AccountEditorDialog.render_sx5o3u$f(this), _.hu.nevermind.app.screen.AccountEditorDialog.render_sx5o3u$f_0(this));
+              },
+              body: function ($receiver, errors) {
                 var account = this.state.editedAccount;
-                var errors = Kotlin.modules['stdlib'].kotlin.collections.hashMapOf_eoa9s7$([]);
-                this.fillWithErrors(errors);
-                _.hu.nevermind.reakt.bootstrap.bsModal_dslzk$($receiver, _.hu.nevermind.app.screen.AccountEditorDialog.render_sx5o3u$f(this), _.hu.nevermind.app.screen.AccountEditorDialog.render_sx5o3u$f_0(this, account, errors));
+                _.hu.nevermind.reakt.bootstrap.bsModalBody_9g1czy$($receiver, _.hu.nevermind.app.screen.AccountEditorDialog.body$f, _.hu.nevermind.app.screen.AccountEditorDialog.body$f_0(account, errors, this));
+              },
+              usernameInput: function ($receiver, account, errors) {
+                _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$($receiver, _.hu.nevermind.app.screen.AccountEditorDialog.usernameInput$f(this, account, errors));
+              },
+              passwordInput: function ($receiver, account, errors) {
+                _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$($receiver, _.hu.nevermind.app.screen.AccountEditorDialog.passwordInput$f(account, this, errors));
+              },
+              disabledInput: function ($receiver, account) {
+                _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$($receiver, _.hu.nevermind.app.screen.AccountEditorDialog.disabledInput$f(account, this));
+              },
+              roleInput: function ($receiver, account) {
+                _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$($receiver, _.hu.nevermind.app.screen.AccountEditorDialog.roleInput$f(account, this), _.hu.nevermind.app.screen.AccountEditorDialog.roleInput$f_0);
+              },
+              footer: function ($receiver, errors) {
+                _.hu.nevermind.reakt.bootstrap.bsModalFooter_4ko09h$($receiver, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.footer$f(errors, this));
               },
               fillWithErrors: function (errors) {
                 var account = this.state.editedAccount;
@@ -3460,140 +3729,180 @@
                 this.closeButton = true;
               },
               f_1: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Szerkeszt\xE9s');
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.commonMsg.edit);
               },
               f_2: function () {
                 _.hu.nevermind.reakt.bootstrap.bsModalTitle_k848lm$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_1);
               },
-              f_3: function () {
+              render_sx5o3u$f_0: function (this$AccountEditorDialog) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsModalHeader_bv4bc3$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_0, _.hu.nevermind.app.screen.AccountEditorDialog.f_2);
+                  var errors = Kotlin.modules['stdlib'].kotlin.collections.hashMapOf_eoa9s7$([]);
+                  this$AccountEditorDialog.fillWithErrors(errors);
+                  this$AccountEditorDialog.body(this, errors);
+                  this$AccountEditorDialog.footer(this, errors);
+                };
+              },
+              body$f: function () {
                 this.closeButton = true;
               },
-              f_4: function () {
+              f_3: function () {
                 this.md = 12;
               },
-              f_5: function () {
+              f_4: function () {
                 this.md = 4;
               },
-              f_6: function (account) {
-                return function (value) {
-                  return account.copy_4ygzu8$(value);
-                };
-              },
-              f_7: function (account, this$AccountEditorDialog) {
-                return function (it) {
-                  this$AccountEditorDialog.updateEntity(it, _.hu.nevermind.app.screen.AccountEditorDialog.f_6(account));
-                };
-              },
-              f_8: function (this$) {
-                return function (errorMessage) {
-                  this$.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Error;
-                  this$.help = errorMessage;
-                };
-              },
-              f_9: function (this$AccountEditorDialog, account, errors) {
+              f_5: function (account, errors, this$AccountEditorDialog) {
                 return function () {
-                  var tmp$0;
-                  this.id = _.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.username;
-                  this.type = _.com.github.andrewoma.react.InputType.Text;
-                  this.label = 'Username';
-                  if (!this$AccountEditorDialog.props.editedAccount.new) {
-                    this.readOnly = true;
-                  }
-                  this.autoComplete = 'off';
-                  this.defaultValue = account.username;
-                  this.onChange = _.hu.nevermind.app.screen.AccountEditorDialog.f_7(account, this$AccountEditorDialog);
-                  (tmp$0 = errors.get_za3rmp$('username')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.screen.AccountEditorDialog.f_8(this)) : null;
+                  this$AccountEditorDialog.usernameInput(this, account, errors);
                 };
               },
-              f_10: function (this$AccountEditorDialog, account, errors) {
+              f_6: function () {
+                this.md = 4;
+              },
+              f_7: function (account, errors, this$AccountEditorDialog) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_9(this$AccountEditorDialog, account, errors));
+                  this$AccountEditorDialog.passwordInput(this, account, errors);
+                };
+              },
+              f_8: function () {
+                this.md = 4;
+              },
+              f_9: function (account, this$AccountEditorDialog) {
+                return function () {
+                  this$AccountEditorDialog.disabledInput(this, account);
+                };
+              },
+              f_10: function (account, errors, this$AccountEditorDialog) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_4, _.hu.nevermind.app.screen.AccountEditorDialog.f_5(account, errors, this$AccountEditorDialog));
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_6, _.hu.nevermind.app.screen.AccountEditorDialog.f_7(account, errors, this$AccountEditorDialog));
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_8, _.hu.nevermind.app.screen.AccountEditorDialog.f_9(account, this$AccountEditorDialog));
                 };
               },
               f_11: function () {
                 this.md = 4;
               },
-              f_12: function (account) {
-                return function (value) {
-                  return account.copy_4ygzu8$(void 0, void 0, void 0, value);
+              f_12: function (account, this$AccountEditorDialog) {
+                return function () {
+                  this$AccountEditorDialog.roleInput(this, account);
                 };
               },
               f_13: function (account, this$AccountEditorDialog) {
-                return function (it) {
-                  this$AccountEditorDialog.updateEntity(it, _.hu.nevermind.app.screen.AccountEditorDialog.f_12(account));
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_11, _.hu.nevermind.app.screen.AccountEditorDialog.f_12(account, this$AccountEditorDialog));
                 };
               },
-              f_14: function (this$) {
+              f_14: function (account, errors, this$AccountEditorDialog) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_10(account, errors, this$AccountEditorDialog));
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_13(account, this$AccountEditorDialog));
+                };
+              },
+              f_15: function (account, errors, this$AccountEditorDialog) {
+                return function () {
+                  _.com.github.andrewoma.react.form_aej7ls$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_14(account, errors, this$AccountEditorDialog));
+                };
+              },
+              f_16: function (account, errors, this$AccountEditorDialog) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_3, _.hu.nevermind.app.screen.AccountEditorDialog.f_15(account, errors, this$AccountEditorDialog));
+                };
+              },
+              body$f_0: function (account, errors, this$AccountEditorDialog) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_16(account, errors, this$AccountEditorDialog));
+                };
+              },
+              f_17: function (account) {
+                return function (value) {
+                  return account.copy_4ygzu8$(value);
+                };
+              },
+              f_18: function (account, this$AccountEditorDialog) {
+                return function (it) {
+                  this$AccountEditorDialog.updateEntity(it, _.hu.nevermind.app.screen.AccountEditorDialog.f_17(account));
+                };
+              },
+              f_19: function (this$) {
                 return function (errorMessage) {
                   this$.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Error;
                   this$.help = errorMessage;
                 };
               },
-              f_15: function (account, this$AccountEditorDialog, errors) {
+              usernameInput$f: function (this$AccountEditorDialog, account, errors) {
+                return function () {
+                  var tmp$0;
+                  this.id = _.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.username;
+                  this.type = _.com.github.andrewoma.react.InputType.Text;
+                  this.label = _.hu.nevermind.app.screen.accountScreenMsg_qdl4vo$.username;
+                  if (!this$AccountEditorDialog.props.editedAccount.new) {
+                    this.readOnly = true;
+                  }
+                  this.autoComplete = 'off';
+                  this.defaultValue = account.username;
+                  this.onChange = _.hu.nevermind.app.screen.AccountEditorDialog.f_18(account, this$AccountEditorDialog);
+                  (tmp$0 = errors.get_za3rmp$('username')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.screen.AccountEditorDialog.f_19(this)) : null;
+                };
+              },
+              f_20: function (account) {
+                return function (value) {
+                  return account.copy_4ygzu8$(void 0, void 0, void 0, value);
+                };
+              },
+              f_21: function (account, this$AccountEditorDialog) {
+                return function (it) {
+                  this$AccountEditorDialog.updateEntity(it, _.hu.nevermind.app.screen.AccountEditorDialog.f_20(account));
+                };
+              },
+              f_22: function (this$) {
+                return function (errorMessage) {
+                  this$.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Error;
+                  this$.help = errorMessage;
+                };
+              },
+              passwordInput$f: function (account, this$AccountEditorDialog, errors) {
                 return function () {
                   var tmp$0;
                   this.id = _.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.password;
                   this.type = _.com.github.andrewoma.react.InputType.Password;
-                  this.label = 'Password';
+                  this.label = _.hu.nevermind.app.screen.accountScreenMsg_qdl4vo$.password;
                   this.autoComplete = 'off';
                   this.defaultValue = '';
-                  this.onChange = _.hu.nevermind.app.screen.AccountEditorDialog.f_13(account, this$AccountEditorDialog);
-                  (tmp$0 = errors.get_za3rmp$('password')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.screen.AccountEditorDialog.f_14(this)) : null;
+                  this.onChange = _.hu.nevermind.app.screen.AccountEditorDialog.f_21(account, this$AccountEditorDialog);
+                  (tmp$0 = errors.get_za3rmp$('password')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.screen.AccountEditorDialog.f_22(this)) : null;
                 };
               },
-              f_16: function (account, this$AccountEditorDialog, errors) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_15(account, this$AccountEditorDialog, errors));
-                };
-              },
-              f_17: function () {
-                this.md = 4;
-              },
-              f_18: function (account, this$AccountEditorDialog) {
+              f_23: function (account, this$AccountEditorDialog) {
                 return function (event) {
                   var checked = event.currentTarget.checked;
                   this$AccountEditorDialog.state = new _.hu.nevermind.app.screen.AccountEditorDialogState(account.copy_4ygzu8$(void 0, checked));
                 };
               },
-              f_19: function (account, this$AccountEditorDialog) {
+              disabledInput$f: function (account, this$AccountEditorDialog) {
                 return function () {
                   this.id = _.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.disabled;
                   this.type = _.com.github.andrewoma.react.InputType.Checkbox;
                   this.checked = account.disabled;
-                  this.label = 'Disabled';
-                  this.onChange = _.hu.nevermind.app.screen.AccountEditorDialog.f_18(account, this$AccountEditorDialog);
+                  this.label = _.hu.nevermind.app.screen.accountScreenMsg_qdl4vo$.columnDisabled;
+                  this.onChange = _.hu.nevermind.app.screen.AccountEditorDialog.f_23(account, this$AccountEditorDialog);
                 };
               },
-              f_20: function (account, this$AccountEditorDialog) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_19(account, this$AccountEditorDialog));
-                };
-              },
-              f_21: function (this$AccountEditorDialog, account, errors) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_5, _.hu.nevermind.app.screen.AccountEditorDialog.f_10(this$AccountEditorDialog, account, errors));
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_11, _.hu.nevermind.app.screen.AccountEditorDialog.f_16(account, this$AccountEditorDialog, errors));
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_17, _.hu.nevermind.app.screen.AccountEditorDialog.f_20(account, this$AccountEditorDialog));
-                };
-              },
-              f_22: function () {
-                this.md = 4;
-              },
-              f_23: function (account) {
+              f_24: function (account) {
                 return function (value) {
                   return account.copy_4ygzu8$(void 0, void 0, _.hu.nevermind.app.store.Role.valueOf_61zpoe$(value));
                 };
               },
-              f_24: function (account, this$AccountEditorDialog) {
+              f_25: function (account, this$AccountEditorDialog) {
                 return function (it) {
-                  this$AccountEditorDialog.updateEntity(it, _.hu.nevermind.app.screen.AccountEditorDialog.f_23(account));
+                  this$AccountEditorDialog.updateEntity(it, _.hu.nevermind.app.screen.AccountEditorDialog.f_24(account));
                 };
               },
-              f_25: function (account, this$AccountEditorDialog) {
+              roleInput$f: function (account, this$AccountEditorDialog) {
                 return function () {
                   this.type = _.com.github.andrewoma.react.InputType.Select;
                   this.defaultValue = account.role;
-                  this.onChange = _.hu.nevermind.app.screen.AccountEditorDialog.f_24(account, this$AccountEditorDialog);
+                  this.onChange = _.hu.nevermind.app.screen.AccountEditorDialog.f_25(account, this$AccountEditorDialog);
                 };
               },
               f_26: function (role) {
@@ -3611,7 +3920,7 @@
                   _.com.github.andrewoma.react.option_ouidv5$(this$, _.hu.nevermind.app.screen.AccountEditorDialog.f_26(role), _.hu.nevermind.app.screen.AccountEditorDialog.f_27(role));
                 };
               },
-              f_29: function () {
+              roleInput$f_0: function () {
                 var $receiver = _.hu.nevermind.app.store.Role.values();
                 var action = _.hu.nevermind.app.screen.AccountEditorDialog.f_28(this);
                 var tmp$0, tmp$1, tmp$2;
@@ -3621,85 +3930,47 @@
                   action(element);
                 }
               },
-              f_30: function (account, this$AccountEditorDialog) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_25(account, this$AccountEditorDialog), _.hu.nevermind.app.screen.AccountEditorDialog.f_29);
-                };
-              },
-              f_31: function (account, this$AccountEditorDialog) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_22, _.hu.nevermind.app.screen.AccountEditorDialog.f_30(account, this$AccountEditorDialog));
-                };
-              },
-              f_32: function (this$AccountEditorDialog, account, errors) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_21(this$AccountEditorDialog, account, errors));
-                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_31(account, this$AccountEditorDialog));
-                };
-              },
-              f_33: function (this$AccountEditorDialog, account, errors) {
-                return function () {
-                  _.com.github.andrewoma.react.form_aej7ls$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_32(this$AccountEditorDialog, account, errors));
-                };
-              },
-              f_34: function (this$AccountEditorDialog, account, errors) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_4, _.hu.nevermind.app.screen.AccountEditorDialog.f_33(this$AccountEditorDialog, account, errors));
-                };
-              },
-              f_35: function (this$AccountEditorDialog, account, errors) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_34(this$AccountEditorDialog, account, errors));
-                };
-              },
-              f_36: function (this$AccountEditorDialog) {
+              f_29: function (this$AccountEditorDialog) {
                 return function (it) {
                   this$AccountEditorDialog.props.close(_.hu.nevermind.app.screen.ModalResult.object.Save, this$AccountEditorDialog.state.editedAccount);
                 };
               },
-              f_37: function (this$AccountEditorDialog) {
+              f_30: function (this$AccountEditorDialog) {
                 return function () {
                   this.id = _.hu.nevermind.app.screen.AccountScreenIds.modal.buttons.save;
                   this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Success;
-                  this.onClick = _.hu.nevermind.app.screen.AccountEditorDialog.f_36(this$AccountEditorDialog);
+                  this.onClick = _.hu.nevermind.app.screen.AccountEditorDialog.f_29(this$AccountEditorDialog);
                 };
               },
-              f_38: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Ment\xE9s');
+              f_31: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.commonMsg.save);
               },
-              f_39: function (this$AccountEditorDialog) {
+              f_32: function (this$AccountEditorDialog) {
                 return function (it) {
                   this$AccountEditorDialog.props.close(_.hu.nevermind.app.screen.ModalResult.object.Close, null);
                 };
               },
-              f_40: function (this$AccountEditorDialog) {
+              f_33: function (this$AccountEditorDialog) {
                 return function () {
                   this.id = _.hu.nevermind.app.screen.AccountScreenIds.modal.buttons.close;
                   this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Danger;
-                  this.onClick = _.hu.nevermind.app.screen.AccountEditorDialog.f_39(this$AccountEditorDialog);
+                  this.onClick = _.hu.nevermind.app.screen.AccountEditorDialog.f_32(this$AccountEditorDialog);
                 };
               },
-              f_41: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'M\xE9gsem');
+              f_34: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.commonMsg.cancel);
               },
-              f_42: function (errors, this$AccountEditorDialog) {
+              f_35: function (errors, this$AccountEditorDialog) {
                 return function () {
                   if (errors.isEmpty()) {
-                    _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_37(this$AccountEditorDialog), _.hu.nevermind.app.screen.AccountEditorDialog.f_38);
+                    _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_30(this$AccountEditorDialog), _.hu.nevermind.app.screen.AccountEditorDialog.f_31);
                   }
-                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_40(this$AccountEditorDialog), _.hu.nevermind.app.screen.AccountEditorDialog.f_41);
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_33(this$AccountEditorDialog), _.hu.nevermind.app.screen.AccountEditorDialog.f_34);
                 };
               },
-              f_43: function (errors, this$AccountEditorDialog) {
+              footer$f: function (errors, this$AccountEditorDialog) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_42(errors, this$AccountEditorDialog));
-                };
-              },
-              render_sx5o3u$f_0: function (this$AccountEditorDialog, account, errors) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsModalHeader_bv4bc3$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_0, _.hu.nevermind.app.screen.AccountEditorDialog.f_2);
-                  _.hu.nevermind.reakt.bootstrap.bsModalBody_9g1czy$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_3, _.hu.nevermind.app.screen.AccountEditorDialog.f_35(this$AccountEditorDialog, account, errors));
-                  _.hu.nevermind.reakt.bootstrap.bsModalFooter_4ko09h$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_43(errors, this$AccountEditorDialog));
+                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.f_35(errors, this$AccountEditorDialog));
                 };
               }
             }),
@@ -3773,7 +4044,14 @@
                 var keyValues = _.hu.nevermind.app.store.KeyValueStore.keyValues();
                 var editingKeyValue = _.hu.nevermind.app.store.KeyValueStore.editingKeyValue;
                 var rowIndex = {v: 0};
-                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$($receiver, _.hu.nevermind.app.screen.KeyValueScreen.render_sx5o3u$f, _.hu.nevermind.app.screen.KeyValueScreen.render_sx5o3u$f_0(keyValues, rowIndex, editingKeyValue));
+                _.hu.nevermind.reakt.bootstrap.bsGrid_tjxxp7$($receiver, _.hu.nevermind.app.screen.KeyValueScreen.render_sx5o3u$f, _.hu.nevermind.app.screen.KeyValueScreen.render_sx5o3u$f_0(keyValues, rowIndex, this, editingKeyValue));
+              },
+              editorDialog: function ($receiver, editingKeyValue) {
+                var closeModal = _.hu.nevermind.app.screen.KeyValueScreen.editorDialog$closeModal;
+                _.hu.nevermind.app.screen.editorDialog_1($receiver, new _.hu.nevermind.app.screen.KeyValueEditorDialogProps(editingKeyValue, closeModal));
+              },
+              buttonColumn: function ($receiver, rowIndex) {
+                _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$($receiver, _.hu.nevermind.app.screen.KeyValueScreen.buttonColumn$f(rowIndex));
               }
             }, /** @lends _.hu.nevermind.app.screen.KeyValueScreen */ {
               object_initializer$: function () {
@@ -3798,7 +4076,7 @@
                 this.onClick = _.hu.nevermind.app.screen.KeyValueScreen.f;
               },
               f_1: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Hozz\xE1ad\xE1s');
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.commonMsg.add);
               },
               f_2: function () {
                 this.md = 10;
@@ -3812,112 +4090,111 @@
                 };
               },
               f_4: function () {
-                this.bsSize = _.hu.nevermind.reakt.bootstrap.BsSize.ExtraSmall;
-              },
-              f_5: function (keyValue) {
-                return function (it) {
-                  window.location.hash = _.Path.keyValue.withOpenedEditorModal(keyValue.key);
-                };
-              },
-              f_6: function (rowIndex, keyValue) {
-                return function () {
-                  this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.table.row.editButton(rowIndex.v);
-                  this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Primary;
-                  this.onClick = _.hu.nevermind.app.screen.KeyValueScreen.f_5(keyValue);
-                };
-              },
-              f_7: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Szerkeszt\xE9s');
-              },
-              f_8: function (keyValue) {
-                return function (it) {
-                  _.hu.nevermind.app.Actions.deleteKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, keyValue);
-                };
-              },
-              f_9: function (rowIndex, keyValue) {
-                return function () {
-                  this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.table.row.deleteButton(rowIndex.v++);
-                  this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Danger;
-                  this.onClick = _.hu.nevermind.app.screen.KeyValueScreen.f_8(keyValue);
-                };
-              },
-              f_10: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'T\xF6rl\xE9s');
-              },
-              f_11: function (rowIndex, keyValue) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_6(rowIndex, keyValue), _.hu.nevermind.app.screen.KeyValueScreen.f_7);
-                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_9(rowIndex, keyValue), _.hu.nevermind.app.screen.KeyValueScreen.f_10);
-                };
-              },
-              f_12: function (rowIndex, keyValue) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_4, _.hu.nevermind.app.screen.KeyValueScreen.f_11(rowIndex, keyValue));
-                };
-              },
-              f_13: function (rowIndex) {
-                return function (cell, keyValue) {
-                  return _.hu.nevermind.reakt.bootstrap.createReactElement_i41a89$(_.hu.nevermind.app.screen.KeyValueScreen.f_12(rowIndex, keyValue));
-                };
-              },
-              f_14: function (rowIndex) {
-                return function () {
-                  this.width = '50';
-                  this.dataFormat = _.hu.nevermind.app.screen.KeyValueScreen.f_13(rowIndex);
-                };
-              },
-              f_15: function () {
                 this.isKey = true;
                 this.dataField = 'key';
                 this.width = '100';
               },
-              f_16: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Key');
+              f_5: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.screen.keyValueScreenMsg_ws3e67$.key);
               },
-              f_17: function (cell, keyValue) {
+              f_6: function (cell, keyValue) {
                 return accounting.formatNumber(cell, 3, ' ');
               },
-              f_18: function () {
+              f_7: function () {
                 this.dataField = 'value';
                 this.dataAlign = _.hu.nevermind.reakt.bootstrap.table.DataAlign.Right;
                 this.width = '75';
-                this.dataFormat = _.hu.nevermind.app.screen.KeyValueScreen.f_17;
+                this.dataFormat = _.hu.nevermind.app.screen.KeyValueScreen.f_6;
               },
-              f_19: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Value');
+              f_8: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.screen.keyValueScreenMsg_ws3e67$.value);
               },
-              f_20: function (rowIndex) {
+              f_9: function (rowIndex, this$KeyValueScreen) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_14(rowIndex));
-                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_15, _.hu.nevermind.app.screen.KeyValueScreen.f_16);
-                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_18, _.hu.nevermind.app.screen.KeyValueScreen.f_19);
+                  this$KeyValueScreen.buttonColumn(this, rowIndex.v++);
+                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_4, _.hu.nevermind.app.screen.KeyValueScreen.f_5);
+                  _.hu.nevermind.reakt.bootstrap.table.tableHeaderColumn_qi04gk$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_7, _.hu.nevermind.app.screen.KeyValueScreen.f_8);
                 };
               },
-              f_21: function (keyValues, rowIndex) {
+              f_10: function (keyValues, rowIndex, this$KeyValueScreen) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.table.bootstrapTable_b7jpzj$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_3(keyValues), _.hu.nevermind.app.screen.KeyValueScreen.f_20(rowIndex));
+                  _.hu.nevermind.reakt.bootstrap.table.bootstrapTable_b7jpzj$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_3(keyValues), _.hu.nevermind.app.screen.KeyValueScreen.f_9(rowIndex, this$KeyValueScreen));
                 };
               },
-              f_22: function (keyValues, rowIndex) {
+              f_11: function (keyValues, rowIndex, this$KeyValueScreen) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_2, _.hu.nevermind.app.screen.KeyValueScreen.f_21(keyValues, rowIndex));
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_2, _.hu.nevermind.app.screen.KeyValueScreen.f_10(keyValues, rowIndex, this$KeyValueScreen));
                 };
               },
-              closeModal: function (result, entity) {
+              render_sx5o3u$f_0: function (keyValues, rowIndex, this$KeyValueScreen, editingKeyValue) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_0, _.hu.nevermind.app.screen.KeyValueScreen.f_1);
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.KeyValueScreen.f_11(keyValues, rowIndex, this$KeyValueScreen));
+                  if (editingKeyValue != null) {
+                    this$KeyValueScreen.editorDialog(this, editingKeyValue);
+                  }
+                };
+              },
+              editorDialog$closeModal: function (result, entity) {
                 if (result === _.hu.nevermind.app.screen.ModalResult.object.Save) {
                   _.hu.nevermind.app.Actions.modifyKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, entity != null ? entity : Kotlin.throwNPE());
                 }
                 _.hu.nevermind.app.Actions.setEditingKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, null);
                 window.location.hash = _.Path.keyValue.root;
               },
-              render_sx5o3u$f_0: function (keyValues, rowIndex, editingKeyValue) {
+              f_12: function () {
+                this.bsSize = _.hu.nevermind.reakt.bootstrap.BsSize.ExtraSmall;
+              },
+              f_13: function (keyValue) {
+                return function (it) {
+                  window.location.hash = _.Path.keyValue.withOpenedEditorModal(keyValue.key);
+                };
+              },
+              f_14: function (rowIndex, keyValue) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_0, _.hu.nevermind.app.screen.KeyValueScreen.f_1);
-                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.KeyValueScreen.f_22(keyValues, rowIndex));
-                  if (editingKeyValue != null) {
-                    var closeModal = _.hu.nevermind.app.screen.KeyValueScreen.closeModal;
-                    _.hu.nevermind.app.screen.editorDialog_1(this, new _.hu.nevermind.app.screen.KeyValueEditorDialogProps(editingKeyValue, closeModal));
-                  }
+                  this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.table.row.editButton(rowIndex);
+                  this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Primary;
+                  this.onClick = _.hu.nevermind.app.screen.KeyValueScreen.f_13(keyValue);
+                };
+              },
+              f_15: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.commonMsg.edit);
+              },
+              f_16: function (keyValue) {
+                return function (it) {
+                  _.hu.nevermind.app.Actions.deleteKeyValue.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, keyValue);
+                };
+              },
+              f_17: function (rowIndex, keyValue) {
+                return function () {
+                  this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.table.row.deleteButton(rowIndex);
+                  this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Danger;
+                  this.onClick = _.hu.nevermind.app.screen.KeyValueScreen.f_16(keyValue);
+                };
+              },
+              f_18: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.commonMsg.delete);
+              },
+              f_19: function (rowIndex, keyValue) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_14(rowIndex, keyValue), _.hu.nevermind.app.screen.KeyValueScreen.f_15);
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_17(rowIndex, keyValue), _.hu.nevermind.app.screen.KeyValueScreen.f_18);
+                };
+              },
+              f_20: function (rowIndex, keyValue) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, _.hu.nevermind.app.screen.KeyValueScreen.f_12, _.hu.nevermind.app.screen.KeyValueScreen.f_19(rowIndex, keyValue));
+                };
+              },
+              f_21: function (rowIndex) {
+                return function (cell, keyValue) {
+                  return _.hu.nevermind.reakt.bootstrap.createReactElement_i41a89$(_.hu.nevermind.app.screen.KeyValueScreen.f_20(rowIndex, keyValue));
+                };
+              },
+              buttonColumn$f: function (rowIndex) {
+                return function () {
+                  this.width = '50';
+                  this.dataFormat = _.hu.nevermind.app.screen.KeyValueScreen.f_21(rowIndex);
                 };
               }
             }),
@@ -3987,10 +4264,20 @@
                 this.state = new _.hu.nevermind.app.screen.KeyValueEditorDialogState(updater(value));
               },
               render_sx5o3u$: function ($receiver) {
+                _.hu.nevermind.reakt.bootstrap.bsModal_dslzk$($receiver, _.hu.nevermind.app.screen.KeyValueEditorDialog.render_sx5o3u$f(this), _.hu.nevermind.app.screen.KeyValueEditorDialog.render_sx5o3u$f_0(this));
+              },
+              body: function ($receiver, errors) {
                 var keyValue = this.state.editedKeyValue;
-                var errors = Kotlin.modules['stdlib'].kotlin.collections.hashMapOf_eoa9s7$([]);
-                this.fillWithErrors(errors);
-                _.hu.nevermind.reakt.bootstrap.bsModal_dslzk$($receiver, _.hu.nevermind.app.screen.KeyValueEditorDialog.render_sx5o3u$f(this), _.hu.nevermind.app.screen.KeyValueEditorDialog.render_sx5o3u$f_0(keyValue, this, errors));
+                _.hu.nevermind.reakt.bootstrap.bsModalBody_9g1czy$($receiver, _.hu.nevermind.app.screen.KeyValueEditorDialog.body$f, _.hu.nevermind.app.screen.KeyValueEditorDialog.body$f_0(keyValue, errors, this));
+              },
+              keyInput: function ($receiver, keyValue, errors) {
+                _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$($receiver, _.hu.nevermind.app.screen.KeyValueEditorDialog.keyInput$f(keyValue, this, errors));
+              },
+              valueInput: function ($receiver, keyValue, errors) {
+                _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$($receiver, _.hu.nevermind.app.screen.KeyValueEditorDialog.valueInput$f(keyValue, this, errors));
+              },
+              footer: function ($receiver, errors) {
+                _.hu.nevermind.reakt.bootstrap.bsModalFooter_4ko09h$($receiver, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.footer$f(errors, this));
               },
               fillWithErrors: function (errors) {
                 var conf = this.state.editedKeyValue;
@@ -4035,58 +4322,71 @@
                 this.closeButton = true;
               },
               f_1: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Szerkeszt\xE9s');
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.commonMsg.edit);
               },
               f_2: function () {
                 _.hu.nevermind.reakt.bootstrap.bsModalTitle_k848lm$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_1);
               },
-              f_3: function () {
+              render_sx5o3u$f_0: function (this$KeyValueEditorDialog) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsModalHeader_bv4bc3$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_2);
+                  var errors = Kotlin.modules['stdlib'].kotlin.collections.hashMapOf_eoa9s7$([]);
+                  this$KeyValueEditorDialog.fillWithErrors(errors);
+                  this$KeyValueEditorDialog.body(this, errors);
+                  this$KeyValueEditorDialog.footer(this, errors);
+                };
+              },
+              body$f: function () {
                 this.closeButton = true;
               },
-              f_4: function () {
+              f_3: function () {
                 this.md = 12;
               },
-              f_5: function () {
+              f_4: function () {
                 this.md = 6;
               },
-              f_6: function (keyValue) {
-                return function (value) {
-                  return keyValue.copy_puj7f4$(value);
-                };
-              },
-              f_7: function (keyValue, this$KeyValueEditorDialog) {
-                return function (it) {
-                  this$KeyValueEditorDialog.updateEntity(it, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_6(keyValue));
-                };
-              },
-              f_8: function (this$) {
-                return function (errorMessage) {
-                  this$.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Error;
-                  this$.help = errorMessage;
-                };
-              },
-              f_9: function (keyValue, this$KeyValueEditorDialog, errors) {
+              f_5: function (keyValue, errors, this$KeyValueEditorDialog) {
                 return function () {
-                  var tmp$0;
-                  this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.modal.inputs.key;
-                  this.type = _.com.github.andrewoma.react.InputType.Text;
-                  this.label = 'Key';
-                  this.defaultValue = keyValue.key;
-                  this.onChange = _.hu.nevermind.app.screen.KeyValueEditorDialog.f_7(keyValue, this$KeyValueEditorDialog);
-                  (tmp$0 = errors.get_za3rmp$('key')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_8(this)) : null;
+                  this$KeyValueEditorDialog.keyInput(this, keyValue, errors);
                 };
               },
-              f_10: function (keyValue, this$KeyValueEditorDialog, errors) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_9(keyValue, this$KeyValueEditorDialog, errors));
-                };
-              },
-              f_11: function () {
+              f_6: function () {
                 this.md = 6;
+              },
+              f_7: function (keyValue, errors, this$KeyValueEditorDialog) {
+                return function () {
+                  this$KeyValueEditorDialog.valueInput(this, keyValue, errors);
+                };
+              },
+              f_8: function (keyValue, errors, this$KeyValueEditorDialog) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_4, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_5(keyValue, errors, this$KeyValueEditorDialog));
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_6, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_7(keyValue, errors, this$KeyValueEditorDialog));
+                };
+              },
+              f_9: function (keyValue, errors, this$KeyValueEditorDialog) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_8(keyValue, errors, this$KeyValueEditorDialog));
+                };
+              },
+              f_10: function (keyValue, errors, this$KeyValueEditorDialog) {
+                return function () {
+                  _.com.github.andrewoma.react.form_aej7ls$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_9(keyValue, errors, this$KeyValueEditorDialog));
+                };
+              },
+              f_11: function (keyValue, errors, this$KeyValueEditorDialog) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_3, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_10(keyValue, errors, this$KeyValueEditorDialog));
+                };
+              },
+              body$f_0: function (keyValue, errors, this$KeyValueEditorDialog) {
+                return function () {
+                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_11(keyValue, errors, this$KeyValueEditorDialog));
+                };
               },
               f_12: function (keyValue) {
                 return function (value) {
-                  return keyValue.copy_puj7f4$(void 0, value);
+                  return keyValue.copy_puj7f4$(value);
                 };
               },
               f_13: function (keyValue, this$KeyValueEditorDialog) {
@@ -4100,96 +4400,85 @@
                   this$.help = errorMessage;
                 };
               },
-              f_15: function (keyValue, this$KeyValueEditorDialog, errors) {
+              keyInput$f: function (keyValue, this$KeyValueEditorDialog, errors) {
+                return function () {
+                  var tmp$0;
+                  this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.modal.inputs.key;
+                  this.type = _.com.github.andrewoma.react.InputType.Text;
+                  this.label = _.hu.nevermind.app.screen.keyValueScreenMsg_ws3e67$.key;
+                  this.defaultValue = keyValue.key;
+                  this.onChange = _.hu.nevermind.app.screen.KeyValueEditorDialog.f_13(keyValue, this$KeyValueEditorDialog);
+                  (tmp$0 = errors.get_za3rmp$('key')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_14(this)) : null;
+                };
+              },
+              f_15: function (keyValue) {
+                return function (value) {
+                  return keyValue.copy_puj7f4$(void 0, value);
+                };
+              },
+              f_16: function (keyValue, this$KeyValueEditorDialog) {
+                return function (it) {
+                  this$KeyValueEditorDialog.updateEntity(it, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_15(keyValue));
+                };
+              },
+              f_17: function (this$) {
+                return function (errorMessage) {
+                  this$.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Error;
+                  this$.help = errorMessage;
+                };
+              },
+              valueInput$f: function (keyValue, this$KeyValueEditorDialog, errors) {
                 return function () {
                   var tmp$0;
                   this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.modal.inputs.value;
                   this.type = _.com.github.andrewoma.react.InputType.Text;
-                  this.label = 'Value';
+                  this.label = _.hu.nevermind.app.screen.keyValueScreenMsg_ws3e67$.value;
                   this.defaultValue = keyValue.value;
-                  this.onChange = _.hu.nevermind.app.screen.KeyValueEditorDialog.f_13(keyValue, this$KeyValueEditorDialog);
-                  (tmp$0 = errors.get_za3rmp$('value')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_14(this)) : null;
+                  this.onChange = _.hu.nevermind.app.screen.KeyValueEditorDialog.f_16(keyValue, this$KeyValueEditorDialog);
+                  (tmp$0 = errors.get_za3rmp$('value')) != null ? Kotlin.modules['stdlib'].kotlin.let_7hr6ff$(tmp$0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_17(this)) : null;
                 };
               },
-              f_16: function (keyValue, this$KeyValueEditorDialog, errors) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsInput_9tgf3w$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_15(keyValue, this$KeyValueEditorDialog, errors));
-                };
-              },
-              f_17: function (keyValue, this$KeyValueEditorDialog, errors) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_5, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_10(keyValue, this$KeyValueEditorDialog, errors));
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_11, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_16(keyValue, this$KeyValueEditorDialog, errors));
-                };
-              },
-              f_18: function (keyValue, this$KeyValueEditorDialog, errors) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_17(keyValue, this$KeyValueEditorDialog, errors));
-                };
-              },
-              f_19: function (keyValue, this$KeyValueEditorDialog, errors) {
-                return function () {
-                  _.com.github.andrewoma.react.form_aej7ls$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_18(keyValue, this$KeyValueEditorDialog, errors));
-                };
-              },
-              f_20: function (keyValue, this$KeyValueEditorDialog, errors) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_4, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_19(keyValue, this$KeyValueEditorDialog, errors));
-                };
-              },
-              f_21: function (keyValue, this$KeyValueEditorDialog, errors) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsRow_j32ejn$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_20(keyValue, this$KeyValueEditorDialog, errors));
-                };
-              },
-              f_22: function (this$KeyValueEditorDialog) {
+              f_18: function (this$KeyValueEditorDialog) {
                 return function (it) {
                   this$KeyValueEditorDialog.props.close(_.hu.nevermind.app.screen.ModalResult.object.Save, this$KeyValueEditorDialog.state.editedKeyValue);
                 };
               },
-              f_23: function (this$KeyValueEditorDialog) {
+              f_19: function (this$KeyValueEditorDialog) {
                 return function () {
                   this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.modal.buttons.save;
                   this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Success;
-                  this.onClick = _.hu.nevermind.app.screen.KeyValueEditorDialog.f_22(this$KeyValueEditorDialog);
+                  this.onClick = _.hu.nevermind.app.screen.KeyValueEditorDialog.f_18(this$KeyValueEditorDialog);
                 };
               },
-              f_24: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'Ment\xE9s');
+              f_20: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.commonMsg.save);
               },
-              f_25: function (this$KeyValueEditorDialog) {
+              f_21: function (this$KeyValueEditorDialog) {
                 return function (it) {
                   this$KeyValueEditorDialog.props.close(_.hu.nevermind.app.screen.ModalResult.object.Close, null);
                 };
               },
-              f_26: function (this$KeyValueEditorDialog) {
+              f_22: function (this$KeyValueEditorDialog) {
                 return function () {
                   this.id = _.hu.nevermind.app.screen.KeyValueScreenIds.modal.buttons.close;
                   this.bsStyle = _.hu.nevermind.reakt.bootstrap.BsStyle.Danger;
-                  this.onClick = _.hu.nevermind.app.screen.KeyValueEditorDialog.f_25(this$KeyValueEditorDialog);
+                  this.onClick = _.hu.nevermind.app.screen.KeyValueEditorDialog.f_21(this$KeyValueEditorDialog);
                 };
               },
-              f_27: function () {
-                _.com.github.andrewoma.react.text_3pk7xh$(this, 'M\xE9gsem');
+              f_23: function () {
+                _.com.github.andrewoma.react.text_3pk7xh$(this, _.hu.nevermind.app.commonMsg.cancel);
               },
-              f_28: function (errors, this$KeyValueEditorDialog) {
+              f_24: function (errors, this$KeyValueEditorDialog) {
                 return function () {
                   if (errors.isEmpty()) {
-                    _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_23(this$KeyValueEditorDialog), _.hu.nevermind.app.screen.KeyValueEditorDialog.f_24);
+                    _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_19(this$KeyValueEditorDialog), _.hu.nevermind.app.screen.KeyValueEditorDialog.f_20);
                   }
-                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_26(this$KeyValueEditorDialog), _.hu.nevermind.app.screen.KeyValueEditorDialog.f_27);
+                  _.hu.nevermind.reakt.bootstrap.bsButton_j31vv5$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_22(this$KeyValueEditorDialog), _.hu.nevermind.app.screen.KeyValueEditorDialog.f_23);
                 };
               },
-              f_29: function (errors, this$KeyValueEditorDialog) {
+              footer$f: function (errors, this$KeyValueEditorDialog) {
                 return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_28(errors, this$KeyValueEditorDialog));
-                };
-              },
-              render_sx5o3u$f_0: function (keyValue, this$KeyValueEditorDialog, errors) {
-                return function () {
-                  _.hu.nevermind.reakt.bootstrap.bsModalHeader_bv4bc3$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_2);
-                  _.hu.nevermind.reakt.bootstrap.bsModalBody_9g1czy$(this, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_3, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_21(keyValue, this$KeyValueEditorDialog, errors));
-                  _.hu.nevermind.reakt.bootstrap.bsModalFooter_4ko09h$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_29(errors, this$KeyValueEditorDialog));
+                  _.hu.nevermind.reakt.bootstrap.bsButtonGroup_488smo$(this, void 0, _.hu.nevermind.app.screen.KeyValueEditorDialog.f_24(errors, this$KeyValueEditorDialog));
                 };
               }
             }),

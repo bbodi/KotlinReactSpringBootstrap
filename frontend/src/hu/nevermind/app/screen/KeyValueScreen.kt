@@ -1,6 +1,13 @@
 package hu.nevermind.app.screen
 
-import com.github.andrewoma.react.*
+import com.github.andrewoma.react.Component
+import com.github.andrewoma.react.ComponentSpec
+import com.github.andrewoma.react.FormEvent
+import com.github.andrewoma.react.InputType
+import com.github.andrewoma.react.Ref
+import com.github.andrewoma.react.form
+import com.github.andrewoma.react.react
+import com.github.andrewoma.react.text
 import hu.nevermind.app.*
 import hu.nevermind.app.store.*
 import hu.nevermind.common.*
@@ -17,25 +24,32 @@ private @native val accounting: dynamic = noImpl
 private object KeyValueScreenIds {
     val screenId = "keyValueScreen"
     val addButton = "${screenId}_addButton"
+
     object table {
         val id = "${screenId}_table"
+
         object row {
-            val editButton: (Int)->String = {rowIndex -> "${id}_editButton_$rowIndex"}
-            val deleteButton: (Int)->String = {rowIndex -> "${id}_deleteButton_$rowIndex"}
+            val editButton: (Int) -> String = { rowIndex -> "${id}_editButton_$rowIndex" }
+            val deleteButton: (Int) -> String = { rowIndex -> "${id}_deleteButton_$rowIndex" }
         }
     }
+
     object modal {
         val id = "${screenId}_modal"
+
         object inputs {
             val key = "${id}_key"
             val value = "${id}_value"
         }
+
         object buttons {
             val save = "${id}_saveButton"
             val close = "${id}_closeButton"
         }
     }
 }
+
+private val keyValueScreenMsg = msg.screen.keyValue
 
 class KeyValueScreen : ComponentSpec<Unit, Unit>() {
 
@@ -62,7 +76,7 @@ class KeyValueScreen : ComponentSpec<Unit, Unit>() {
                 id = KeyValueScreenIds.addButton
                 bsStyle = BsStyle.Primary
                 onClick = { Actions.setEditingKeyValue(globalDispatcher, KeyValue("", "")) }
-            }) { text("Hozzáadás") }
+            }) { text(commonMsg.add) }
             bsRow {
                 bsCol ({ md = 10 }) {
                     bootstrapTable<KeyValue>({
@@ -71,54 +85,62 @@ class KeyValueScreen : ComponentSpec<Unit, Unit>() {
                         selectRow = SelectRowProp(SelectionMode.radio, clickToSelect = true, hideSelectColumn = true)
                         search = true
                     }) {
-                        tableHeaderColumn<KeyValue, Unit>({
-                            width = "50"
-                            dataFormat = { cell, keyValue ->
-                                createReactElement {
-                                    bsButtonGroup ({ bsSize = BsSize.ExtraSmall }) {
-                                        bsButton ({
-                                            id = KeyValueScreenIds.table.row.editButton(rowIndex)
-                                            bsStyle = BsStyle.Primary
-                                            onClick = {
-                                                window.location.hash = Path.keyValue.withOpenedEditorModal(keyValue.key)
-                                            }
-                                        }) { text("Szerkesztés") }
-                                        bsButton ({
-                                            id = KeyValueScreenIds.table.row.deleteButton(rowIndex++)
-                                            bsStyle = BsStyle.Danger
-                                            onClick = {
-                                                Actions.deleteKeyValue(globalDispatcher, keyValue)
-                                            }
-                                        }) { text("Törlés") }
-                                    }
-                                }
-                            }
-                        })
+                        buttonColumn(rowIndex++)
                         tableHeaderColumn<KeyValue, String>({
                             isKey = true
                             dataField = "key"
                             width = "100"
-                        }) { text("Key") }
+                        }) { text(keyValueScreenMsg.key) }
                         tableHeaderColumn<KeyValue, String>({
                             dataField = "value"
                             dataAlign = DataAlign.Right
                             width = "75"
                             dataFormat = { cell, keyValue -> accounting.formatNumber(cell, 3, ' ') }
-                        }) { text("Value") }
+                        }) { text(keyValueScreenMsg.value) }
                     }
                 }
             }
             if (editingKeyValue != null) {
-                fun closeModal(result: ModalResult, entity: KeyValue?) {
-                    if (result == ModalResult.Save) {
-                        Actions.modifyKeyValue(globalDispatcher, entity!!)
-                    }
-                    Actions.setEditingKeyValue(globalDispatcher, null)
-                    window.location.hash = Path.keyValue.root
-                }
-                editorDialog(KeyValueEditorDialogProps(editingKeyValue, ::closeModal))
+                editorDialog(editingKeyValue)
             }
         }
+    }
+
+    private fun Component.editorDialog(editingKeyValue: KeyValue) {
+        fun closeModal(result: ModalResult, entity: KeyValue?) {
+            if (result == ModalResult.Save) {
+                Actions.modifyKeyValue(globalDispatcher, entity!!)
+            }
+            Actions.setEditingKeyValue(globalDispatcher, null)
+            window.location.hash = Path.keyValue.root
+        }
+        editorDialog(KeyValueEditorDialogProps(editingKeyValue, ::closeModal))
+    }
+
+    private fun Component.buttonColumn(rowIndex: Int) {
+        tableHeaderColumn<KeyValue, Unit>({
+            width = "50"
+            dataFormat = { cell, keyValue ->
+                createReactElement {
+                    bsButtonGroup ({ bsSize = BsSize.ExtraSmall }) {
+                        bsButton ({
+                            id = KeyValueScreenIds.table.row.editButton(rowIndex)
+                            bsStyle = BsStyle.Primary
+                            onClick = {
+                                window.location.hash = Path.keyValue.withOpenedEditorModal(keyValue.key)
+                            }
+                        }) { text(commonMsg.edit) }
+                        bsButton ({
+                            id = KeyValueScreenIds.table.row.deleteButton(rowIndex)
+                            bsStyle = BsStyle.Danger
+                            onClick = {
+                                Actions.deleteKeyValue(globalDispatcher, keyValue)
+                            }
+                        }) { text(commonMsg.delete) }
+                    }
+                }
+            }
+        })
     }
 }
 
@@ -155,72 +177,89 @@ class KeyValueEditorDialog() : ComponentSpec<KeyValueEditorDialogProps, KeyValue
     }
 
     override fun Component.render() {
-        val keyValue = state.editedKeyValue
-        val errors = hashMapOf<String, String>()
-        fillWithErrors(errors)
         bsModal ({
             id = KeyValueScreenIds.modal.id
             show = true
             onHide = { props.close(ModalResult.Close, null) }
         }) {
             bsModalHeader ({ closeButton = true }) {
-                bsModalTitle { text("Szerkesztés") }
+                bsModalTitle { text(commonMsg.edit) }
             }
-            bsModalBody ({ closeButton = true }) {
-                bsRow {
-                    bsCol({ md = 12 }) {
-                        form {
-                            bsRow {
-                                bsCol({ md = 6 }) {
-                                    bsInput({
-                                        id = KeyValueScreenIds.modal.inputs.key
-                                        type = InputType.Text
-                                        label = "Key"
-                                        defaultValue = keyValue.key
-                                        onChange = {
-                                            updateEntity(it) { value -> keyValue.copy(key = value) }
-                                        }
-                                        errors["key"]?.let { errorMessage ->
-                                            bsStyle = BsStyle.Error
-                                            help = errorMessage
-                                        }
-                                    })
-                                }
-                                bsCol({ md = 6 }) {
-                                    bsInput({
-                                        id = KeyValueScreenIds.modal.inputs.value
-                                        type = InputType.Text
-                                        label = "Value"
-                                        defaultValue = keyValue.value
-                                        onChange = {
-                                            updateEntity(it) { value -> keyValue.copy(value = value) }
-                                        }
-                                        errors["value"]?.let { errorMessage ->
-                                            bsStyle = BsStyle.Error
-                                            help = errorMessage
-                                        }
-                                    })
-                                }
+            val errors = hashMapOf<String, String>()
+            fillWithErrors(errors)
+            body(errors)
+            footer(errors)
+
+        }
+    }
+
+    private fun Component.body(errors: Map<String, String>) {
+        val keyValue = state.editedKeyValue
+        bsModalBody ({ closeButton = true }) {
+            bsRow {
+                bsCol({ md = 12 }) {
+                    form {
+                        bsRow {
+                            bsCol({ md = 6 }) {
+                                keyInput(keyValue, errors)
+                            }
+                            bsCol({ md = 6 }) {
+                                valueInput(keyValue, errors)
                             }
                         }
                     }
                 }
             }
-            bsModalFooter {
-                bsButtonGroup {
-                    if (errors.isEmpty()) {
-                        bsButton ({
-                            id = KeyValueScreenIds.modal.buttons.save
-                            bsStyle = BsStyle.Success
-                            onClick = { props.close(ModalResult.Save, state.editedKeyValue) }
-                        }) { text("Mentés") }
-                    }
+        }
+    }
+
+    private fun Component.keyInput(keyValue: KeyValue, errors: Map<String, String>) {
+        bsInput({
+            id = KeyValueScreenIds.modal.inputs.key
+            type = InputType.Text
+            label = keyValueScreenMsg.key
+            defaultValue = keyValue.key
+            onChange = {
+                updateEntity(it) { value -> keyValue.copy(key = value) }
+            }
+            errors["key"]?.let { errorMessage ->
+                bsStyle = BsStyle.Error
+                help = errorMessage
+            }
+        })
+    }
+
+    private fun Component.valueInput(keyValue: KeyValue, errors: Map<String, String>) {
+        bsInput({
+            id = KeyValueScreenIds.modal.inputs.value
+            type = InputType.Text
+            label = keyValueScreenMsg.value
+            defaultValue = keyValue.value
+            onChange = {
+                updateEntity(it) { value -> keyValue.copy(value = value) }
+            }
+            errors["value"]?.let { errorMessage ->
+                bsStyle = BsStyle.Error
+                help = errorMessage
+            }
+        })
+    }
+
+    private fun Component.footer(errors: Map<String, String>) {
+        bsModalFooter {
+            bsButtonGroup {
+                if (errors.isEmpty()) {
                     bsButton ({
-                        id = KeyValueScreenIds.modal.buttons.close
-                        bsStyle = BsStyle.Danger
-                        onClick = { props.close(ModalResult.Close, null) }
-                    }) { text("Mégsem") }
+                        id = KeyValueScreenIds.modal.buttons.save
+                        bsStyle = BsStyle.Success
+                        onClick = { props.close(ModalResult.Save, state.editedKeyValue) }
+                    }) { text(commonMsg.save) }
                 }
+                bsButton ({
+                    id = KeyValueScreenIds.modal.buttons.close
+                    bsStyle = BsStyle.Danger
+                    onClick = { props.close(ModalResult.Close, null) }
+                }) { text(commonMsg.cancel) }
             }
         }
     }
@@ -281,7 +320,7 @@ class KeyValueScreenTest {
                     assertTrue(KeyValueScreenIds.modal.inputs.value.appearOnScreen())
                 }
                 it("should fill the input fields with the values of the references KeyValue") {
-                    
+
                     assertEquals("key1", jq("#${KeyValueScreenIds.modal.inputs.key}").`val`())
                     assertEquals("100", jq("#${KeyValueScreenIds.modal.inputs.value}").`val`())
                 }

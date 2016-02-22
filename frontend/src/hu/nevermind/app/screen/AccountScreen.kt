@@ -1,6 +1,14 @@
 package hu.nevermind.app.screen
 
-import com.github.andrewoma.react.*
+import com.github.andrewoma.react.Component
+import com.github.andrewoma.react.ComponentSpec
+import com.github.andrewoma.react.FormEvent
+import com.github.andrewoma.react.InputType
+import com.github.andrewoma.react.Ref
+import com.github.andrewoma.react.form
+import com.github.andrewoma.react.option
+import com.github.andrewoma.react.react
+import com.github.andrewoma.react.text
 import hu.nevermind.app.*
 import hu.nevermind.app.store.*
 import hu.nevermind.reakt.bootstrap.*
@@ -35,6 +43,8 @@ private object AccountScreenIds {
     }
 }
 
+private val accountScreenMsg = msg.screen.account
+
 class AccountScreen : ComponentSpec<Unit, Unit>() {
 
     companion object {
@@ -56,11 +66,7 @@ class AccountScreen : ComponentSpec<Unit, Unit>() {
         val editingAccount = AccountStore.editingAccount
         var rowIndex = 0
         bsGrid({ id = AccountScreenIds.screenId }) {
-            bsButton ({
-                id = AccountScreenIds.addButton
-                bsStyle = BsStyle.Primary
-                onClick = { Actions.setEditingAccount(globalDispatcher, EditingAccount(Account("", false, Role.ROLE_USER, ""), true)) }
-            }) { text("Hozzáadás") }
+            addButton()
             bsRow {
                 bsCol ({ md = 10 }) {
                     bootstrapTable<Account>({
@@ -69,53 +75,77 @@ class AccountScreen : ComponentSpec<Unit, Unit>() {
                         selectRow = SelectRowProp(SelectionMode.radio, clickToSelect = true, hideSelectColumn = true)
                         search = true
                     }) {
-                        tableHeaderColumn<Account, Unit>({
-                            width = "50"
-                            dataFormat = { cell, account ->
-                                createReactElement {
-                                    bsButtonGroup ({ bsSize = BsSize.ExtraSmall }) {
-                                        bsButton ({
-                                            id = AccountScreenIds.table.row.editButton(rowIndex)
-                                            bsStyle = BsStyle.Primary
-                                            onClick = {
-                                                window.location.hash = Path.account.withOpenedEditorModal(account.username)
-                                            }
-                                        }) { text("Szerkesztés") }
-                                    }
-                                }
-                            }
-                        })
-                        tableHeaderColumn<Account, String>({
-                            isKey = true
-                            dataField = "username"
-                            width = "100"
-                        }) { text("Username") }
-                        tableHeaderColumn<Account, String>({
-                            width = "75"
-                            dataFormat = { cell, account ->
-                                createReactElement {
-                                    if (account.disabled) {
-                                        bsLabel({ bsStyle = BsStyle.Error }) {text("Disabled")}
-                                    } else {
-                                        bsLabel({ bsStyle = BsStyle.Success }) {text("Enabled")}
-                                    }
-                                }
-                            }
-                        }) { text("State") }
+                        buttonColumn(rowIndex++)
+                        usernameColumn()
+                        stateColumn()
                     }
                 }
             }
             if (editingAccount != null) {
-                fun closeModal(result: ModalResult, entity: Account?) {
-                    if (result == ModalResult.Save) {
-                        Actions.modifyAccount(globalDispatcher, entity!!)
-                    }
-                    Actions.setEditingAccount(globalDispatcher, null)
-                    window.location.hash = Path.account.root
-                }
-                editorDialog(AccountEditorDialogProps(editingAccount, ::closeModal))
+                editorDialog(editingAccount)
             }
         }
+    }
+
+    private fun Component.addButton() {
+        bsButton ({
+            id = AccountScreenIds.addButton
+            bsStyle = BsStyle.Primary
+            onClick = { Actions.setEditingAccount(globalDispatcher, EditingAccount(Account("", false, Role.ROLE_USER, ""), true)) }
+        }) { text(commonMsg.add) }
+    }
+
+    private fun Component.buttonColumn(rowIndex: Int) {
+        tableHeaderColumn<Account, Unit>({
+            width = "50"
+            dataFormat = { cell, account ->
+                createReactElement {
+                    bsButtonGroup ({ bsSize = BsSize.ExtraSmall }) {
+                        bsButton ({
+                            id = AccountScreenIds.table.row.editButton(rowIndex)
+                            bsStyle = BsStyle.Primary
+                            onClick = {
+                                window.location.hash = Path.account.withOpenedEditorModal(account.username)
+                            }
+                        }) { text(commonMsg.edit) }
+                    }
+                }
+            }
+        })
+    }
+
+    private fun Component.usernameColumn() {
+        tableHeaderColumn<Account, String>({
+            isKey = true
+            dataField = "username"
+            width = "100"
+        }) { text(accountScreenMsg.username) }
+    }
+
+    private fun Component.stateColumn() {
+        tableHeaderColumn<Account, String>({
+            width = "75"
+            dataFormat = { cell, account ->
+                createReactElement {
+                    if (account.disabled) {
+                        bsLabel({ bsStyle = BsStyle.Error }) { text(accountScreenMsg.disabled) }
+                    } else {
+                        bsLabel({ bsStyle = BsStyle.Success }) {text(accountScreenMsg.enabled)}
+                    }
+                }
+            }
+        }) { text(accountScreenMsg.state) }
+    }
+
+    private fun Component.editorDialog(editingAccount: EditingAccount) {
+        fun closeModal(result: ModalResult, entity: Account?) {
+            if (result == ModalResult.Save) {
+                Actions.modifyAccount(globalDispatcher, entity!!)
+            }
+            Actions.setEditingAccount(globalDispatcher, null)
+            window.location.hash = Path.account.root
+        }
+        editorDialog(AccountEditorDialogProps(editingAccount, ::closeModal))
     }
 }
 
@@ -152,111 +182,140 @@ class AccountEditorDialog() : ComponentSpec<AccountEditorDialogProps, AccountEdi
     }
 
     override fun Component.render() {
-        val account = state.editedAccount
-        val errors = hashMapOf<String, String>()
-        fillWithErrors(errors)
         bsModal ({
             id = AccountScreenIds.modal.id
             show = true
             onHide = { props.close(ModalResult.Close, null) }
         }) {
             bsModalHeader ({ closeButton = true }) {
-                bsModalTitle { text("Szerkesztés") }
+                bsModalTitle { text(commonMsg.edit) }
             }
-            bsModalBody ({ closeButton = true }) {
-                bsRow {
-                    bsCol({ md = 12 }) {
-                        form {
-                            bsRow {
-                                bsCol({ md = 4 }) {
-                                    bsInput({
-                                        id = AccountScreenIds.modal.inputs.username
-                                        type = InputType.Text
-                                        label = "Username"
-                                        if (!props.editedAccount.new) {
-                                            readOnly = true
-                                        }
-                                        autoComplete = "off"
-                                        defaultValue = account.username
-                                        onChange = {
-                                            updateEntity(it) { value -> account.copy(username = value) }
-                                        }
-                                        errors["username"]?.let { errorMessage ->
-                                            bsStyle = BsStyle.Error
-                                            help = errorMessage
-                                        }
-                                    })
-                                }
-                                bsCol({ md = 4 }) {
-                                    bsInput({
-                                        id = AccountScreenIds.modal.inputs.password
-                                        type = InputType.Password
-                                        label = "Password"
-                                        autoComplete = "off"
-                                        defaultValue = ""
-                                        onChange = {
-                                            updateEntity(it) { value -> account.copy(plainPassword = value) }
-                                        }
-                                        errors["password"]?.let { errorMessage ->
-                                            bsStyle = BsStyle.Error
-                                            help = errorMessage
-                                        }
-                                    })
-                                }
-                                bsCol({ md = 4 }) {
-                                    bsInput({
-                                        id = AccountScreenIds.modal.inputs.disabled
-                                        type = InputType.Checkbox
-                                        checked = account.disabled
-                                        label = "Disabled"
-                                        onChange = { event ->
-                                            val checked = event.currentTarget.asDynamic().checked
-                                            state = AccountEditorDialogState(account.copy(disabled = checked))
-                                        }
-                                    })
-                                }
+            val errors = hashMapOf<String, String>()
+            fillWithErrors(errors)
+            body(errors)
+            footer(errors)
+
+        }
+    }
+
+    private fun Component.body(errors: Map<String, String>) {
+        val account = state.editedAccount
+        bsModalBody ({ closeButton = true }) {
+            bsRow {
+                bsCol({ md = 12 }) {
+                    form {
+                        bsRow {
+                            bsCol({ md = 4 }) {
+                                usernameInput(account, errors)
                             }
-                            bsRow {
-                                bsCol({ md = 4 }) {
-                                    bsInput({
-                                        type = InputType.Select
-                                        defaultValue = account.role
-                                        onChange = {
-                                            updateEntity(it) {value ->
-                                                account.copy(role = Role.valueOf(value))
-                                            }
-                                        }
-                                    }) {
-                                        Role.values().forEach { role ->
-                                            option({value = role.name}) {
-                                                text(role.name)
-                                            }
-                                        }
-                                    }
-                                }
+                            bsCol({ md = 4 }) {
+                                passwordInput(account, errors)
+                            }
+                            bsCol({ md = 4 }) {
+                                disabledInput(account)
+                            }
+                        }
+                        bsRow {
+                            bsCol({ md = 4 }) {
+                                roleInput(account)
                             }
                         }
                     }
                 }
             }
-            bsModalFooter {
-                bsButtonGroup {
-                    if (errors.isEmpty()) {
-                        bsButton ({
-                            id = AccountScreenIds.modal.buttons.save
-                            bsStyle = BsStyle.Success
-                            onClick = { props.close(ModalResult.Save, state.editedAccount) }
-                        }) { text("Mentés") }
-                    }
-                    bsButton ({
-                        id = AccountScreenIds.modal.buttons.close
-                        bsStyle = BsStyle.Danger
-                        onClick = { props.close(ModalResult.Close, null) }
-                    }) { text("Mégsem") }
+        }
+    }
+
+    private fun Component.usernameInput(account: Account, errors: Map<String, String>) {
+        bsInput({
+            id = AccountScreenIds.modal.inputs.username
+            type = InputType.Text
+            label = accountScreenMsg.username
+            if (!props.editedAccount.new) {
+                readOnly = true
+            }
+            autoComplete = "off"
+            defaultValue = account.username
+            onChange = {
+                updateEntity(it) { value -> account.copy(username = value) }
+            }
+            errors["username"]?.let { errorMessage ->
+                bsStyle = BsStyle.Error
+                help = errorMessage
+            }
+        })
+    }
+
+    private fun Component.passwordInput(account: Account, errors: Map<String, String>) {
+        bsInput({
+            id = AccountScreenIds.modal.inputs.password
+            type = InputType.Password
+            label = accountScreenMsg.password
+            autoComplete = "off"
+            defaultValue = ""
+            onChange = {
+                updateEntity(it) { value -> account.copy(plainPassword = value) }
+            }
+            errors["password"]?.let { errorMessage ->
+                bsStyle = BsStyle.Error
+                help = errorMessage
+            }
+        })
+    }
+
+    private fun Component.disabledInput(account: Account) {
+        bsInput({
+            id = AccountScreenIds.modal.inputs.disabled
+            type = InputType.Checkbox
+            checked = account.disabled
+            label = accountScreenMsg.columnDisabled
+            onChange = { event ->
+                val checked = event.currentTarget.asDynamic().checked
+                state = AccountEditorDialogState(account.copy(disabled = checked))
+            }
+        })
+    }
+
+    private fun Component.roleInput(account: Account) {
+        bsInput({
+            type = InputType.Select
+            defaultValue = account.role
+            onChange = {
+                updateEntity(it) {value ->
+                    account.copy(role = Role.valueOf(value))
+                }
+            }
+        }) {
+            Role.values().forEach { role ->
+                option({value = role.name}) {
+                    text(role.name)
                 }
             }
         }
     }
+
+    private fun Component.footer(errors: Map<String, String>) {
+        bsModalFooter {
+            bsButtonGroup {
+                if (errors.isEmpty()) {
+                    bsButton ({
+                        id = AccountScreenIds.modal.buttons.save
+                        bsStyle = BsStyle.Success
+                        onClick = { props.close(ModalResult.Save, state.editedAccount) }
+                    }) { text(commonMsg.save) }
+                }
+                bsButton ({
+                    id = AccountScreenIds.modal.buttons.close
+                    bsStyle = BsStyle.Danger
+                    onClick = { props.close(ModalResult.Close, null) }
+                }) { text(commonMsg.cancel) }
+            }
+        }
+    }
+
+
+
+
 
     private fun fillWithErrors(errors: MutableMap<String, String>) {
         val account = state.editedAccount

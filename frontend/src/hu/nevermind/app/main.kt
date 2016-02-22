@@ -124,30 +124,26 @@ class App : ComponentSpec<Unit, AppState>() {
             bsNavbar() {
                 bsNavbarHeader() {
                     bsNavbarBrand() {
-                        a({ href = nullHref }) { text("Project name") }
+                        a({ href = nullHref }) { text(homeScreenMsg.title) }
                     }
                 }
                 if (state.screen != AppScreen.Login) {
                     bsNav {
                         if (LoggedInUserStore.loggedInUser.role == Role.ROLE_ADMIN) {
-                            bsNavDropdown({ title = "Admin" }) {
+                            bsNavDropdown({ title = homeScreenMsg.menuAdmin }) {
                                 bsMenuItem({
                                     id = NavMenuIds.account
                                     href = "#${Path.account.root}"
                                     active = state.screen == AppScreen.Account
-                                }) { text("Accounts") }
-                                bsMenuItem { text("Another Action") }
-                                bsMenuItem { text("Something else here") }
-                                bsMenuItemDivider()
-                                bsMenuItem { text("Separated link") }
+                                }) { text(homeScreenMsg.menuAccounts) }
                             }
                         }
-                        bsNavDropdown({ title = "Options" }) {
+                        bsNavDropdown({ title = homeScreenMsg.menuOptions }) {
                             bsMenuItem({
                                 id = NavMenuIds.keyValue
                                 href = "#${Path.keyValue.root}"
                                 active = state.screen == AppScreen.Config
-                            }) { text("Configs") }
+                            }) { text(homeScreenMsg.menuKeyValue) }
                         }
                     }
                 }
@@ -162,12 +158,12 @@ class App : ComponentSpec<Unit, AppState>() {
                             href = "/logout"
                             onClick = { Actions.setLoggedInUser(globalDispatcher, null) }
                         }) {
-                            text("Logout")
+                            text(homeScreenMsg.logout)
                         }
                     }
                 } else {
                     bsNav({ pullRight = true }) {
-                        bsNavItem({ eventKey = 2; href = "/" }) { text("Contact") }
+                        bsNavItem({ eventKey = 2; href = "/" }) { text(homeScreenMsg.contact) }
                     }
                 }
             }
