@@ -30,4 +30,5 @@ internal fun <C : ReactComponent<*, *>> reactRender(component: C, container: Ele
 internal fun <T>  flatten(properties: T): T = noImpl
 
 @native("React.createElement")
+@Suppress("UNUSED_PARAMETER")
 internal fun <P> reactCreateElement(reactComponent: ReactComponent<*, *>, prop: P, children: Array<Any?>?): ReactComponent<Any, Any> = noImpl

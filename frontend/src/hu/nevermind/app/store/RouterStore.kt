@@ -4,7 +4,7 @@ import com.github.andrewoma.flux.Store
 import hu.nevermind.common.given
 import hu.nevermind.common.qunitTest
 import hu.nevermind.common.runFirstGiven
-import hu.nevermind.reakt.jqext.size
+import hu.nevermind.common.size
 import jquery.jq
 import org.junit.Test
 import kotlin.browser.window

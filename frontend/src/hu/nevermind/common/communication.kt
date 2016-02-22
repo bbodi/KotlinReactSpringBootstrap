@@ -11,6 +11,7 @@ data class AjaxRequest(val url: String,
 public data class AjaxResult<T>(val status: Boolean, val data: T)
 
 @native("$")
+@Suppress("UNUSED_PARAMETER")
 object Jq {
     fun ajax(req: Any): Unit = noImpl
     fun <T> get(url: String,

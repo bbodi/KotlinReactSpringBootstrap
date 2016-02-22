@@ -6,8 +6,8 @@ import hu.nevermind.app.store.*
 import hu.nevermind.common.*
 import hu.nevermind.reakt.bootstrap.*
 import hu.nevermind.reakt.bootstrap.table.*
-import hu.nevermind.reakt.jqext.find
-import hu.nevermind.reakt.jqext.size
+import hu.nevermind.common.find
+import hu.nevermind.common.size
 import jquery.jq
 import org.junit.Test
 import kotlin.browser.window
@@ -261,12 +261,12 @@ class KeyValueScreenTest {
         given("in any state") {
             on("routing to the KeyValue screen") {
                 window.location.hash = Path.keyValue.root
-                it("should be rendered KeyValue screen") { assertTrue(jq("#${KeyValueScreenIds.screenId}").size() == 1) }
+                it("should render KeyValue screen") { assertTrue(jq("#${KeyValueScreenIds.screenId}").size() == 1) }
                 it("should make the KeyValue menupoint active") { assertTrue(jq("#${NavMenuIds.keyValue}").parent().hasClass("active")) }
             }
         }
         given("KeyValueScreenTest in default state") {
-            Actions.setLoggedInUser(globalDispatcher, Account("testUser", false, arrayListOf(Role.ROLE_ADMIN), ""))
+            Actions.setLoggedInUser(globalDispatcher, Account("testUser", false, Role.ROLE_ADMIN, ""))
             window.location.hash = Path.keyValue.root
             Actions.modifyKeyValue(globalDispatcher,
                     KeyValue(key = "key1", value = "100")

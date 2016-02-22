@@ -10,19 +10,24 @@ import kotlin.browser.window
 private object AccountScreenIds {
     val screenId = "accountScreen"
     val addButton = "${screenId}_addButton"
+
     object table {
         val id = "${screenId}_table"
+
         object row {
-            val editButton: (Int)->String = {rowIndex -> "${id}_editButton_$rowIndex"}
+            val editButton: (Int) -> String = { rowIndex -> "${id}_editButton_$rowIndex" }
         }
     }
+
     object modal {
         val id = "${screenId}_modal"
+
         object inputs {
             val username = "${id}_username"
             val password = "${id}_password"
             val disabled = "${id}_disabled"
         }
+
         object buttons {
             val save = "${id}_saveButton"
             val close = "${id}_closeButton"
@@ -54,7 +59,7 @@ class AccountScreen : ComponentSpec<Unit, Unit>() {
             bsButton ({
                 id = AccountScreenIds.addButton
                 bsStyle = BsStyle.Primary
-                onClick = { Actions.setEditingAccount(globalDispatcher, Account("", false, arrayListOf(), "")) }
+                onClick = { Actions.setEditingAccount(globalDispatcher, Account("", false, Role.ROLE_USER, "")) }
             }) { text("Hozzáadás") }
             bsRow {
                 bsCol ({ md = 10 }) {
@@ -89,14 +94,14 @@ class AccountScreen : ComponentSpec<Unit, Unit>() {
                             width = "75"
                             dataFormat = { cell, account ->
                                 createReactElement {
-                                    bsInput({
-                                        type = InputType.Checkbox
-                                        checked = if (account.disabled) "checked" else ""
-                                        readOnly = true
-                                    })
+                                    if (account.disabled) {
+                                        bsLabel({ bsStyle = BsStyle.Error }) {text("Disabled")}
+                                    } else {
+                                        bsLabel({ bsStyle = BsStyle.Success }) {text("Enabled")}
+                                    }
                                 }
                             }
-                        }) { text("Disabled") }
+                        }) { text("State") }
                     }
                 }
             }
@@ -168,6 +173,7 @@ class AccountEditorDialog() : ComponentSpec<AccountEditorDialogProps, AccountEdi
                                         id = AccountScreenIds.modal.inputs.username
                                         type = InputType.Text
                                         label = "Username"
+                                        autoComplete = "off"
                                         defaultValue = account.username
                                         onChange = {
                                             updateEntity(it) { value -> account.copy(username = value) }
@@ -183,6 +189,7 @@ class AccountEditorDialog() : ComponentSpec<AccountEditorDialogProps, AccountEdi
                                         id = AccountScreenIds.modal.inputs.password
                                         type = InputType.Password
                                         label = "Password"
+                                        autoComplete = "off"
                                         defaultValue = ""
                                         onChange = {
                                             updateEntity(it) { value -> account.copy(plainPassword = value) }
@@ -210,13 +217,15 @@ class AccountEditorDialog() : ComponentSpec<AccountEditorDialogProps, AccountEdi
                                 bsCol({ md = 4 }) {
                                     bsInput({
                                         type = InputType.Select
+                                        defaultValue = account.role
                                         onChange = {
-                                            console.log(it)
-                                            //updateEntity(it) {value -> console.log(value) }
+                                            updateEntity(it) {value ->
+                                                account.copy(role = Role.valueOf(value))
+                                            }
                                         }
                                     }) {
-                                        Role.values().forEach {  role ->
-                                            option({selected = account.hasRole(role)}) {
+                                        Role.values().forEach { role ->
+                                            option({value = role.name}) {
                                                 text(role.name)
                                             }
                                         }
@@ -248,12 +257,13 @@ class AccountEditorDialog() : ComponentSpec<AccountEditorDialogProps, AccountEdi
 
     private fun fillWithErrors(errors: MutableMap<String, String>) {
         val account = state.editedAccount
-        arrayOf("username" to account.username,
-                "password" to account.plainPassword).forEach {
-            val errorMessages = validate(it.second, Min(3), Max(100))
-            if (errorMessages.isNotEmpty()) {
-                errors[it.first] = errorMessages.joinToString("\n")
-            }
+        var errorMsgList = validate(account.username, Min(3), Max(100))
+        if (errorMsgList.isNotEmpty()) {
+            errors["username"] = errorMsgList.joinToString("\n")
+        }
+        errorMsgList = validate(account.plainPassword, EmptyOr(Min(3)), Max(100))
+        if (errorMsgList.isNotEmpty()) {
+            errors["password"] = errorMsgList.joinToString("\n")
         }
     }
 }

@@ -1,29 +1,23 @@
 package hu.nevermind.reakt.bootstrap
 
 import com.github.andrewoma.react.*
-import org.w3c.dom.events.Event
 
 fun <P> Component.externalReactClass(thisComp: ReactComponent<P, *>,
                                      prop: P,
                                      properties: P.() -> Unit = {},
                                      init: Component.() -> Unit = {}) {
     this.constructAndInsert(Component({
-        react.createElement(thisComp, initProps(prop, properties), it.transformChildren())
-    }), init)
-}
-
-fun <P> Component.externalReactClassWithoutChild(thisComp: ReactComponent<P, *>,
-                                                 prop: P,
-                                                 properties: P.() -> Unit = {},
-                                                 init: Component.() -> Unit = {}) {
-    this.constructAndInsert(Component({
-        react.createElement(thisComp, initProps(prop, properties), null)
+        val children = {
+            if (it.children.isEmpty()) null else it.transformChildren()
+        }
+        react.createElement(thisComp, initProps(prop, properties), children())
     }), init)
 }
 
 fun createReactElement(init: Component.() -> Unit): Any {
     return Component({ 0 }).run {
         this.init()
+        require(this.children.size == 1, {"You can only return one node!"})
         this.children[0].transform()
     }
 }
@@ -72,7 +66,7 @@ fun Component.bsMenuItem(
 fun Component.bsMenuItemDivider(
         properties: MenuItemProperties.() -> Unit = {},
         init: Component.() -> Unit = {}) {
-    externalReactClassWithoutChild(
+    externalReactClass(
             js("ReactBootstrap.MenuItem"),
             MenuItemProperties(), properties,
             init)
@@ -373,8 +367,20 @@ class BsInputProperties : InputProperties() {
 fun Component.bsInput(
         properties: BsInputProperties.() -> Unit = {},
         init: Component.() -> Unit = {}) {
-    externalReactClassWithoutChild(
+    externalReactClass(
             js("ReactBootstrap.Input"),
             BsInputProperties(), properties,
+            init)
+}
+
+class BsLabelproperties {
+    var bsStyle: BsStyle by Property()
+}
+fun Component.bsLabel(
+        properties: BsLabelproperties.() -> Unit = {},
+        init: Component.() -> Unit = {}) {
+    externalReactClass(
+            js("ReactBootstrap.Label"),
+            BsLabelproperties(), properties,
             init)
 }

@@ -1,12 +1,24 @@
 package hu.nevermind.reakt
 
 
-@native("moment") private fun moment(): MomentJs = noImpl
-@native("moment") private fun moment(other: MomentJs): MomentJs = noImpl
-@native("moment") private fun moment(millisecondsSinceUnixEpoch: Long): MomentJs = noImpl
-@native("moment") private fun moment(input: String, format: String): MomentJs = noImpl
+@native("moment")
+@Suppress("UNUSED_PARAMETER")
+private fun moment(): MomentJs = noImpl
+
+@native("moment")
+@Suppress("UNUSED_PARAMETER")
+private fun moment(other: MomentJs): MomentJs = noImpl
+
+@native("moment")
+@Suppress("UNUSED_PARAMETER")
+private fun moment(millisecondsSinceUnixEpoch: Long): MomentJs = noImpl
+
+@native("moment")
+@Suppress("UNUSED_PARAMETER")
+private fun moment(input: String, format: String): MomentJs = noImpl
 
 @native("Moment")
+@Suppress("UNUSED_PARAMETER")
 private class MomentJs {
     fun format(formatString: String? = null): String = noImpl
     fun valueOf(): Long = noImpl

@@ -14,7 +14,7 @@ class AppController() {
         val authentication = context.authentication;
         return object {
             val name = (authentication.principal as User).username
-            val roles = authentication.authorities.map { it.authority }.toTypedArray()
+            val role = authentication.authorities.map { it.authority }.first()
         }
     }
 

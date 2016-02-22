@@ -18,11 +18,11 @@ object RestUrl {
 
 class Communicator(val ajaxPoster: AjaxPoster) {
 
-    fun getEntitiesFromServer(url: String, callback: (Array<Any>) -> Unit) {
+    fun getEntitiesFromServer(url: String, callback: (Array<dynamic>) -> Unit) {
         ajaxPoster.ajaxPost(
                 url = url,
                 type = "GET",
-                async = false) { result: Result<Array<Any>, String> ->
+                async = false) { result: Result<Array<dynamic>, String> ->
             requireNotNull(result.ok)
             val returnedEntities = result.ok!!
             callback(returnedEntities)

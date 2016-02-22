@@ -34,7 +34,7 @@ open class AuthenticationConfig : GlobalAuthenticationConfigurerAdapter() {
                         true, // accountNonExpired
                         true, // credentialsNonExpired
                         true, // accountNonLocked
-                        AuthorityUtils.commaSeparatedStringToAuthorityList(account.roles) // authorities
+                        AuthorityUtils.createAuthorityList(account.role) // authorities
                 )
             } else {
                 throw UsernameNotFoundException("could not find the user '$username'");

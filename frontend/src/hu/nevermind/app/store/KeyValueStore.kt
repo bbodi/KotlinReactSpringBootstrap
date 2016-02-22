@@ -24,10 +24,8 @@ object KeyValueStore : Store() {
                 keyValues = arrayListOf()
             } else {
                 communicator.getEntitiesFromServer(RestUrl.getKeyValuesFromServer) { returnedArray ->
-                    val newConfigs = returnedArray.map {
-                        with(it.asDynamic()) {
-                            KeyValue(key, value)
-                        }
+                    val newConfigs = returnedArray.map { json ->
+                        KeyValue(json.key, json.value)
                     }.toTypedArray()
                     keyValues = newConfigs.toArrayList()
                 }

@@ -1,7 +1,7 @@
 package hu.nevermind.common
 
-import hu.nevermind.reakt.jqext.get
-import hu.nevermind.reakt.jqext.size
+import hu.nevermind.common.get
+import hu.nevermind.common.size
 import jquery.jq
 import org.w3c.dom.HTMLInputElement
 import kotlin.browser.window
@@ -112,4 +112,5 @@ fun String.simulateClick() {
     ReactTestUtils.Simulate.click(jq("#${this}").get(0)!!)
 }
 
-@native("QUnit.test") fun qunitTest(name: String, body: (assert: dynamic)->Unit)
+@Suppress("UNUSED_PARAMETER")
+@native("QUnit.test") fun qunitTest(name: String, body: (assert: dynamic)->Unit): Unit = noImpl

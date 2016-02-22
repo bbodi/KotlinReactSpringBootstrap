@@ -10,7 +10,7 @@ import javax.persistence.Id
 data class Account(@Id var username: String = "",
                    var passwordHash: String = "",
                    var disabled: Boolean = false,
-                   var roles: String = "") {
+                   var role: String = "") {
 }
 
 @Repository

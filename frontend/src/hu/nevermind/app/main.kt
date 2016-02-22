@@ -9,8 +9,8 @@ import hu.nevermind.app.screen.loginScreen
 import hu.nevermind.app.store.*
 import hu.nevermind.common.*
 import hu.nevermind.reakt.bootstrap.*
-import hu.nevermind.reakt.jqext.get
-import hu.nevermind.reakt.jqext.hide
+import hu.nevermind.common.get
+import hu.nevermind.common.hide
 import jquery.jq
 import kotlin.browser.window
 
@@ -104,9 +104,7 @@ class App : ComponentSpec<Unit, AppState>() {
         communicator.authenticate() { result ->
             if (result.ok != null) {
                 val principal = result.ok.asDynamic()
-                val rolesStringArray: Array<String> = principal.roles
-                val roles = rolesStringArray.map { Role.valueOf(it) }
-                Actions.setLoggedInUser(globalDispatcher, Account(principal.name, false, roles, ""))
+                Actions.setLoggedInUser(globalDispatcher, Account(principal.name, false, Role.valueOf(principal.role), ""))
             } else {
                 Actions.setLoggedInUser(globalDispatcher, null)
             }
@@ -127,7 +125,7 @@ class App : ComponentSpec<Unit, AppState>() {
                 }
                 if (state.screen != AppScreen.Login) {
                     bsNav {
-                        if (LoggedInUserStore.loggedInUser.hasRole(Role.ROLE_ADMIN)) {
+                        if (LoggedInUserStore.loggedInUser.role == Role.ROLE_ADMIN) {
                             bsNavDropdown({ title = "Admin" }) {
                                 bsMenuItem({
                                     id = NavMenuIds.account
@@ -153,7 +151,7 @@ class App : ComponentSpec<Unit, AppState>() {
                     bsNav({ pullRight = true }) {
                         bsNavItem {
                             text("${LoggedInUserStore.loggedInUser.username}")
-                            text("(${LoggedInUserStore.loggedInUser.roles.joinToString(", ")})")
+                            text("(${LoggedInUserStore.loggedInUser.role})")
                         }
                         bsNavItem({
                             eventKey = 2
@@ -192,6 +190,16 @@ interface ValidationRule {
     val errorMsg: String
 
     fun hasValidationError(value: String): Boolean
+}
+
+data class EmptyOr(val orRule: ValidationRule) : ValidationRule {
+
+    override fun hasValidationError(value: String): Boolean {
+        return value.isNotEmpty() && orRule.hasValidationError(value)
+    }
+
+    override val errorMsg: String = "Must be empty or ${orRule.errorMsg}"
+
 }
 
 data class Min(val length: Int) : ValidationRule {

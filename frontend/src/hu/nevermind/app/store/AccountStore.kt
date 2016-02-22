@@ -12,23 +12,9 @@ enum class Role {
 
 data class Account(var username: String = "",
                    var disabled: Boolean = false,
-                   var roles: List<Role>,
+                   var role: Role,
                    var plainPassword: String) {
-    fun hasRole(role: Role) : Boolean {
-        return roles.contains(role)
-    }
 
-    fun hasAnyRoles(vararg roles: Role) : Boolean {
-        return roles.any {
-            roles.contains(it)
-        }
-    }
-
-    fun hasAllRoles(vararg roles: Role) : Boolean{
-        return roles.all {
-            roles.contains(it)
-        }
-    }
 }
 
 object AccountStore : Store() {
@@ -39,15 +25,13 @@ object AccountStore : Store() {
 
 
     init {
-        register(globalDispatcher, Actions.setLoggedInUser) { loggedInUser->
+        register(globalDispatcher, Actions.setLoggedInUser) { loggedInUser ->
             if (loggedInUser == null) {
                 accounts = arrayListOf()
             } else {
                 communicator.getEntitiesFromServer(RestUrl.getAccountsFromServer) { returnedArray ->
-                    val newAccounts = returnedArray.map {
-                        with(it.asDynamic()) {
-                            Account(username, disabled, roles, "")
-                        }
+                    val newAccounts = returnedArray.map { json ->
+                        Account(json.username, json.disabled, json.role, "")
                     }.toTypedArray()
                     accounts = newAccounts.toArrayList()
                 }

@@ -2,54 +2,55 @@ package hu.nevermind.common
 
 import kotlin.text.js.RegExp
 
+@Suppress("UNUSED_PARAMETER")
 @native class RegExpBuilder {
-    fun find(str: String): RegExpBuilder
-    fun min(num: Int): RegExpBuilder
-    fun max(num: Int): RegExpBuilder
-    fun exactly(num: Int): RegExpBuilder
-    fun then(str: String): RegExpBuilder
-    fun like(pattern: RegExpBuilder): RegExpBuilder
-    fun append(pattern: RegExpBuilder): RegExpBuilder
-    fun optional(pattern: RegExpBuilder): RegExpBuilder
-    fun either(pattern: RegExpBuilder): RegExpBuilder
-    fun either(pattern: String): RegExpBuilder
-    fun neither(pattern: RegExpBuilder): RegExpBuilder
-    fun neither(pattern: String): RegExpBuilder
-    fun or(pattern: RegExpBuilder): RegExpBuilder
-    fun or(pattern: String): RegExpBuilder
-    fun nor(pattern: RegExpBuilder): RegExpBuilder
-    fun nor(pattern: String): RegExpBuilder
-    fun anything(): RegExpBuilder
-    fun something(): RegExpBuilder
-    fun lineBreak(): RegExpBuilder
-    fun lineBreaks(): RegExpBuilder
-    fun whitespace(): RegExpBuilder
-    fun tab(): RegExpBuilder
-    fun tabs(): RegExpBuilder
-    fun letter(): RegExpBuilder
-    fun letters(): RegExpBuilder
-    fun startOfInput(): RegExpBuilder
-    fun startOfLine(): RegExpBuilder
-    fun endOfInput(): RegExpBuilder
-    fun endOfLine(): RegExpBuilder
-    fun lowerCaseLetter(): RegExpBuilder
-    fun lowerCaseLetters(): RegExpBuilder
-    fun upperCaseLetter(): RegExpBuilder
-    fun upperCaseLetters(): RegExpBuilder
-    fun digit(): RegExpBuilder
-    fun digits(): RegExpBuilder
-    fun asGroup(): RegExpBuilder
-    fun ofGroup(): RegExpBuilder
-    fun ignoreCase(): RegExpBuilder
-    fun anythingBut(str: String): RegExpBuilder
-    fun of(str: String): RegExpBuilder
-    fun maybe(str: String): RegExpBuilder
-    fun from(str: Array<String>): RegExpBuilder
-    fun some(str: Array<String>): RegExpBuilder
-    fun maybeSome(str: Array<String>): RegExpBuilder
-    fun notFrom(str: Array<String>): RegExpBuilder
+    fun find(str: String):  RegExpBuilder = noImpl
+    fun min(num: Int):  RegExpBuilder = noImpl
+    fun max(num: Int):  RegExpBuilder = noImpl
+    fun exactly(num: Int):  RegExpBuilder = noImpl
+    fun then(str: String):  RegExpBuilder = noImpl
+    fun like(pattern:  RegExpBuilder = noImpl):  RegExpBuilder = noImpl
+    fun append(pattern:  RegExpBuilder = noImpl):  RegExpBuilder = noImpl
+    fun optional(pattern:  RegExpBuilder = noImpl):  RegExpBuilder = noImpl
+    fun either(pattern:  RegExpBuilder = noImpl):  RegExpBuilder = noImpl
+    fun either(pattern: String):  RegExpBuilder = noImpl
+    fun neither(pattern:  RegExpBuilder = noImpl):  RegExpBuilder = noImpl
+    fun neither(pattern: String):  RegExpBuilder = noImpl
+    fun or(pattern:  RegExpBuilder = noImpl):  RegExpBuilder = noImpl
+    fun or(pattern: String):  RegExpBuilder = noImpl
+    fun nor(pattern:  RegExpBuilder = noImpl):  RegExpBuilder = noImpl
+    fun nor(pattern: String):  RegExpBuilder = noImpl
+    fun anything():  RegExpBuilder = noImpl
+    fun something():  RegExpBuilder = noImpl
+    fun lineBreak():  RegExpBuilder = noImpl
+    fun lineBreaks():  RegExpBuilder = noImpl
+    fun whitespace():  RegExpBuilder = noImpl
+    fun tab():  RegExpBuilder = noImpl
+    fun tabs():  RegExpBuilder = noImpl
+    fun letter():  RegExpBuilder = noImpl
+    fun letters():  RegExpBuilder = noImpl
+    fun startOfInput():  RegExpBuilder = noImpl
+    fun startOfLine():  RegExpBuilder = noImpl
+    fun endOfInput():  RegExpBuilder = noImpl
+    fun endOfLine():  RegExpBuilder = noImpl
+    fun lowerCaseLetter():  RegExpBuilder = noImpl
+    fun lowerCaseLetters():  RegExpBuilder = noImpl
+    fun upperCaseLetter():  RegExpBuilder = noImpl
+    fun upperCaseLetters():  RegExpBuilder = noImpl
+    fun digit():  RegExpBuilder = noImpl
+    fun digits():  RegExpBuilder = noImpl
+    fun asGroup():  RegExpBuilder = noImpl
+    fun ofGroup():  RegExpBuilder = noImpl
+    fun ignoreCase():  RegExpBuilder = noImpl
+    fun anythingBut(str: String):  RegExpBuilder = noImpl
+    fun of(str: String):  RegExpBuilder = noImpl
+    fun maybe(str: String):  RegExpBuilder = noImpl
+    fun from(str: Array<String>):  RegExpBuilder = noImpl
+    fun some(str: Array<String>):  RegExpBuilder = noImpl
+    fun maybeSome(str: Array<String>):  RegExpBuilder = noImpl
+    fun notFrom(str: Array<String>):  RegExpBuilder = noImpl
 
-    fun getRegExp(str: String): RegExp
-    fun test(str: String): Boolean
-    fun exec(str: String): Array<String>
+    fun getRegExp(str: String): RegExp = noImpl
+    fun test(str: String): Boolean = noImpl
+    fun exec(str: String): Array<String> = noImpl
 }
