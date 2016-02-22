@@ -46,13 +46,13 @@ href = "#${Path.account.root}"
 - BDD frontend testing (inspired by [Spek](https://github.com/JetBrains/spek))
 
  ```kotlin
-given("in any state") {
-    on("routing to the KeyValue screen") {
-      window.location.hash = Path.keyValue.root // these initialization code runs before every "it" invocations
-      it("should render KeyValue screen") { assertTrue(jq("#${KeyValueScreenIds.screenId}").size() == 1) }
-      it("should make the KeyValue menupoint active") { assertTrue(jq("#${NavMenuIds.keyValue}").parent().hasClass("active")) }
+    given("in any state") {
+        on("routing to the KeyValue screen") {
+            window.location.hash = Path.keyValue.root // these initialization code runs before every "it" invocations
+            it("should render KeyValue screen") { assertTrue(jq("#${KeyValueScreenIds.screenId}").size() == 1) }
+            it("should make the KeyValue menupoint active") { assertTrue(jq("#${NavMenuIds.keyValue}").parent().hasClass("active")) }
+        }
     }
-}
 ```
 - Router
 
