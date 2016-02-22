@@ -8,18 +8,18 @@ Kotlin 1.0.0-beta-4589
 
    ```
 bsModalBody ({ closeButton = true }) {
-    bsRow {
-      bsCol({ md = 12 }) {
-          form {
-              bsRow {
+      bsRow {
+         bsCol({ md = 12 }) {
+            form {
+               bsRow {
                   bsCol({ md = 6 }) {
-                      bsInput(){}
+                     bsInput(){}
                   }
               }
-          }
-      }
-    }
-}
+           }
+         }
+     }
+   }
 ```
 - Typesafe HTML enums
 
@@ -58,19 +58,19 @@ href = "#${Path.account.root}"
 
  ```kotlin
 RouterStore.match(
-    "${Path.login}" to { params ->
-        ...
-    },
-    "${Path.keyValue.root}:id" to { params ->
-        assert(params["id"] != null)
-    },
-    "${Path.account.root}?id" to { params ->
-        // params["id"] can be null
-    },
-    otherwise = {
-        ...
-    }
-  )
+      "${Path.login}" to { params ->
+            ...
+      },
+      "${Path.keyValue.root}:id" to { params ->
+            assert(params["id"] != null)
+      },
+      "${Path.account.root}?id" to { params ->
+            // params["id"] can be null
+      },
+      otherwise = {
+            ...
+      }
+)
 ```
 - Frontend unit testing without any backend
 
