@@ -11,9 +11,21 @@ import com.github.andrewoma.react.react
 import com.github.andrewoma.react.text
 import hu.nevermind.app.*
 import hu.nevermind.app.store.*
+import hu.nevermind.common.appearOnScreen
+import hu.nevermind.common.find
+import hu.nevermind.common.given
+import hu.nevermind.common.prop
+import hu.nevermind.common.qunitTest
+import hu.nevermind.common.runFirstGiven
+import hu.nevermind.common.simulateChangeInput
+import hu.nevermind.common.simulateClick
+import hu.nevermind.common.size
 import hu.nevermind.reakt.bootstrap.*
 import hu.nevermind.reakt.bootstrap.table.*
+import jquery.jq
+import org.junit.Test
 import kotlin.browser.window
+import kotlin.test.assertFalse
 
 private object AccountScreenIds {
     val screenId = "accountScreen"
@@ -130,7 +142,7 @@ class AccountScreen : ComponentSpec<Unit, Unit>() {
                     if (account.disabled) {
                         bsLabel({ bsStyle = BsStyle.Error }) { text(accountScreenMsg.disabled) }
                     } else {
-                        bsLabel({ bsStyle = BsStyle.Success }) {text(accountScreenMsg.enabled)}
+                        bsLabel({ bsStyle = BsStyle.Success }) { text(accountScreenMsg.enabled) }
                     }
                 }
             }
@@ -191,7 +203,7 @@ class AccountEditorDialog() : ComponentSpec<AccountEditorDialogProps, AccountEdi
                 bsModalTitle { text(commonMsg.edit) }
             }
             val errors = hashMapOf<String, String>()
-            fillWithErrors(errors)
+            fillWithErrors(props.editedAccount.new, errors)
             body(errors)
             footer(errors)
 
@@ -211,8 +223,10 @@ class AccountEditorDialog() : ComponentSpec<AccountEditorDialogProps, AccountEdi
                             bsCol({ md = 4 }) {
                                 passwordInput(account, errors)
                             }
-                            bsCol({ md = 4 }) {
-                                disabledInput(account)
+                            if (!props.editedAccount.new) {
+                                bsCol({ md = 4 }) {
+                                    disabledInput(account)
+                                }
                             }
                         }
                         bsRow {
@@ -281,13 +295,13 @@ class AccountEditorDialog() : ComponentSpec<AccountEditorDialogProps, AccountEdi
             type = InputType.Select
             defaultValue = account.role
             onChange = {
-                updateEntity(it) {value ->
+                updateEntity(it) { value ->
                     account.copy(role = Role.valueOf(value))
                 }
             }
         }) {
             Role.values().forEach { role ->
-                option({value = role.name}) {
+                option({ value = role.name }) {
                     text(role.name)
                 }
             }
@@ -314,16 +328,17 @@ class AccountEditorDialog() : ComponentSpec<AccountEditorDialogProps, AccountEdi
     }
 
 
-
-
-
-    private fun fillWithErrors(errors: MutableMap<String, String>) {
+    private fun fillWithErrors(isNewAccount: Boolean, errors: MutableMap<String, String>) {
         val account = state.editedAccount
         var errorMsgList = validate(account.username, Min(3), Max(100))
         if (errorMsgList.isNotEmpty()) {
             errors["username"] = errorMsgList.joinToString("\n")
         }
-        errorMsgList = validate(account.plainPassword, EmptyOr(Min(3)), Max(100))
+        errorMsgList = if (isNewAccount) {
+            validate(account.plainPassword, Min(3), Max(100))
+        } else {
+            validate(account.plainPassword, EmptyOr(Min(3)), Max(100))
+        }
         if (errorMsgList.isNotEmpty()) {
             errors["password"] = errorMsgList.joinToString("\n")
         }
@@ -336,4 +351,173 @@ private fun Component.editorDialog(props: AccountEditorDialogProps): Component {
 
 fun Component.accountScreen(): Component {
     return constructAndInsert(Component({ AccountScreen.factory(Ref(null)) }))
+}
+
+private class AccountScreenTest {
+
+
+    @Test
+    fun hack() {
+        kotlin.test.assertTrue(true) // qunit hack, at least one assert must be present
+        qunitTest("AccountScreenTest") { assert: dynamic ->
+            tests()
+            runFirstGiven(assert)
+        }
+    }
+
+    fun tests() {
+        given("in any state") {
+            Actions.setLoggedInUser(globalDispatcher, Account("testUser", false, Role.ROLE_ADMIN, ""))
+            on("routing to the Account screen") {
+                window.location.hash = Path.account.root
+                it("should render Account screen") { assertTrue(jq("#${AccountScreenIds.screenId}").size() == 1) }
+                it("should make the Account menupoint active") { assertTrue(jq("#${NavMenuIds.account}").parent().hasClass("active")) }
+            }
+        }
+        given("AccountScreenTest in default state") {
+            Actions.setLoggedInUser(globalDispatcher, Account("testUser", false, Role.ROLE_ADMIN, ""))
+            window.location.hash = Path.account.root
+            Actions.modifyAccount(globalDispatcher,
+                    Account("test", false, Role.ROLE_ADMIN, "")
+            )
+            on("changing the URl to .../account/test") {
+                window.location.hash = Path.account.withOpenedEditorModal("test")
+                it("should open the modal") {
+                    assertTrue(AccountScreenIds.modal.id.appearOnScreen())
+                }
+                it("should render the input fields") {
+                    assertTrue(AccountScreenIds.modal.inputs.username.appearOnScreen())
+                    assertTrue(AccountScreenIds.modal.inputs.password.appearOnScreen())
+                    assertTrue(AccountScreenIds.modal.inputs.disabled.appearOnScreen())
+                }
+                it("should fill the input fields with the values of the references Account") {
+                    assertEquals("test", jq("#${AccountScreenIds.modal.inputs.username}").`val`())
+                    assertEquals("on", jq("#${AccountScreenIds.modal.inputs.disabled}").`val`())
+                }
+                it("should set the username input as ReadOnly") {
+                    assertEquals("readonly", jq("#${AccountScreenIds.modal.inputs.username}").attr("readonly"))
+                }
+                it("should not fill the password input") {
+                    assertEquals("", jq("#${AccountScreenIds.modal.inputs.password}").`val`())
+                }
+                it("should render the close button") {
+                    assertTrue(AccountScreenIds.modal.buttons.close.appearOnScreen())
+                }
+            }
+            on("Clicking on the Edit button") {
+                AccountScreenIds.table.row.editButton(0).simulateClick()
+                it("should open the modal") {
+                    assertTrue(AccountScreenIds.modal.id.appearOnScreen())
+                }
+                it("should fill the input fields with the values of the references Account") {
+                    assertEquals("test", jq("#${AccountScreenIds.modal.inputs.username}").`val`())
+                    assertEquals(false, jq("#${AccountScreenIds.modal.inputs.disabled}").prop("checked"))
+                }
+                it("should set the username input as ReadOnly") {
+                    assertEquals("readonly", jq("#${AccountScreenIds.modal.inputs.username}").attr("readonly"))
+                }
+                it("should not fill the password input") {
+                    assertEquals("", jq("#${AccountScreenIds.modal.inputs.password}").`val`())
+                }
+                it("should change the URL, appending the editing key to it") {
+                    assertEquals(Path.account.withOpenedEditorModal("test"), RouterStore.path)
+                }
+            }
+            on("Clicking on Add button") {
+                AccountScreenIds.addButton.simulateClick()
+                it("should open the modal") {
+                    assertTrue(AccountScreenIds.modal.id.appearOnScreen())
+                }
+                it("should not set the username input as ReadOnly") {
+                    assertEquals(null, jq("#${AccountScreenIds.modal.inputs.username}").attr("readonly"))
+                }
+                it("should not render the disabled input") {
+                    assertFalse(AccountScreenIds.modal.inputs.disabled.appearOnScreen())
+                }
+                it("should render the input values empty") {
+                    assertEquals("", jq("#${AccountScreenIds.modal.inputs.username}").`val`())
+                    assertEquals("", jq("#${AccountScreenIds.modal.inputs.password}").`val`())
+                }
+            }
+        }
+        given("new Account editor is open with empty inputs") {
+            window.location.hash = Path.account.root
+            AccountScreenIds.addButton.simulateClick()
+            on("appearing") {
+                it("should hide the Save button") {
+                    assertFalse(AccountScreenIds.modal.buttons.save.appearOnScreen())
+                }
+            }
+            on("filling the input fields") {
+                simulateChangeInput(AccountScreenIds.modal.inputs.username) { input ->
+                    input.value = "newUsername"
+                }
+                simulateChangeInput(AccountScreenIds.modal.inputs.password) { input ->
+                    input.value = "pass"
+                }
+                it("should render the Save button") {
+                    assertTrue(AccountScreenIds.modal.buttons.save.appearOnScreen())
+                }
+            }
+        }
+        given("new Account editor is open with filled inputs") {
+            window.location.hash = Path.account.root
+            AccountScreenIds.addButton.simulateClick()
+            simulateChangeInput(AccountScreenIds.modal.inputs.username) { input ->
+                input.value = "newUsername"
+            }
+            simulateChangeInput(AccountScreenIds.modal.inputs.password) { input ->
+                input.value = "pass"
+            }
+            on("clicking on the Close button") {
+                AccountScreenIds.modal.buttons.close.simulateClick()
+                it("should close the Modal dialog window") {
+                    assertFalse(AccountScreenIds.modal.id.appearOnScreen())
+                }
+                it("should not change the URL") {
+                    assertEquals(Path.account.root, RouterStore.path)
+                }
+            }
+            on("clicking on the Save button") {
+                AccountScreenIds.modal.buttons.save.simulateClick()
+                it("should close the Modal dialog window") {
+                    assertFalse(AccountScreenIds.modal.id.appearOnScreen())
+                }
+                it("should not change the URL") {
+                    assertEquals(Path.account.root, RouterStore.path)
+                }
+                it("should add the new Account to the Store") {
+                    assertEquals(2, AccountStore.accounts().size)
+                }
+                it("should render the new Account in the table") {
+                    assertTrue(jq("#${AccountScreenIds.screenId}").find("div:contains('newUsername'):last").size() == 1)
+                }
+            }
+        }
+        given("AccountScreenTest: the Modal editor is open") {
+            window.location.hash = Path.account.root
+            window.location.hash = Path.account.withOpenedEditorModal("test")
+            Actions.modifyAccount(globalDispatcher,
+                    Account("test1", false, Role.ROLE_ADMIN, "")
+            )
+            on("clicking on the Close button") {
+                AccountScreenIds.modal.buttons.close.simulateClick()
+                it("should close the Modal dialog window") {
+                    assertFalse(AccountScreenIds.modal.id.appearOnScreen())
+                }
+                it("should change the URL, deleting the .../key/ parts") {
+                    assertEquals(Path.account.root, RouterStore.path)
+                }
+            }
+            on("clicking on the Save button") {
+                AccountScreenIds.modal.buttons.save.simulateClick()
+                it("should close the Modal dialog window") {
+                    assertFalse(AccountScreenIds.modal.id.appearOnScreen())
+                }
+                it("should change the URL, deleting the .../id/ parts") {
+                    assertEquals(Path.account.root, RouterStore.path)
+                }
+            }
+        }
+    }
 }

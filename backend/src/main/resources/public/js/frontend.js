@@ -2048,7 +2048,10 @@
           main_kand9s$f_2: function (result) {
             return _.hu.nevermind.common.ok_za3rmp$(result);
           },
-          main_kand9s$f_3: function (it) {
+          main_kand9s$f_3: function (result) {
+            return _.hu.nevermind.common.ok_za3rmp$(result);
+          },
+          main_kand9s$f_4: function (it) {
             return _.hu.nevermind.common.ok_za3rmp$('');
           },
           main_kand9s$: function (arg) {
@@ -2061,7 +2064,8 @@
               _.hu.nevermind.app.testAjaxPoster.pushResult_yuwyva$(_.hu.nevermind.app.RestUrl.getKeyValuesFromServer, _.hu.nevermind.app.main_kand9s$f_0);
               _.hu.nevermind.app.testAjaxPoster.pushResult_yuwyva$(_.hu.nevermind.app.RestUrl.getAccountsFromServer, _.hu.nevermind.app.main_kand9s$f_1);
               _.hu.nevermind.app.testAjaxPoster.pushResult_yuwyva$(_.hu.nevermind.app.RestUrl.saveKeyValue, _.hu.nevermind.app.main_kand9s$f_2);
-              _.hu.nevermind.app.testAjaxPoster.pushResult_yuwyva$(_.hu.nevermind.app.RestUrl.deleteKeyValue, _.hu.nevermind.app.main_kand9s$f_3);
+              _.hu.nevermind.app.testAjaxPoster.pushResult_yuwyva$(_.hu.nevermind.app.RestUrl.saveAccount, _.hu.nevermind.app.main_kand9s$f_3);
+              _.hu.nevermind.app.testAjaxPoster.pushResult_yuwyva$(_.hu.nevermind.app.RestUrl.deleteKeyValue, _.hu.nevermind.app.main_kand9s$f_4);
               _.com.github.andrewoma.react.react.render_vbpb6g$(_.hu.nevermind.app.app(), (tmp$0 = $('#app').get(0)) != null ? tmp$0 : Kotlin.throwNPE());
               QUnit.start();
             }
@@ -3688,13 +3692,20 @@
               footer: function ($receiver, errors) {
                 _.hu.nevermind.reakt.bootstrap.bsModalFooter_4ko09h$($receiver, void 0, _.hu.nevermind.app.screen.AccountEditorDialog.footer$f(errors, this));
               },
-              fillWithErrors: function (errors) {
+              fillWithErrors: function (isNewAccount, errors) {
+                var tmp$0;
                 var account = this.state.editedAccount;
                 var errorMsgList = _.hu.nevermind.app.validate_pn0x65$(account.username, [new _.hu.nevermind.app.Min(3), new _.hu.nevermind.app.Max(100)]);
                 if (Kotlin.modules['stdlib'].kotlin.collections.isNotEmpty_4m3c68$(errorMsgList)) {
                   errors.put_wn2jw4$('username', Kotlin.modules['stdlib'].kotlin.collections.joinToString_sdec0h$(errorMsgList, '\n'));
                 }
-                errorMsgList = _.hu.nevermind.app.validate_pn0x65$(account.plainPassword, [new _.hu.nevermind.app.EmptyOr(new _.hu.nevermind.app.Min(3)), new _.hu.nevermind.app.Max(100)]);
+                if (isNewAccount) {
+                  tmp$0 = _.hu.nevermind.app.validate_pn0x65$(account.plainPassword, [new _.hu.nevermind.app.Min(3), new _.hu.nevermind.app.Max(100)]);
+                }
+                 else {
+                  tmp$0 = _.hu.nevermind.app.validate_pn0x65$(account.plainPassword, [new _.hu.nevermind.app.EmptyOr(new _.hu.nevermind.app.Min(3)), new _.hu.nevermind.app.Max(100)]);
+                }
+                errorMsgList = tmp$0;
                 if (Kotlin.modules['stdlib'].kotlin.collections.isNotEmpty_4m3c68$(errorMsgList)) {
                   errors.put_wn2jw4$('password', Kotlin.modules['stdlib'].kotlin.collections.joinToString_sdec0h$(errorMsgList, '\n'));
                 }
@@ -3738,7 +3749,7 @@
                 return function () {
                   _.hu.nevermind.reakt.bootstrap.bsModalHeader_bv4bc3$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_0, _.hu.nevermind.app.screen.AccountEditorDialog.f_2);
                   var errors = Kotlin.modules['stdlib'].kotlin.collections.hashMapOf_eoa9s7$([]);
-                  this$AccountEditorDialog.fillWithErrors(errors);
+                  this$AccountEditorDialog.fillWithErrors(this$AccountEditorDialog.props.editedAccount.new, errors);
                   this$AccountEditorDialog.body(this, errors);
                   this$AccountEditorDialog.footer(this, errors);
                 };
@@ -3777,7 +3788,9 @@
                 return function () {
                   _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_4, _.hu.nevermind.app.screen.AccountEditorDialog.f_5(account, errors, this$AccountEditorDialog));
                   _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_6, _.hu.nevermind.app.screen.AccountEditorDialog.f_7(account, errors, this$AccountEditorDialog));
-                  _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_8, _.hu.nevermind.app.screen.AccountEditorDialog.f_9(account, this$AccountEditorDialog));
+                  if (!this$AccountEditorDialog.props.editedAccount.new) {
+                    _.hu.nevermind.reakt.bootstrap.bsCol_zb79fh$(this, _.hu.nevermind.app.screen.AccountEditorDialog.f_8, _.hu.nevermind.app.screen.AccountEditorDialog.f_9(account, this$AccountEditorDialog));
+                  }
                 };
               },
               f_11: function () {
@@ -3988,6 +4001,222 @@
             accountScreen_sx5o3u$: function ($receiver) {
               return $receiver.constructAndInsert_ad91at$(new _.com.github.andrewoma.react.Component(_.hu.nevermind.app.screen.accountScreen_sx5o3u$f));
             },
+            AccountScreenTest: Kotlin.createClass(null, null, /** @lends _.hu.nevermind.app.screen.AccountScreenTest.prototype */ {
+              hack: function () {
+                Kotlin.modules['stdlib'].kotlin.test.assertTrue_8kj6y5$(true);
+                QUnit.test('AccountScreenTest', _.hu.nevermind.app.screen.AccountScreenTest.hack$f(this));
+              },
+              tests: function () {
+                _.hu.nevermind.common.given_h3u0vh$('in any state', _.hu.nevermind.app.screen.AccountScreenTest.tests$f);
+                _.hu.nevermind.common.given_h3u0vh$('AccountScreenTest in default state', _.hu.nevermind.app.screen.AccountScreenTest.tests$f_0);
+                _.hu.nevermind.common.given_h3u0vh$('new Account editor is open with empty inputs', _.hu.nevermind.app.screen.AccountScreenTest.tests$f_1);
+                _.hu.nevermind.common.given_h3u0vh$('new Account editor is open with filled inputs', _.hu.nevermind.app.screen.AccountScreenTest.tests$f_2);
+                _.hu.nevermind.common.given_h3u0vh$('AccountScreenTest: the Modal editor is open', _.hu.nevermind.app.screen.AccountScreenTest.tests$f_3);
+              }
+            }, /** @lends _.hu.nevermind.app.screen.AccountScreenTest */ {
+              hack$f: function (this$AccountScreenTest) {
+                return function (assert) {
+                  this$AccountScreenTest.tests();
+                  _.hu.nevermind.common.runFirstGiven_za3rmp$(assert);
+                };
+              },
+              f: function () {
+                this.assertTrue_6taknv$($('#accountScreen').size() === 1);
+              },
+              f_0: function () {
+                this.assertTrue_6taknv$($('#navItem_account').parent().hasClass('active'));
+              },
+              f_1: function () {
+                window.location.hash = _.Path.account.root;
+                this.it_e6z94m$('should render Account screen', _.hu.nevermind.app.screen.AccountScreenTest.f);
+                this.it_e6z94m$('should make the Account menupoint active', _.hu.nevermind.app.screen.AccountScreenTest.f_0);
+              },
+              tests$f: function () {
+                _.hu.nevermind.app.Actions.setLoggedInUser.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.Account('testUser', false, _.hu.nevermind.app.store.Role.object.ROLE_ADMIN, ''));
+                this.on_82t0p5$('routing to the Account screen', _.hu.nevermind.app.screen.AccountScreenTest.f_1);
+              },
+              f_2: function () {
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.id));
+              },
+              f_3: function () {
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.username));
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.password));
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.disabled));
+              },
+              f_4: function () {
+                this.assertEquals_wn2jw4$('test', $('#accountScreen_modal_username').val());
+                this.assertEquals_wn2jw4$('on', $('#accountScreen_modal_disabled').val());
+              },
+              f_5: function () {
+                this.assertEquals_wn2jw4$('readonly', $('#accountScreen_modal_username').attr('readonly'));
+              },
+              f_6: function () {
+                this.assertEquals_wn2jw4$('', $('#accountScreen_modal_password').val());
+              },
+              f_7: function () {
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.buttons.close));
+              },
+              f_8: function () {
+                window.location.hash = _.Path.account.withOpenedEditorModal('test');
+                this.it_e6z94m$('should open the modal', _.hu.nevermind.app.screen.AccountScreenTest.f_2);
+                this.it_e6z94m$('should render the input fields', _.hu.nevermind.app.screen.AccountScreenTest.f_3);
+                this.it_e6z94m$('should fill the input fields with the values of the references Account', _.hu.nevermind.app.screen.AccountScreenTest.f_4);
+                this.it_e6z94m$('should set the username input as ReadOnly', _.hu.nevermind.app.screen.AccountScreenTest.f_5);
+                this.it_e6z94m$('should not fill the password input', _.hu.nevermind.app.screen.AccountScreenTest.f_6);
+                this.it_e6z94m$('should render the close button', _.hu.nevermind.app.screen.AccountScreenTest.f_7);
+              },
+              f_9: function () {
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.id));
+              },
+              f_10: function () {
+                this.assertEquals_wn2jw4$('test', $('#accountScreen_modal_username').val());
+                this.assertEquals_wn2jw4$(false, $('#accountScreen_modal_disabled').prop('checked'));
+              },
+              f_11: function () {
+                this.assertEquals_wn2jw4$('readonly', $('#accountScreen_modal_username').attr('readonly'));
+              },
+              f_12: function () {
+                this.assertEquals_wn2jw4$('', $('#accountScreen_modal_password').val());
+              },
+              f_13: function () {
+                this.assertEquals_wn2jw4$(_.Path.account.withOpenedEditorModal('test'), _.hu.nevermind.app.store.RouterStore.path);
+              },
+              f_14: function () {
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.table.row.editButton(0));
+                this.it_e6z94m$('should open the modal', _.hu.nevermind.app.screen.AccountScreenTest.f_9);
+                this.it_e6z94m$('should fill the input fields with the values of the references Account', _.hu.nevermind.app.screen.AccountScreenTest.f_10);
+                this.it_e6z94m$('should set the username input as ReadOnly', _.hu.nevermind.app.screen.AccountScreenTest.f_11);
+                this.it_e6z94m$('should not fill the password input', _.hu.nevermind.app.screen.AccountScreenTest.f_12);
+                this.it_e6z94m$('should change the URL, appending the editing key to it', _.hu.nevermind.app.screen.AccountScreenTest.f_13);
+              },
+              f_15: function () {
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.id));
+              },
+              f_16: function () {
+                this.assertEquals_wn2jw4$(null, $('#accountScreen_modal_username').attr('readonly'));
+              },
+              f_17: function () {
+                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.disabled));
+              },
+              f_18: function () {
+                this.assertEquals_wn2jw4$('', $('#accountScreen_modal_username').val());
+                this.assertEquals_wn2jw4$('', $('#accountScreen_modal_password').val());
+              },
+              f_19: function () {
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.addButton);
+                this.it_e6z94m$('should open the modal', _.hu.nevermind.app.screen.AccountScreenTest.f_15);
+                this.it_e6z94m$('should not set the username input as ReadOnly', _.hu.nevermind.app.screen.AccountScreenTest.f_16);
+                this.it_e6z94m$('should not render the disabled input', _.hu.nevermind.app.screen.AccountScreenTest.f_17);
+                this.it_e6z94m$('should render the input values empty', _.hu.nevermind.app.screen.AccountScreenTest.f_18);
+              },
+              tests$f_0: function () {
+                _.hu.nevermind.app.Actions.setLoggedInUser.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.Account('testUser', false, _.hu.nevermind.app.store.Role.object.ROLE_ADMIN, ''));
+                window.location.hash = _.Path.account.root;
+                _.hu.nevermind.app.Actions.modifyAccount.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.Account('test', false, _.hu.nevermind.app.store.Role.object.ROLE_ADMIN, ''));
+                this.on_82t0p5$('changing the URl to .../account/test', _.hu.nevermind.app.screen.AccountScreenTest.f_8);
+                this.on_82t0p5$('Clicking on the Edit button', _.hu.nevermind.app.screen.AccountScreenTest.f_14);
+                this.on_82t0p5$('Clicking on Add button', _.hu.nevermind.app.screen.AccountScreenTest.f_19);
+              },
+              f_20: function () {
+                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.buttons.save));
+              },
+              f_21: function () {
+                this.it_e6z94m$('should hide the Save button', _.hu.nevermind.app.screen.AccountScreenTest.f_20);
+              },
+              f_22: function (input) {
+                input.value = 'newUsername';
+              },
+              f_23: function (input) {
+                input.value = 'pass';
+              },
+              f_24: function () {
+                this.assertTrue_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.buttons.save));
+              },
+              f_25: function () {
+                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.username, _.hu.nevermind.app.screen.AccountScreenTest.f_22);
+                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.password, _.hu.nevermind.app.screen.AccountScreenTest.f_23);
+                this.it_e6z94m$('should render the Save button', _.hu.nevermind.app.screen.AccountScreenTest.f_24);
+              },
+              tests$f_1: function () {
+                window.location.hash = _.Path.account.root;
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.addButton);
+                this.on_82t0p5$('appearing', _.hu.nevermind.app.screen.AccountScreenTest.f_21);
+                this.on_82t0p5$('filling the input fields', _.hu.nevermind.app.screen.AccountScreenTest.f_25);
+              },
+              f_26: function (input) {
+                input.value = 'newUsername';
+              },
+              f_27: function (input) {
+                input.value = 'pass';
+              },
+              f_28: function () {
+                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.id));
+              },
+              f_29: function () {
+                this.assertEquals_wn2jw4$(_.Path.account.root, _.hu.nevermind.app.store.RouterStore.path);
+              },
+              f_30: function () {
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.buttons.close);
+                this.it_e6z94m$('should close the Modal dialog window', _.hu.nevermind.app.screen.AccountScreenTest.f_28);
+                this.it_e6z94m$('should not change the URL', _.hu.nevermind.app.screen.AccountScreenTest.f_29);
+              },
+              f_31: function () {
+                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.id));
+              },
+              f_32: function () {
+                this.assertEquals_wn2jw4$(_.Path.account.root, _.hu.nevermind.app.store.RouterStore.path);
+              },
+              f_33: function () {
+                this.assertEquals_wn2jw4$(2, _.hu.nevermind.app.store.AccountStore.accounts().size);
+              },
+              f_34: function () {
+                this.assertTrue_6taknv$($('#accountScreen').find("div:contains('newUsername'):last").size() === 1);
+              },
+              f_35: function () {
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.buttons.save);
+                this.it_e6z94m$('should close the Modal dialog window', _.hu.nevermind.app.screen.AccountScreenTest.f_31);
+                this.it_e6z94m$('should not change the URL', _.hu.nevermind.app.screen.AccountScreenTest.f_32);
+                this.it_e6z94m$('should add the new Account to the Store', _.hu.nevermind.app.screen.AccountScreenTest.f_33);
+                this.it_e6z94m$('should render the new Account in the table', _.hu.nevermind.app.screen.AccountScreenTest.f_34);
+              },
+              tests$f_2: function () {
+                window.location.hash = _.Path.account.root;
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.addButton);
+                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.username, _.hu.nevermind.app.screen.AccountScreenTest.f_26);
+                _.hu.nevermind.common.simulateChangeInput_wc1zer$(_.hu.nevermind.app.screen.AccountScreenIds.modal.inputs.password, _.hu.nevermind.app.screen.AccountScreenTest.f_27);
+                this.on_82t0p5$('clicking on the Close button', _.hu.nevermind.app.screen.AccountScreenTest.f_30);
+                this.on_82t0p5$('clicking on the Save button', _.hu.nevermind.app.screen.AccountScreenTest.f_35);
+              },
+              f_36: function () {
+                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.id));
+              },
+              f_37: function () {
+                this.assertEquals_wn2jw4$(_.Path.account.root, _.hu.nevermind.app.store.RouterStore.path);
+              },
+              f_38: function () {
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.buttons.close);
+                this.it_e6z94m$('should close the Modal dialog window', _.hu.nevermind.app.screen.AccountScreenTest.f_36);
+                this.it_e6z94m$('should change the URL, deleting the .../key/ parts', _.hu.nevermind.app.screen.AccountScreenTest.f_37);
+              },
+              f_39: function () {
+                this.assertFalse_6taknv$(_.hu.nevermind.common.appearOnScreen_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.id));
+              },
+              f_40: function () {
+                this.assertEquals_wn2jw4$(_.Path.account.root, _.hu.nevermind.app.store.RouterStore.path);
+              },
+              f_41: function () {
+                _.hu.nevermind.common.simulateClick_pdl1w0$(_.hu.nevermind.app.screen.AccountScreenIds.modal.buttons.save);
+                this.it_e6z94m$('should close the Modal dialog window', _.hu.nevermind.app.screen.AccountScreenTest.f_39);
+                this.it_e6z94m$('should change the URL, deleting the .../id/ parts', _.hu.nevermind.app.screen.AccountScreenTest.f_40);
+              },
+              tests$f_3: function () {
+                window.location.hash = _.Path.account.root;
+                window.location.hash = _.Path.account.withOpenedEditorModal('test');
+                _.hu.nevermind.app.Actions.modifyAccount.invoke_3vhket$(_.hu.nevermind.app.globalDispatcher, new _.hu.nevermind.app.store.Account('test1', false, _.hu.nevermind.app.store.Role.object.ROLE_ADMIN, ''));
+                this.on_82t0p5$('clicking on the Close button', _.hu.nevermind.app.screen.AccountScreenTest.f_38);
+                this.on_82t0p5$('clicking on the Save button', _.hu.nevermind.app.screen.AccountScreenTest.f_41);
+              }
+            }),
             editButton$f_0: function (this$table) {
               return function (rowIndex) {
                 return this$table.id + '_editButton_' + rowIndex;
@@ -9612,6 +9841,9 @@
   _.hu.nevermind.app.main_kand9s$([]);
   QUnit.test('RouterStoreTest.hack', function () {
     (new _.hu.nevermind.app.store.RouterStoreTest()).hack();
+  });
+  QUnit.test('AccountScreenTest.hack', function () {
+    (new _.hu.nevermind.app.screen.AccountScreenTest()).hack();
   });
   QUnit.test('KeyValueScreenTest.hack', function () {
     (new _.hu.nevermind.app.screen.KeyValueScreenTest()).hack();

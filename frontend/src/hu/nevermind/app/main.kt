@@ -32,6 +32,7 @@ public fun main(vararg arg: String) {
         testAjaxPoster.pushResult<Nothing>(RestUrl.getKeyValuesFromServer, {ok(emptyArray<Any>())})
         testAjaxPoster.pushResult<Nothing>(RestUrl.getAccountsFromServer, {ok(emptyArray<Any>())})
         testAjaxPoster.pushResult(RestUrl.saveKeyValue, {result: KeyValue -> ok(result)})
+        testAjaxPoster.pushResult(RestUrl.saveAccount, {result: Account -> ok(result)})
         testAjaxPoster.pushResult<Nothing>(RestUrl.deleteKeyValue, {ok("")})
         react.render(app(), jq("#app").get(0)!!)
         QUnit.start()

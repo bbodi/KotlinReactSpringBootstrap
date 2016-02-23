@@ -39,6 +39,7 @@ public @native fun JQuery.block(): Unit = noImpl
 public @native fun JQuery.unblock(): Unit = noImpl
 
 @Suppress("UNUSED_PARAMETER") public @native("val") fun JQuery.value(value: String?): Unit= noImpl
+@Suppress("UNUSED_PARAMETER") public @native("prop") fun JQuery.prop(propName: String): Any= noImpl
 
 // jQuery Caret
 public @native fun JQuery.caret(): Int = noImpl

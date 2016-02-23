@@ -284,7 +284,7 @@ fun Component.keyValueScreen(): Component {
     return constructAndInsert(Component({ KeyValueScreen.factory(Ref(null)) }))
 }
 
-class KeyValueScreenTest {
+private class KeyValueScreenTest {
 
 
     @Test
