@@ -37,7 +37,18 @@ bsButton ({id = KeyValueScreenIds.addButton}) { text("Add") }
  ```kotlin
 assertTrue(KeyValueScreenIds.addButton.appearOnScreen())
 KeyValueScreenIds.addButton.simulateClick()
+simulateChangeInput(AccountScreenIds.modal.inputs.username) { input ->
+       input.value = "newUsername"
+}
 ```
+- Typesafe localization
+
+ ```kotlin
+ bsInput({ label = msg.screen.account.username })
+ // or
+ val accountScreenMsg = msg.screen.account
+ bsInput({ label = accountScreenMsg.username })
+ ```
 - Typesafe hash URL-s
 
  ```
