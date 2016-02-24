@@ -9,7 +9,7 @@ public abstract class Store {
     }
 
     fun unRegister(dispatcher: Dispatcher, token: RegisteredActionHandler) {
-        return dispatcher.unRegister(token)
+        dispatcher.unRegister(token)
     }
 
     public fun addChangeListener(self: Any, callback: () -> Unit) {

@@ -36,8 +36,8 @@ object AccountStore : Store() {
                     accounts = newAccounts.toArrayList()
                 }
                 if (setEditingAccountToken != null) {
-                    //unRegister(globalDispatcher, setEditingAccountToken)
-                    //unRegister(globalDispatcher, modifyAccountToken)
+                    unRegister(globalDispatcher, setEditingAccountToken!!)
+                    unRegister(globalDispatcher, modifyAccountToken!!)
                 }
                 if (loggedInUser.role == Role.ROLE_ADMIN) {
                     registerAccountEditingHandlers()
